@@ -73,7 +73,7 @@ Based on the comprehensive analysis of the eAuditPro codebase, here are several 
 4. **File Storage** - Azure Blob Storage integration missing
 5. **Notification System** - Email/SMS notification framework
 6. **Audit Trail** - Enhanced logging beyond basic requirements
-7. **Mobile Responsiveness** - React Native mobile app specifications
+7. **Enhanced Responsiveness** - Progressive Web App (PWA) capabilities
 8. **Integration APIs** - Third-party system integration patterns
 9. **Deployment Scripts** - Azure DevOps CI/CD pipelines
 10. **Testing Strategy** - Unit/Integration/E2E testing frameworks
@@ -114,7 +114,7 @@ Based on the comprehensive analysis of the eAuditPro codebase, here are several 
 - UI Components: Material-UI (MUI) or Ant Design
 - Build Tool: Vite
 - Testing: React Testing Library + Jest
-- Mobile: React Native (future phase)
+- PWA: Progressive Web App with offline capabilities
 - PWA: Service Workers for offline support
 - CDN: Azure CDN
 ```
@@ -840,37 +840,64 @@ const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 - Email notifications
 - Activity feeds
 
-#### Week 15: Mobile App (React Native)
+#### Week 15: Enhanced PWA Features
 ```typescript
-// React Native navigation structure
-const AppNavigator = () => (
-  <NavigationContainer>
-    <Stack.Navigator>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Dashboard" component={DashboardScreen} />
-      <Stack.Screen name="Companies" component={CompaniesScreen} />
-      <Stack.Screen name="Procedures" component={ProceduresScreen} />
-      <Stack.Screen name="DocumentViewer" component={DocumentViewerScreen} />
-    </Stack.Navigator>
-  </NavigationContainer>
-);
+// Enhanced PWA capabilities
+const PWAConfiguration = {
+  // Service Worker for offline functionality
+  workbox: {
+    runtimeCaching: [
+      {
+        urlPattern: /^https:\/\/api\.cloudauditpro\.com\//,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'api-cache',
+          networkTimeoutSeconds: 3,
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      },
+    ],
+  },
+  
+  // Offline detection and sync
+  manifest: {
+    name: 'CloudAudit Pro',
+    short_name: 'CloudAudit',
+    description: 'Professional Audit Management Platform',
+    theme_color: '#1976d2',
+    background_color: '#ffffff',
+    display: 'standalone',
+    orientation: 'portrait',
+    scope: '/',
+    start_url: '/',
+  },
+};
 
 // Offline sync capability
 const useOfflineSync = () => {
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [pendingActions, setPendingActions] = useState<OfflineAction[]>([]);
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
-      setIsOnline(state.isConnected);
-      
-      if (state.isConnected && pendingActions.length > 0) {
+    const handleOnline = () => {
+      setIsOnline(true);
+      if (pendingActions.length > 0) {
         syncPendingActions();
       }
-    });
+    };
 
-    return unsubscribe;
-  }, []);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [pendingActions]);
 
   const syncPendingActions = async () => {
     for (const action of pendingActions) {
@@ -886,10 +913,10 @@ const useOfflineSync = () => {
 ```
 
 **Deliverables:**
-- React Native mobile app
+- Enhanced Progressive Web App
 - Offline synchronization
-- Mobile-optimized UI
-- Push notifications
+- Responsive mobile-optimized UI
+- Web push notifications
 
 #### Week 16: Testing & Security
 ```typescript

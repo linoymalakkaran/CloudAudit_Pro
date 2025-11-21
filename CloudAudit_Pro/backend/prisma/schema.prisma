@@ -1,0 +1,610 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Central tenant management
+model Tenant {
+  id          String      @id @default(cuid())
+  name        String
+  subdomain   String      @unique
+  databaseName String     @unique
+  
+  // Subscription details
+  subscriptionTier String  @default("standard")
+  maxUsers        Int      @default(10)
+  maxCompanies    Int      @default(5)
+  storageLimitGb  Int      @default(10)
+  
+  // Status and lifecycle
+  status       TenantStatus @default(ACTIVE)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  suspendedAt  DateTime?
+  trialEndsAt  DateTime?
+  
+  // Billing
+  billingEmail   String?
+  billingAddress Json?
+  
+  // Configuration
+  featureFlags   Json     @default("{}")
+  customConfig   Json     @default("{}")
+  
+  // Relations
+  users         TenantUser[]
+  subscriptions Subscription[]
+  usageMetrics  UsageMetric[]
+
+  @@map("tenants")
+}
+
+model TenantUser {
+  id          String   @id @default(cuid())
+  tenantId    String
+  email       String
+  passwordHash String
+  firstName   String?
+  lastName    String?
+  role        String   @default("user")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  lastLoginAt DateTime?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, email])
+  @@map("tenant_users")
+}
+
+model Subscription {
+  id                   String            @id @default(cuid())
+  tenantId             String
+  planId               String
+  status               SubscriptionStatus
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  createdAt            DateTime          @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@map("subscriptions")
+}
+
+model UsageMetric {
+  id          String   @id @default(cuid())
+  tenantId    String
+  metricName  String
+  metricValue BigInt
+  periodStart DateTime
+  periodEnd   DateTime
+  createdAt   DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, metricName, periodStart])
+  @@map("usage_metrics")
+}
+
+// Individual tenant database schema (replicated per tenant)
+model Company {
+  id              String        @id @default(cuid())
+  name            String
+  code            String
+  shortName       String?
+  
+  // Contact information
+  addressLine1    String?
+  addressLine2    String?
+  addressLine3    String?
+  phone           String?
+  fax             String?
+  email           String?
+  website         String?
+  
+  // Primary contact
+  contactPerson   String?
+  contactDesignation String?
+  contactPhone    String?
+  contactEmail    String?
+  
+  // Business details
+  currencyId      Int?
+  industrySector  String?
+  fiscalYearEnd   DateTime?
+  
+  // Status
+  status          CompanyStatus @default(ACTIVE)
+  
+  // Metadata
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  createdBy       String?
+  updatedBy       String?
+  version         Int           @default(1)
+  isDeleted       Boolean       @default(false)
+  
+  // Relations
+  periods         Period[]
+  accountHeads    AccountHead[]
+  procedures      Procedure[]
+  documents       Document[]
+  journalEntries  JournalEntry[]
+
+  @@unique([code])
+  @@map("companies")
+}
+
+model Period {
+  id              String       @id @default(cuid())
+  companyId       String
+  name            String
+  startDate       DateTime
+  endDate         DateTime
+  auditType       AuditType
+  
+  // Period status
+  status          PeriodStatus @default(OPEN)
+  isCurrent       Boolean      @default(false)
+  
+  // Audit parameters
+  materialityAmount     Decimal? @db.Decimal(15, 2)
+  materialityPercentage Decimal? @db.Decimal(5, 2)
+  
+  // Metadata
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  createdBy       String?
+  updatedBy       String?
+  
+  // Relations
+  company         Company            @relation(fields: [companyId], references: [id])
+  trialBalance    TrialBalanceEntry[]
+  journalEntries  JournalEntry[]
+  procedures      Procedure[]
+
+  @@unique([companyId, name])
+  @@map("periods")
+}
+
+model AccountType {
+  id            Int           @id @default(autoincrement())
+  name          String
+  code          String        @unique
+  category      AccountCategory
+  normalBalance BalanceType
+  displayOrder  Int?
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+
+  accountHeads  AccountHead[]
+
+  @@map("account_types")
+}
+
+model AccountHead {
+  id                    String            @id @default(cuid())
+  companyId             String
+  accountTypeId         Int
+  name                  String
+  code                  String?
+  description           String?
+  parentAccountId       String?
+  level                 Int               @default(1)
+  trialBalanceOrder     Int?
+  includeInTrialBalance Boolean           @default(true)
+  status                AccountStatus     @default(ACTIVE)
+  isActive              Boolean           @default(true)
+  
+  // Metadata
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  createdBy             String?
+  updatedBy             String?
+
+  // Relations
+  company               Company           @relation(fields: [companyId], references: [id])
+  accountType           AccountType       @relation(fields: [accountTypeId], references: [id])
+  parentAccount         AccountHead?      @relation("AccountHierarchy", fields: [parentAccountId], references: [id])
+  childAccounts         AccountHead[]     @relation("AccountHierarchy")
+  trialBalanceEntries   TrialBalanceEntry[]
+  journalLineItems      JournalLineItem[]
+  procedures            Procedure[]
+
+  @@unique([companyId, code])
+  @@map("account_heads")
+}
+
+model TrialBalanceEntry {
+  id                String      @id @default(cuid())
+  companyId         String
+  periodId          String
+  accountId         String
+  
+  // Balance amounts
+  openingDebit      Decimal     @default(0) @db.Decimal(15, 2)
+  openingCredit     Decimal     @default(0) @db.Decimal(15, 2)
+  periodDebit       Decimal     @default(0) @db.Decimal(15, 2)
+  periodCredit      Decimal     @default(0) @db.Decimal(15, 2)
+  closingDebit      Decimal     @default(0) @db.Decimal(15, 2)
+  closingCredit     Decimal     @default(0) @db.Decimal(15, 2)
+  adjustmentDebit   Decimal     @default(0) @db.Decimal(15, 2)
+  adjustmentCredit  Decimal     @default(0) @db.Decimal(15, 2)
+  
+  // Status
+  isBalanced        Boolean     @default(true)
+  lastUpdated       DateTime    @default(now())
+  updatedBy         String?
+
+  // Relations
+  company           Company     @relation(fields: [companyId], references: [id])
+  period            Period      @relation(fields: [periodId], references: [id])
+  account           AccountHead @relation(fields: [accountId], references: [id])
+
+  @@unique([companyId, periodId, accountId])
+  @@map("trial_balance")
+}
+
+model JournalEntry {
+  id               String            @id @default(cuid())
+  companyId        String
+  periodId         String
+  journalNumber    String
+  journalDate      DateTime
+  referenceNumber  String?
+  description      String?
+  journalType      JournalType       @default(ADJUSTMENT)
+  totalDebit       Decimal           @default(0) @db.Decimal(15, 2)
+  totalCredit      Decimal           @default(0) @db.Decimal(15, 2)
+  status           JournalStatus     @default(DRAFT)
+  isPosted         Boolean           @default(false)
+  
+  // Metadata
+  createdAt        DateTime          @default(now())
+  createdBy        String?
+  postedAt         DateTime?
+  postedBy         String?
+
+  // Relations
+  company          Company           @relation(fields: [companyId], references: [id])
+  period           Period            @relation(fields: [periodId], references: [id])
+  lineItems        JournalLineItem[]
+
+  @@unique([companyId, journalNumber])
+  @@map("journal_entries")
+}
+
+model JournalLineItem {
+  id            String       @id @default(cuid())
+  journalEntryId String
+  accountId     String
+  lineNumber    Int
+  description   String?
+  debitAmount   Decimal      @default(0) @db.Decimal(15, 2)
+  creditAmount  Decimal      @default(0) @db.Decimal(15, 2)
+  reference     String?
+
+  // Relations
+  journalEntry  JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  account       AccountHead  @relation(fields: [accountId], references: [id])
+
+  @@map("journal_line_items")
+}
+
+model ProcedureTemplate {
+  id               String      @id @default(cuid())
+  name             String
+  category         String?
+  procedureText    String
+  isMandatory      Boolean     @default(false)
+  estimatedHours   Decimal?    @db.Decimal(5, 2)
+  requiredSkills   Json?
+  isActive         Boolean     @default(true)
+  version          Int         @default(1)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  procedures       Procedure[]
+
+  @@map("procedure_templates")
+}
+
+model Procedure {
+  id                    String              @id @default(cuid())
+  companyId             String
+  periodId              String
+  templateId            String?
+  accountId             String?
+  
+  // Procedure details
+  name                  String
+  description           String?
+  procedureType         String?
+  
+  // Assignment and tracking
+  assignedTo            String?
+  assignedDate          DateTime?
+  dueDate               DateTime?
+  estimatedHours        Decimal?            @db.Decimal(5, 2)
+  actualHours           Decimal?            @db.Decimal(5, 2)
+  
+  // Status tracking
+  status                ProcedureStatus     @default(NOT_STARTED)
+  completionPercentage  Int                 @default(0)
+  
+  // Review process
+  reviewStatus          ReviewStatus        @default(NOT_REVIEWED)
+  reviewerId            String?
+  reviewedDate          DateTime?
+  reviewNotes           String?
+  
+  // Final sign-off
+  signedOffBy           String?
+  signedOffDate         DateTime?
+  
+  // Metadata
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  createdBy             String?
+  updatedBy             String?
+
+  // Relations
+  company               Company             @relation(fields: [companyId], references: [id])
+  period                Period              @relation(fields: [periodId], references: [id])
+  template              ProcedureTemplate?  @relation(fields: [templateId], references: [id])
+  account               AccountHead?        @relation(fields: [accountId], references: [id])
+  documents             Document[]
+
+  @@map("procedures")
+}
+
+model Document {
+  id                   String         @id @default(cuid())
+  companyId            String
+  procedureId          String?
+  
+  // Document metadata
+  name                 String
+  originalFilename     String
+  fileExtension        String
+  mimeType             String
+  fileSizeBytes        BigInt
+  
+  // Storage information
+  storageProvider      String         @default("azure_blob")
+  storagePath          String
+  storageBucket        String?
+  
+  // Document classification
+  documentType         String?
+  category             String?
+  classification       Classification @default(CONFIDENTIAL)
+  
+  // Version control
+  version              Int            @default(1)
+  isCurrentVersion     Boolean        @default(true)
+  parentDocumentId     String?
+  
+  // Security
+  accessLevel          AccessLevel    @default(INTERNAL)
+  passwordProtected    Boolean        @default(false)
+  
+  // Metadata
+  uploadedAt           DateTime       @default(now())
+  uploadedBy           String
+  lastAccessedAt       DateTime?
+  
+  // Relations
+  company              Company        @relation(fields: [companyId], references: [id])
+  procedure            Procedure?     @relation(fields: [procedureId], references: [id])
+  parentDocument       Document?      @relation("DocumentVersions", fields: [parentDocumentId], references: [id])
+  childDocuments       Document[]     @relation("DocumentVersions")
+
+  @@map("documents")
+}
+
+model User {
+  id                   String         @id @default(cuid())
+  email                String         @unique
+  passwordHash         String
+  
+  // Personal information
+  firstName            String
+  lastName             String
+  middleName           String?
+  jobTitle             String?
+  department           String?
+  employeeId           String?
+  
+  // Contact information
+  phone                String?
+  mobile               String?
+  
+  // System access
+  role                 UserRole       @default(AUDITOR)
+  permissions          Json           @default("[]")
+  isActive             Boolean        @default(true)
+  
+  // Session management
+  lastLoginAt          DateTime?
+  lastActivityAt       DateTime?
+  loginAttempts        Int            @default(0)
+  lockedUntil          DateTime?
+  
+  // Preferences
+  timezone             String         @default("UTC")
+  language             String         @default("en")
+  theme                String         @default("light")
+  
+  // Password policy
+  passwordChangedAt    DateTime       @default(now())
+  mustChangePassword   Boolean        @default(false)
+  
+  // Metadata
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  createdBy            String?
+
+  @@map("users")
+}
+
+model AuditLog {
+  id               String         @id @default(cuid())
+  
+  // Entity information
+  tableName        String
+  recordId         String
+  action           AuditAction
+  
+  // Change details
+  oldValues        Json?
+  newValues        Json?
+  
+  // User context
+  userId           String?
+  userEmail        String?
+  
+  // Session context
+  sessionId        String?
+  ipAddress        String?
+  userAgent        String?
+  
+  // Request context
+  requestId        String?
+  endpoint         String?
+  httpMethod       String?
+  
+  // Timing
+  timestamp        DateTime       @default(now())
+  processingTimeMs Int?
+  
+  // Classification
+  riskLevel        RiskLevel      @default(LOW)
+  complianceRelevant Boolean      @default(false)
+  
+  // Retention
+  retentionPeriod  String         @default("7 years")
+  archivedAt       DateTime?
+
+  @@map("audit_logs")
+}
+
+// Enums
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  CANCELLED
+  TRIAL
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  UNPAID
+}
+
+enum CompanyStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PeriodStatus {
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+enum AuditType {
+  ANNUAL
+  INTERIM
+  QUARTERLY
+}
+
+enum AccountCategory {
+  ASSETS
+  LIABILITIES
+  EQUITY
+  REVENUE
+  EXPENSES
+}
+
+enum BalanceType {
+  DEBIT
+  CREDIT
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum JournalType {
+  ADJUSTMENT
+  RECLASSIFICATION
+  ERROR_CORRECTION
+}
+
+enum JournalStatus {
+  DRAFT
+  POSTED
+  REVERSED
+}
+
+enum ProcedureStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+}
+
+enum ReviewStatus {
+  NOT_REVIEWED
+  IN_REVIEW
+  REVIEWED
+  APPROVED
+}
+
+enum Classification {
+  PUBLIC
+  INTERNAL
+  CONFIDENTIAL
+  RESTRICTED
+}
+
+enum AccessLevel {
+  PUBLIC
+  INTERNAL
+  RESTRICTED
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  SENIOR_AUDITOR
+  AUDITOR
+  INTERN
+}
+
+enum AuditAction {
+  INSERT
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  ACCESS
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
