@@ -1,0 +1,171 @@
+[Root]
+Most Recent Package=Standard Setup Package 1
+
+
+[Package|Standard Setup Package 1|Root]
+SubWizProgID=PDWizard.SetupPkgSubWiz
+BuildFolder=e:\package
+
+[Package|Standard Setup Package 1|Configure DAO ISAMs]
+Applicable=No
+
+[Package|Standard Setup Package 1|Configure DAO ODBC]
+JetWorkspace=
+ODBCDirect=
+
+[Package|Standard Setup Package 1|Files Found]
+
+[Package|Standard Setup Package 1|Files Released]
+
+[Package|Standard Setup Package 1|Missing Dependency Information]
+C:\Program Files\Common Files\Microsoft Shared\MODI\11.0\MDIVWCTL.DLL=
+C:\WINDOWS\system32\Spell8.ocx=
+C:\WINDOWS\system32\Thes8.ocx=
+C:\WINDOWS\system32\vsvport8.ocx=
+C:\WINDOWS\system32\AS-IFCE1.OCX=
+C:\WINDOWS\system32\MVE.OCX=
+C:\WINDOWS\system32\msadox.dll=
+C:\WINDOWS\system32\vsprint8.ocx=
+C:\WINDOWS\system32\vsflex8.ocx=
+C:\WINDOWS\system32\MVE.DLL=
+C:\Windows\System32\msstdfmt.dll=
+C:\Program Files\Seagate Software\Report Designer Component\craxdui.dll=
+C:\Windows\System32\crviewer.dll=
+C:\Windows\Microsoft.NET\Framework\v2.0.50727\mscoree.tlb=
+C:\Program Files\Common Files\System\ado\msadox28.tlb=
+C:\Program Files\Common Files\System\ado\msado25.tlb=
+
+[Package|Standard Setup Package 1|Out-of-Date Dependency Information]
+C:\WINDOWS\system32\TABCTL32.OCX=
+C:\WINDOWS\system32\msstdfmt.dll=
+C:\WINDOWS\system32\MSADODC.OCX=
+C:\Windows\System32\RICHTX32.OCX=
+C:\Windows\System32\MSCOMCT2.OCX=
+C:\Windows\System32\MSCOMCTL.OCX=
+C:\Windows\System32\COMCTL32.OCX=
+C:\Windows\System32\comdlg32.ocx=
+
+[Package|Standard Setup Package 1|Files Added]
+
+[Package|Standard Setup Package 1|Files Removed]
+
+[Package|Standard Setup Package 1|Files In Project]
+C:\WINDOWS\system32\msvbvm60.dll=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=Yes
+C:\WINDOWS\system32\MVE.DLL=Yes
+C:\WINDOWS\system32\vsflex8.ocx=Yes
+C:\WINDOWS\system32\vsprint8.ocx=Yes
+C:\WINDOWS\system32\MSCOMCTL.OCX=Yes
+C:\WINDOWS\system32\MSADODC.OCX=Yes
+C:\WINDOWS\system32\msstdfmt.dll=Yes
+C:\WINDOWS\system32\MSCOMCT2.OCX=Yes
+C:\WINDOWS\system32\MVE.OCX=Yes
+C:\WINDOWS\system32\AS-IFCE1.OCX=Yes
+C:\WINDOWS\system32\comdlg32.ocx=Yes
+C:\WINDOWS\system32\vsvport8.ocx=Yes
+C:\WINDOWS\system32\RICHTX32.OCX=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\RICHED32.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=Yes
+C:\WINDOWS\system32\VB6STKIT.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=Yes
+E:\AuditMate.exe=Yes
+C:\Windows\System32\oleaut32.dll=Yes
+C:\Windows\System32\olepro32.dll=Yes
+C:\Windows\System32\asycfilt.dll=Yes
+C:\Windows\System32\stdole2.tlb=Yes
+C:\Program Files\Common Files\System\ado\msado25.tlb=Yes
+C:\Program Files\Common Files\System\ado\msadox28.tlb=Yes
+C:\Windows\Microsoft.NET\Framework\v2.0.50727\mscoree.tlb=Yes
+C:\Windows\System32\crviewer.dll=Yes
+C:\Program Files\Seagate Software\Report Designer Component\craxdui.dll=Yes
+C:\Windows\System32\COMCTL32.OCX=Yes
+C:\Windows\System32\COMCT232.OCX=Yes
+C:\Windows\System32\Crystl32.OCX=Yes
+C:\Windows\System32\CRPE32.dll=Yes
+
+[Package|Standard Setup Package 1|Configure Registry Files]
+Applicable=No
+
+[Package|Standard Setup Package 1|Configure Remote Servers]
+Applicable=No
+
+[Package|Standard Setup Package 1|Install Locations]
+C:\Documents and Settings\Administrator\Desktop\eAuditPro.exe=$(AppPath)
+C:\WINDOWS\system32\msvbvm60.dll=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEAUT32.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEPRO32.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\ASYCFILT.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\STDOLE2.TLB=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=$(WinSysPathSysFile)
+C:\WINDOWS\system32\MVE.DLL=$(WinSysPath)
+C:\WINDOWS\system32\vsflex8.ocx=$(WinSysPath)
+C:\WINDOWS\system32\vsprint8.ocx=$(WinSysPath)
+C:\WINDOWS\system32\msadox.dll=$(WinSysPath)
+C:\WINDOWS\system32\MSCOMCTL.OCX=$(WinSysPath)
+C:\WINDOWS\system32\MSADODC.OCX=$(WinSysPath)
+C:\WINDOWS\system32\msstdfmt.dll=$(WinSysPath)
+C:\WINDOWS\system32\MSCOMCT2.OCX=$(WinSysPath)
+C:\WINDOWS\system32\MVE.OCX=$(WinSysPath)
+C:\WINDOWS\system32\TABCTL32.OCX=$(WinSysPath)
+C:\WINDOWS\system32\AS-IFCE1.OCX=$(WinSysPath)
+C:\WINDOWS\system32\comdlg32.ocx=$(WinSysPath)
+C:\WINDOWS\system32\vsvport8.ocx=$(WinSysPath)
+C:\WINDOWS\system32\RICHTX32.OCX=$(WinSysPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\RICHED32.DLL=$(WinSysPathSysFile)
+C:\WINDOWS\system32\Thes8.ocx=$(WinSysPath)
+C:\WINDOWS\system32\Spell8.ocx=$(WinSysPath)
+C:\Program Files\Common Files\Microsoft Shared\MODI\11.0\MDIVWCTL.DLL=$(WinSysPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\MDAC_TYP.EXE=$(AppPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=$(AppPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=$(WinPath)
+C:\WINDOWS\system32\VB6STKIT.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=$(WinPath)
+\\Softserver\d\SOFTWARE\eAuditPro\eAuditPro.exe=$(AppPath)
+E:\AuditMate.exe=$(AppPath)
+C:\Windows\System32\oleaut32.dll=$(WinSysPathSysFile)
+C:\Windows\System32\olepro32.dll=$(WinSysPathSysFile)
+C:\Windows\System32\asycfilt.dll=$(WinSysPathSysFile)
+C:\Windows\System32\stdole2.tlb=$(WinSysPathSysFile)
+C:\Program Files\Common Files\System\ado\msado25.tlb=$(WinSysPath)
+C:\Program Files\Common Files\System\ado\msadox28.tlb=$(WinSysPath)
+C:\Windows\Microsoft.NET\Framework\v2.0.50727\mscoree.tlb=$(WinSysPath)
+C:\Windows\System32\crviewer.dll=$(WinSysPath)
+C:\Program Files\Seagate Software\Report Designer Component\craxdui.dll=$(WinSysPath)
+C:\Windows\System32\COMCTL32.OCX=$(WinSysPath)
+C:\Windows\System32\COMCT232.OCX=$(WinSysPath)
+C:\Windows\System32\Crystl32.OCX=$(WinSysPath)
+C:\Windows\System32\CRPE32.dll=$(WinSysPath)
+
+[Package|Standard Setup Package 1|Configure Shared Files]
+Applicable=Yes
+C:\Documents and Settings\Administrator\Desktop\eAuditPro.exe=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\MDAC_TYP.EXE=Yes
+\\Softserver\d\SOFTWARE\eAuditPro\eAuditPro.exe=Yes
+E:\AuditMate.exe=No
+
+[Package|Standard Setup Package 1|Distribution]
+Type=single
+Size=
+Title=eAuditPro
+
+[Package|Standard Setup Package 1|Package]
+PackageFolder=C:\Documents and Settings\Administrator.EAUDITSERVER\Desktop\SetUp
+ProjectFolder=\\Softserver\d\SOFTWARE\eAuditPro
+ServerSideCab=
+File1=C:\Documents and Settings\Administrator.EAUDITSERVER\Desktop\SetUp\setup.exe
+File2=C:\Documents and Settings\Administrator.EAUDITSERVER\Desktop\SetUp\Setup.Lst
+File3=C:\Documents and Settings\Administrator.EAUDITSERVER\Desktop\SetUp\eAuditPro.CAB
+Handler1=PDWizard.FolderDplySubWiz
+Handler2=PDWizard.WebPostDplySubWiz
+
+[Package|Standard Setup Package 1|IconGroups]
+Group0=eAuditPro
+PrivateGroup0=False
+Parent0=$(Programs)
+
+[Package|Standard Setup Package 1|eAuditPro]
+Icon1=eAuditPro.exe
+Title1=eAuditPro
+StartIn1=$(AppPath)
+Key1=Icon1

@@ -1,0 +1,186 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fnil\fprq1\fcharset0 Courier New;}{\f1\fswiss\fcharset0 Arial;}}
+{\colortbl ;\red0\green0\blue255;\red128\green0\blue0;\red0\green128\blue0;}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\cf1\f0\fs20 Private\cf0  \cf1 Function\cf0  AddAccounts()\par
+        \cf1 Try\par
+\cf0             \cf1 Dim\cf0  IncIng \cf1 As\cf0  \cf1 Integer\par
+\cf0             \cf1 Dim\cf0  ssql \cf1 As\cf0  \cf1 String\par
+\cf0             \cf1 Dim\cf0  AcHead(69) \cf1 As\cf0  \cf1 String\par
+\par
+\cf0             AcHead(0) = \cf2 "Assets"\par
+\cf0             AcHead(1) = \cf2 " Liabilities and shareholders` equity"\par
+\cf0             AcHead(2) = \cf2 "Profit and Loss"\par
+\cf0             AcHead(3) = \cf2 "Current Assets"\par
+\cf0             AcHead(4) = \cf2 "Non - current assets"\par
+\cf0             AcHead(5) = \cf2 "Current liability"\par
+\cf0             AcHead(6) = \cf2 "Non - current liability"\par
+\cf0             AcHead(7) = \cf2 " Shareholders` equity"\par
+\cf0             AcHead(8) = \cf2 "Cash and bank balances"\par
+\cf0             AcHead(9) = \cf2 "Due from related parties"\par
+\cf0             AcHead(10) = \cf2 "Inventories"\par
+\cf0             AcHead(11) = \cf2 "Property, plant and equipment"\par
+\cf0             AcHead(12) = \cf2 "Trade payable"\par
+\cf0             AcHead(13) = \cf2 " Other payables"\par
+\cf0             AcHead(14) = \cf2 "Due to related parties"\par
+\cf0             AcHead(15) = \cf2 "Bank creditlines"\par
+\cf0             AcHead(16) = \cf2 " Obligation under finance lease - current portion"\par
+\cf0             AcHead(17) = \cf2 "Obligation under finance lease - non current portion"\par
+\cf0             AcHead(18) = \cf2 "Provision for employees` end of service indemnity"\par
+\cf0             AcHead(19) = \cf2 " Share capital"\par
+\cf0             AcHead(20) = \cf2 "Statutory reserve"\par
+\cf0             AcHead(21) = \cf2 "Retained Earnings"\par
+\cf0             AcHead(22) = \cf2 " Shareholders` loan account"\par
+\cf0             AcHead(23) = \cf2 "Shareholders` current account"\par
+\cf0             AcHead(24) = \cf2 "Revenue"\par
+\cf0             AcHead(25) = \cf2 " Cost of sales"\par
+\cf0             AcHead(26) = \cf2 "Other income"\par
+\cf0             AcHead(27) = \cf2 "Selling and distribution expenses"\par
+\cf0             AcHead(28) = \cf2 " General and administration expenses"\par
+\cf0             AcHead(29) = \cf2 "Depreciation"\par
+\cf0             AcHead(30) = \cf2 "Managerial remuneration"\par
+\cf0             AcHead(31) = \cf2 " Finance cost"\par
+\cf0             AcHead(32) = \cf2 "Cash in hand"\par
+\cf0             AcHead(33) = \cf2 "Cash at bank"\par
+\cf0             AcHead(34) = \cf2 " Fixed deposits"\par
+\cf0             AcHead(35) = \cf2 "Trade and other receivables"\par
+\cf0             AcHead(36) = \cf2 "Trade receivables"\par
+\cf0             AcHead(37) = \cf2 " Prepayments"\par
+\cf0             AcHead(38) = \cf2 "Deposits"\par
+\cf0             AcHead(39) = \cf2 "Other receivables"\par
+\cf0             AcHead(40) = \cf2 " Closing stock"\par
+\cf0             AcHead(41) = \cf2 "Goods in transit"\par
+\cf0             AcHead(42) = \cf2 "Work in progress"\par
+\cf0             AcHead(43) = \cf2 " Allowance for slow moving stock"\par
+\cf0             AcHead(44) = \cf2 "Building"\par
+\cf0             AcHead(45) = \cf2 "Leasehold improvements"\par
+\cf0             AcHead(46) = \cf2 " Furniture and fixtures"\par
+\cf0             AcHead(47) = \cf2 "Office equipment"\par
+\cf0             AcHead(48) = \cf2 "Tools and equipments"\par
+\cf0             AcHead(49) = \cf2 " Vehicles"\par
+\cf0             AcHead(50) = \cf2 "Intangible assets"\par
+\cf0             AcHead(51) = \cf2 "Goodwill"\par
+\cf0             AcHead(52) = \cf2 " Creditors for expenses"\par
+\cf0             AcHead(53) = \cf2 "Provision for staff benefits"\par
+\cf0             AcHead(54) = \cf2 " Accrued expenses"\par
+\cf0             AcHead(55) = \cf2 "Others"\par
+\cf0             AcHead(56) = \cf2 " Short term loan"\par
+\cf0             AcHead(57) = \cf2 "Trust receipts"\par
+\cf0             AcHead(58) = \cf2 "Bank overdraft"\par
+\cf0             AcHead(59) = \cf2 " Bills discounted"\par
+\cf0             AcHead(60) = \cf2 "Purchases and direct expenses"\par
+\cf0             AcHead(61) = \cf2 "Salaries and allowaces"\par
+\cf0             AcHead(62) = \cf2 " Rent"\par
+\cf0             AcHead(63) = \cf2 "Legal and professional"\par
+\cf0             AcHead(64) = \cf2 "Bad and doubtful debts"\par
+\cf0             AcHead(65) = \cf2 " Advance to suppliers"\par
+\cf0             AcHead(66) = \cf2 "Allowance for doubtful debts"\par
+\cf0             AcHead(67) = \cf2 " Future Interest"\par
+\cf0             AcHead(68) = \cf2 "Obligation under finance lease - current  portion"\par
+\cf0             AcHead(69) = \cf2 "Obligation under finance lease - noncurrent portion"\par
+\cf0            \par
+\par
+            \cf1 Dim\cf0  cmd \cf1 As\cf0  OleDb.OleDbCommand\par
+            \cf1 Dim\cf0  i \cf1 As\cf0  \cf1 Integer\par
+\cf0             \cf1 For\cf0  i = 0 \cf1 To\cf0  UBound(AcHead) - 1\par
+                IncIng += 1\par
+                \cf1 Dim\cf0  s \cf1 As\cf0  \cf1 String\par
+\cf0                 \cf1 Dim\cf0  p \cf1 As\cf0  \cf1 Long\par
+\cf0                 \cf1 Dim\cf0  IPrevilage, IParent, ITree, ITrialOrder \cf1 As\cf0  \cf1 Long\par
+\cf0                 \cf1 If\cf0  IncIng = 1 \cf1 Or\cf0  IncIng = 2 \cf1 Or\cf0  IncIng = 3 \cf1 Or\cf0  IncIng = 4 _\par
+                \cf1 Or\cf0  IncIng = 5 \cf1 Or\cf0  IncIng = 6 \cf1 Or\cf0  IncIng = 7 \cf1 Or\cf0  IncIng = 8 _\par
+                 \cf1 Or\cf0  IncIng = 9 \cf1 Or\cf0  IncIng = 10 \cf1 Or\cf0  IncIng = 11 \cf1 Or\cf0  IncIng = 12 _\par
+                 \cf1 Or\cf0  IncIng = 17 \cf1 Or\cf0  IncIng = 18 \cf1 Or\cf0  IncIng = 19 \cf1 Or\cf0  IncIng = 20 _\par
+                 \cf1 Or\cf0  IncIng = 21 \cf1 Or\cf0  IncIng = 22 \cf1 Or\cf0  IncIng = 23 \cf1 Or\cf0  IncIng = 24 _\par
+                 \cf1 Or\cf0  IncIng = 25 \cf1 Or\cf0  IncIng = 26 \cf1 Or\cf0  IncIng = 27 \cf1 Or\cf0  IncIng = 28 _\par
+                 \cf1 Or\cf0  IncIng = 29 \cf1 Or\cf0  IncIng = 30 \cf1 Or\cf0  IncIng = 31 \cf1 Or\cf0  IncIng = 32 _\par
+                 \cf1 Or\cf0  IncIng = 33 \cf1 Or\cf0  IncIng = 34 \cf1 Or\cf0  IncIng = 35 \cf1 Or\cf0  IncIng = 36 _\par
+                 \cf1 Or\cf0  IncIng = 37 \cf1 Or\cf0  IncIng = 38 \cf1 Or\cf0  IncIng = 39 \cf1 Or\cf0  IncIng = 40 _\par
+                 \cf1 Or\cf0  IncIng = 41 \cf1 Or\cf0  IncIng = 42 \cf1 Or\cf0  IncIng = 43 \cf1 Or\cf0  IncIng = 44 _\par
+                 \cf1 Or\cf0  IncIng = 45 \cf1 Or\cf0  IncIng = 46 \cf1 Or\cf0  IncIng = 47 \cf1 Or\cf0  IncIng = 48 _\par
+                 \cf1 Or\cf0  IncIng = 53 \cf1 Or\cf0  IncIng = 54 \cf1 Or\cf0  IncIng = 55 \cf1 Or\cf0  IncIng = 56 _\par
+                 \cf1 Or\cf0  IncIng = 67 \cf1 Or\cf0  IncIng = 68 \cf1 Or\cf0  IncIng = 69 \cf1 Then\par
+\cf0                     s = \cf2 "DR"\par
+\cf0                     IPrevilage = 1\par
+                \cf1 Else\par
+\cf0                     s = \cf2 "CR"\par
+\cf0                     IPrevilage = 0\par
+                \cf1 End\cf0  \cf1 If\par
+\cf0                 \cf1 If\cf0  IncIng = 4 \cf1 Or\cf0  IncIng = 5 \cf1 Then\par
+\cf0                     IParent = 1\par
+\par
+                \cf1 ElseIf\cf0  IncIng = 6 \cf1 Or\cf0  IncIng = 7 \cf1 Or\cf0  IncIng = 8 \cf1 Then\par
+\cf0                     IParent = 2\par
+                  \cf1 ElseIf\cf0  IncIng = 25 \cf1 Or\cf0  IncIng = 26 \cf1 Or\cf0  IncIng = 27 \cf1 Or\cf0  IncIng = 28 \cf1 Or\cf0  IncIng = 29 \cf1 Or\cf0  IncIng = 30 \cf1 Or\cf0  IncIng = 31 \cf1 Or\cf0  IncIng = 32 \cf1 Then\par
+\cf0                     IParent = 3\par
+             \cf1 ElseIf\cf0  IncIng = 9 \cf1 Or\cf0  IncIng = 10 \cf1 Or\cf0  IncIng = 11 \cf1 Or\cf0  IncIng = 36 \cf1 Then\par
+\cf0                     IParent = 4\par
+               \cf1 ElseIf\cf0  IncIng = 12 \cf1 Or\cf0  IncIng = 52 \cf1 Then\par
+\cf0                     IParent = 5\par
+                \cf1 ElseIf\cf0  IncIng = 13 \cf1 Or\cf0  IncIng = 14 \cf1 Or\cf0  IncIng = 15 \cf1 Or\cf0  IncIng = 16 \cf1 Or\cf0  IncIng = 17 \cf1 Then\par
+\cf0                     IParent = 6\par
+                \cf1 ElseIf\cf0  IncIng = 18 \cf1 Or\cf0  IncIng = 19 \cf1 Then\par
+\cf0                     IParent = 7\par
+                \cf1 ElseIf\cf0  IncIng = 20 \cf1 Or\cf0  IncIng = 21 \cf1 Or\cf0  IncIng = 22 \cf1 Or\cf0  IncIng = 23 \cf1 Or\cf0  IncIng = 24 \cf1 Then\par
+\cf0                     IParent = 8\par
+                \cf1 ElseIf\cf0  IncIng = 33 \cf1 Or\cf0  IncIng = 34 \cf1 Or\cf0  IncIng = 35 \cf1 Then\par
+\cf0                     IParent = 9\par
+                \cf1 ElseIf\cf0  IncIng = 42 \cf1 Or\cf0  IncIng = 43 \cf1 Or\cf0  IncIng = 44 \cf1 Or\cf0  IncIng = 45 \cf1 Then\par
+\cf0                     IParent = 11\par
+                \cf1 ElseIf\cf0  IncIng = 46 \cf1 Or\cf0  IncIng = 47 \cf1 Or\cf0  IncIng = 48 \cf1 Or\cf0  IncIng = 49 \cf1 Or\cf0  IncIng = 50 \cf1 Or\cf0  IncIng = 51 \cf1 Then\par
+\cf0                     IParent = 12\par
+                \cf1 ElseIf\cf0  IncIng = 54 \cf1 Or\cf0  IncIng = 55 \cf1 Or\cf0  IncIng = 56 \cf1 Or\cf0  IncIng = 57 \cf1 Then\par
+\cf0                     IParent = 14\par
+                \cf1 ElseIf\cf0  IncIng = 58 \cf1 Or\cf0  IncIng = 59 \cf1 Or\cf0  IncIng = 60 \cf1 Or\cf0  IncIng = 61 \cf1 Then\par
+\cf0                     IParent = 16\par
+                \cf1 ElseIf\cf0  IncIng = 62 \cf1 Then\par
+\cf0                     IParent = 26\par
+                \cf1 ElseIf\cf0  IncIng = 40 \cf1 Or\cf0  IncIng = 37 \cf1 Or\cf0  IncIng = 53 \cf1 Or\cf0  IncIng = 61 \cf1 Or\cf0  IncIng = 63 \cf1 Or\cf0  IncIng = 64 \cf1 Or\cf0  IncIng = 67 \cf1 Or\cf0  IncIng = 68 \cf1 Or\cf0  IncIng = 69 \cf1 Then\par
+\cf0                     IParent = 29\par
+                \cf1 Else\par
+\par
+\cf0                 \cf1 End\cf0  \cf1 If\par
+\par
+\cf0                 \cf1 If\cf0  IncIng = 1 \cf1 Or\cf0  IncIng = 2 \cf1 Or\cf0  IncIng = 3 \cf1 Then\par
+\cf0                     ITree = 1\par
+                \cf1 ElseIf\cf0  IncIng = 4 \cf1 Or\cf0  IncIng = 5 \cf1 Or\cf0  IncIng = 6 \cf1 Or\cf0  IncIng = 7 \cf1 Or\cf0  IncIng = 8 \cf1 Or\cf0  IncIng = 25 \cf1 Or\cf0  IncIng = 26 \cf1 Or\cf0  IncIng = 27 \cf1 Or\cf0  IncIng = 28 \cf1 Or\cf0  IncIng = 29 \cf1 Or\cf0  IncIng = 30 \cf1 Or\cf0  IncIng = 31 \cf1 Or\cf0  IncIng = 32 \cf1 Then\par
+\cf0                     ITree = 2\par
+                \cf1 ElseIf\cf0  IncIng = 9 \cf1 Or\cf0  IncIng = 10 \cf1 Or\cf0  IncIng = 11 \cf1 Or\cf0  IncIng = 12 \cf1 Or\cf0  IncIng = 13 \cf1 Or\cf0  IncIng = 14 \cf1 Or\cf0  IncIng = 15 \cf1 Or\cf0  IncIng = 16 \cf1 Or\cf0  IncIng = 17 \cf1 Or\cf0  IncIng = 18 \cf1 Or\cf0  IncIng = 19 \cf1 Or\cf0  IncIng = 20 \cf1 Or\cf0  IncIng = 21 \cf1 Or\cf0  IncIng = 22 \cf1 Or\cf0  IncIng = 23 \cf1 Or\cf0  IncIng = 24 \cf1 Or\cf0  IncIng = 36 \cf1 Or\cf0  IncIng = 52 \cf1 Or\cf0  IncIng = 62 \cf1 Or\cf0  IncIng = 67 \cf1 Or\cf0  IncIng = 68 \cf1 Or\cf0  IncIng = 69 \cf1 Or\cf0  IncIng = 64 \cf1 Or\cf0  IncIng = 2 \cf1 Or\cf0  IncIng = 3 \cf1 Then\par
+\cf0                     ITree = 3\par
+                \cf1 ElseIf\cf0  IncIng = 33 \cf1 Or\cf0  IncIng = 34 \cf1 Or\cf0  IncIng = 35 \cf1 Or\cf0  IncIng = 37 \cf1 Or\cf0  IncIng = 38 \cf1 Or\cf0  IncIng = 39 \cf1 Or\cf0  IncIng = 40 \cf1 Or\cf0  IncIng = 42 \cf1 Or\cf0  IncIng = 43 \cf1 Or\cf0  IncIng = 44 \cf1 Or\cf0  IncIng = 45 \cf1 Or\cf0  IncIng = 46 \cf1 Or\cf0  IncIng = 47 \cf1 Or\cf0  IncIng = 48 \cf1 Or\cf0  IncIng = 49 \cf1 Or\cf0  IncIng = 50 \cf1 Or\cf0  IncIng = 51 \cf1 Or\cf0  IncIng = 53 \cf1 Or\cf0  IncIng = 54 \cf1 Or\cf0  IncIng = 55 \cf1 Or\cf0  IncIng = 56 \cf1 Or\cf0  IncIng = 57 \cf1 Or\cf0  IncIng = 58 \cf1 Or\cf0  IncIng = 59 \cf1 Or\cf0  IncIng = 60 \cf1 Or\cf0  IncIng = 61 \cf1 Then\par
+\cf0                     ITree = 4\par
+                \cf1 Else\par
+\cf0                 \cf1 End\cf0  \cf1 If\par
+\par
+\cf0                 \cf1 If\cf0  IncIng = 1 \cf1 Or\cf0  IncIng = 4 \cf1 Or\cf0  IncIng = 6 \cf1 Or\cf0  IncIng = 9 \cf1 Or\cf0  IncIng = 12 \cf1 Or\cf0  IncIng = 13 \cf1 Or\cf0  IncIng = 18 \cf1 Or\cf0  IncIng = 20 \cf1 Or\cf0  IncIng = 37 \cf1 Then\par
+\par
+\cf0                     ITrialOrder = 1\par
+                \cf1 ElseIf\cf0  IncIng = 2 \cf1 Or\cf0  IncIng = 5 \cf1 Or\cf0  IncIng = 7 \cf1 Or\cf0  IncIng = 14 \cf1 Or\cf0  IncIng = 19 \cf1 Or\cf0  IncIng = 21 \cf1 Or\cf0  IncIng = 36 \cf1 Or\cf0  IncIng = 52 \cf1 Or\cf0  IncIng = 66 \cf1 Then\par
+\cf0                     ITrialOrder = 2\par
+                \cf1 ElseIf\cf0  IncIng = 3 \cf1 Or\cf0  IncIng = 8 \cf1 Or\cf0  IncIng = 10 \cf1 Or\cf0  IncIng = 15 \cf1 Or\cf0  IncIng = 22 \cf1 Or\cf0  IncIng = 38 \cf1 Or\cf0  IncIng = 36 \cf1 Or\cf0  IncIng = 39 \cf1 Then\par
+\cf0                     ITrialOrder = 3\par
+\par
+                \cf1 ElseIf\cf0  IncIng = 11 \cf1 Or\cf0  IncIng = 16 \cf1 Or\cf0  IncIng = 23 \cf1 Or\cf0  IncIng = 65 \cf1 Then\par
+\cf0                     ITree = 4\par
+                \cf1 ElseIf\cf0  IncIng = 17 \cf1 Or\cf0  IncIng = 24 \cf1 Or\cf0  IncIng = 40 \cf1 Then\par
+\cf0                     ITrialOrder = 5\par
+\par
+\par
+                \cf1 End\cf0  \cf1 If\par
+\par
+\par
+\par
+\cf0                 ssql = \cf2 " insert into Table1(CompanyID, AcTypeID,AcName,GrpType,IsReserved,ParentAcTypeID,Treelevel,TrialOrder,CreateUser,UpdateUser) values( 2, "\cf0  & IncIng & \cf2 ",'"\cf0  & AcHead(i).ToString & \cf2 "', '"\cf0  & s & \cf2 "', "\cf0  & Val(IPrevilage) & \cf2 " ,"\cf0  & Val(IParent) & \cf2 ", "\cf0  & Val(ITree) & \cf2 ","\cf0  & Val(ITrialOrder) & \cf2 ",1,1 )"\par
+\cf0                 \cf3 'ssql = " insert into AcTypes(CompanyID, AcTypeID,AcTypeName) values( 1, " & IncIng & ",'" & AcHead(i).ToString & "' )"\par
+\par
+\cf0                 cmd = \cf1 New\cf0  OleDb.OleDbCommand(ssql, pOleDbConn)\par
+                cmd.ExecuteNonQuery()\par
+                \cf3 'End If\par
+\cf0             \cf1 Next\par
+\par
+\cf0         \cf1 Catch\cf0  ex \cf1 As\cf0  Exception\par
+            MsgBox(ex.Message.ToString)\par
+        \cf1 End\cf0  \cf1 Try\par
+\cf0         \cf1 Return\cf0  \cf1 True\par
+\cf0     \cf1 End\cf0  \cf1 Function\par
+\cf0\f1\par
+}
+ 

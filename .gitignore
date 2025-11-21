@@ -1,0 +1,281 @@
+# CloudAudit Pro - Git Ignore File
+
+# ==============================================================================
+# VISUAL BASIC / VB6 FILES
+# ==============================================================================
+
+# Compiled executables
+*.exe
+*.dll
+
+# VB6 temporary files
+*.tmp
+VB*.tmp
+
+# VB6 workspace files
+*.vbw
+
+# VB6 log files
+*.log
+
+# VB6 backup files
+*.bak
+
+# ==============================================================================
+# VISUAL STUDIO / .NET FILES  
+# ==============================================================================
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NUnit
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+
+# ==============================================================================
+# NODE.JS / NESTJS BACKEND FILES
+# ==============================================================================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ==============================================================================
+# REACT FRONTEND FILES
+# ==============================================================================
+
+# Production builds
+build/
+dist/
+
+# React dependencies
+node_modules/
+
+# React environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Vite
+.vite/
+
+# ==============================================================================
+# DATABASE FILES
+# ==============================================================================
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# PostgreSQL
+*.sql.gz
+
+# Database backups
+*.bak
+*.backup
+
+# ==============================================================================
+# AZURE / CLOUD FILES
+# ==============================================================================
+
+# Azure Functions
+local.settings.json
+.azure/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Azure CLI
+.azure/
+
+# ==============================================================================
+# DEVELOPMENT TOOLS
+# ==============================================================================
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ==============================================================================
+# DOCUMENTATION FILES (Keep essential ones)
+# ==============================================================================
+
+# Temporary documentation
+*.tmp.md
+draft_*.md
+
+# ==============================================================================
+# LOGS AND TEMPORARY FILES
+# ==============================================================================
+
+# Log files
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary folders
+tmp/
+temp/
+
+# Cache directories
+.cache/
+*.cache
+
+# ==============================================================================
+# SECURITY FILES
+# ==============================================================================
+
+# Keys and certificates
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Configuration with secrets
+*secret*
+*password*
+*token*
+config.production.*
+
+# ==============================================================================
+# PACKAGE MANAGER FILES
+# ==============================================================================
+
+# npm
+package-lock.json
+npm-debug.log*
+
+# yarn
+yarn.lock
+yarn-debug.log*
+yarn-error.log*
+
+# pnpm
+pnpm-lock.yaml
+
+# ==============================================================================
+# DOCKER FILES
+# ==============================================================================
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# ==============================================================================
+# MISCELLANEOUS
+# ==============================================================================
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

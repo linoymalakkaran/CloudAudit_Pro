@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{B7B9B81E-59B7-4E11-A22D-739A1F0EE23D}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>ConsoleApplication</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>AuditMatePro</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="12006000.xls" />
+    <None Include="12012625.xls" />
+    <None Include="12060750.xls" />
+    <None Include="12963015.pdf" />
+    <None Include="13009250.pdf" />
+    <None Include="13011984.pdf" />
+    <None Include="13040546.pdf" />
+    <None Include="16001350.com SouthIndian Non-Veg Recipes.pdf" />
+    <None Include="18781053.PDF" />
+    <None Include="19019049.PDF" />
+    <None Include="3999413.PDF" />
+    <None Include="6186952.PDF" />
+    <None Include="AccountCreation Main heads  code.rtf" />
+    <None Include="AuditMate.ini" />
+    <None Include="Checklist.xls" />
+    <None Include="DetachingAndAttaching.xls" />
+    <None Include="eAuditPro.PDM" />
+    <None Include="eAuditPro.vbw" />
+    <None Include="event.log" />
+    <None Include="frmAcHeads.frm" />
+    <None Include="frmAcHeads.frx" />
+    <None Include="frmAcHeads.log" />
+    <None Include="frmAcTypes.frm" />
+    <None Include="frmAcTypes.frx" />
+    <None Include="frmAcTypes.log" />
+    <None Include="frmAttachedDocumentsDetails.frm" />
+    <None Include="frmAttachedDocumentsDetails.frx" />
+    <None Include="frmAttachedDocumentsDetails.log" />
+    <None Include="frmBackupData.frm" />
+    <None Include="frmBackupData.log" />
+    <None Include="frmBankMaster.frm" />
+    <None Include="frmBankMaster.frx" />
+    <None Include="frmBankMaster.log" />
+    <None Include="frmCashAndCashEquivalents.frm" />
+    <None Include="frmCashAndCashEquivalents.frx" />
+    <None Include="frmCashAndCashEquivalents.log" />
+    <None Include="frmCashFlow.frm" />
+    <None Include="frmCashFlow.frx" />
+    <None Include="frmCashFlow.log" />
+    <None Include="frmChangePassword.frm" />
+    <None Include="frmChangePassword.frx" />
+    <None Include="frmChangePassword.log" />
+    <None Include="frmCollectMultipleDocs.frm" />
+    <None Include="frmCollectMultipleDocs.frx" />
+    <None Include="frmCollectMultipleDocs.log" />
+    <None Include="FrmCompany.frm" />
+    <None Include="frmCompany.frx" />
+    <None Include="FrmCompany.log" />
+    <None Include="frmCompanyConsole.frm" />
+    <None Include="frmCompanyConsole.frx" />
+    <None Include="frmCompanyConsole.log" />
+    <None Include="frmCompanyDetails.frm" />
+    <None Include="frmCompanyDetails.frx" />
+    <None Include="frmConnection.frm" />
+    <None Include="frmConnection.log" />
+    <None Include="frmConvertWizard.frm" />
+    <None Include="frmConvertWizard.frx" />
+    <None Include="frmConvertWizard.log" />
+    <None Include="frmCurrencyMaster.frm" />
+    <None Include="frmCurrencyMaster.frx" />
+    <None Include="frmCurrencyMaster.log" />
+    <None Include="frmDatasheet.frm" />
+    <None Include="frmDatasheet.frx" />
+    <None Include="frmDatasheet.log" />
+    <None Include="frmDetachAttach.frm" />
+    <None Include="frmDetachAttach.frx" />
+    <None Include="frmDetachNAttach.frm" />
+    <None Include="frmDetachNAttach.frx" />
+    <None Include="frmDetachNAttach.log" />
+    <None Include="frmDetachNBackup.frm" />
+    <None Include="frmDetachNBackup.frx" />
+    <None Include="frmDetachNBackup.log" />
+    <None Include="frmDettachDataBase.frm" />
+    <None Include="frmDettachDataBase.frx" />
+    <None Include="frmDettachDataBase.log" />
+    <None Include="frmDocLinking.frm" />
+    <None Include="frmDocLinking.frx" />
+    <None Include="frmDocLinking.log" />
+    <None Include="frmDocumentCollect.frm" />
+    <None Include="frmDocumentCollect.frx" />
+    <None Include="frmDocumentCollect.log" />
+    <None Include="frmDocumentCollection.frm" />
+    <None Include="frmDocumentDefinition.frm" />
+    <None Include="frmDocumentDefinition.frx" />
+    <None Include="frmDocumentDefinition.log" />
+    <None Include="frmDocumentInsert.frm" />
+    <None Include="frmDocumentInsert.frx" />
+    <None Include="frmDocumentLinking.frm" />
+    <None Include="frmDocumentLinking.frx" />
+    <None Include="frmDocumentLinking.log" />
+    <None Include="frmEquityShedule.frm" />
+    <None Include="frmEquityShedule.frx" />
+    <None Include="frmEquityShedule.log" />
+    <None Include="frmFinalisation.frm" />
+    <None Include="frmFinalisation.frx" />
+    <None Include="frmFind.frm" />
+    <None Include="frmFind.frx" />
+    <None Include="frmFind.log" />
+    <None Include="frmFixedAssetSchedule.frm" />
+    <None Include="frmFixedAssetSchedule.frx" />
+    <None Include="frmFixedAssetSchedule.log" />
+    <None Include="frmGeneralSchedule.frm" />
+    <None Include="frmGeneralSchedule.frx" />
+    <None Include="frmGeneralSchedule.log" />
+    <None Include="frmJournalEntry.frm" />
+    <None Include="frmJournalEntry.frx" />
+    <None Include="frmJournalEntry.log" />
+    <None Include="frmLedger.frm" />
+    <None Include="frmLedger.frx" />
+    <None Include="frmLedger.log" />
+    <None Include="frmLiabilitySchedule.frm" />
+    <None Include="frmLiabilitySchedule.frx" />
+    <None Include="frmLiabilitySchedule.log" />
+    <None Include="frmLogin.frm" />
+    <None Include="frmLogin.frx" />
+    <None Include="frmLogin.log" />
+    <None Include="frmLogo.frm" />
+    <None Include="frmLogo.frx" />
+    <None Include="frmNationsMaster.frm" />
+    <None Include="frmNationsMaster.frx" />
+    <None Include="frmNationsMaster.log" />
+    <None Include="frmNavigator.frm" />
+    <None Include="frmNavigator.frx" />
+    <None Include="frmNavigator.log" />
+    <None Include="frmNoteNoAndCaption.frm" />
+    <None Include="frmNoteNoAndCaption.frx" />
+    <None Include="frmNoteNoAndCaption.log" />
+    <None Include="frmOpenPeriod.frm" />
+    <None Include="frmOpenPeriod.frx" />
+    <None Include="frmOpenPeriod.log" />
+    <None Include="frmOptions.frm" />
+    <None Include="frmOptions.frx" />
+    <None Include="frmOptions.log" />
+    <None Include="frmPeriods.frm" />
+    <None Include="frmPeriods.frx" />
+    <None Include="frmPeriods.log" />
+    <None Include="frmPreview.frm" />
+    <None Include="frmPreview.frx" />
+    <None Include="frmPreview.log" />
+    <None Include="frmPrivilegeSettings.frm" />
+    <None Include="frmPrivilegeSettings.frx" />
+    <None Include="frmProcedure.frm" />
+    <None Include="frmProcedure.frx" />
+    <None Include="frmProcedure.log" />
+    <None Include="frmProcedures.frm" />
+    <None Include="frmProcedures.frx" />
+    <None Include="frmProcedures.log" />
+    <None Include="frmRelatedReviews.frm" />
+    <None Include="frmRelatedReviews.log" />
+    <None Include="frmReportDesigner.frm" />
+    <None Include="frmReportDesigner.frx" />
+    <None Include="frmReportDesigner.log" />
+    <None Include="frmReportGenerator.frm" />
+    <None Include="frmReportGenerator.frx" />
+    <None Include="frmReportGenerator.log" />
+    <None Include="frmResources.frm" />
+    <None Include="frmResources.frx" />
+    <None Include="frmResources.log" />
+    <None Include="frmRestoreDatabase.frm" />
+    <None Include="frmRestoreDatabase.frx" />
+    <None Include="frmRestoreDatabase.log" />
+    <None Include="frmReview.frm" />
+    <None Include="frmReview.frx" />
+    <None Include="frmReview.log" />
+    <None Include="frmReviewDetails.frm" />
+    <None Include="frmReviewDetails.frx" />
+    <None Include="frmReviewDetails.log" />
+    <None Include="frmSelect.frm" />
+    <None Include="frmSelect.frx" />
+    <None Include="frmSelect.log" />
+    <None Include="frmShowInExcel.frm" />
+    <None Include="frmShowInExcel.frx" />
+    <None Include="frmShowInExcel.log" />
+    <None Include="frmSplitSchedule.frm" />
+    <None Include="frmSplitSchedule.frx" />
+    <None Include="frmSplitSchedule.log" />
+    <None Include="frmTBSorted.frm" />
+    <None Include="frmTBSorted.frx" />
+    <None Include="frmTESTING.frm" />
+    <None Include="frmTESTING.log" />
+    <None Include="frmTesting1.frm" />
+    <None Include="frmTips.frm" />
+    <None Include="frmTips.frx" />
+    <None Include="frmTips.log" />
+    <None Include="frmTrialBalance.frm" />
+    <None Include="frmTrialBalance.frx" />
+    <None Include="frmTrialBalance.log" />
+    <None Include="frmUserPrivileges.frm" />
+    <None Include="frmUserPrivileges.frx" />
+    <None Include="frmUserPrivileges.log" />
+    <None Include="frmUsers.frm" />
+    <None Include="frmUsers.frx" />
+    <None Include="frmUsers.log" />
+    <None Include="frmVersionDetails.frm" />
+    <None Include="frmVersionDetails.frx" />
+    <None Include="frmVersionDetails.log" />
+    <None Include="logger_asserts.log" />
+    <None Include="main.pts" />
+    <None Include="MDIFormMain.frm" />
+    <None Include="MDIFormMain.frx" />
+    <None Include="MDIFormMain.log" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="clsAcHead.cls" />
+    <Content Include="clsAcType.cls" />
+    <Content Include="clsCallByName.cls" />
+    <Content Include="clsCompany.cls" />
+    <Content Include="clsGradient.cls" />
+    <Content Include="clsGrid.cls" />
+    <Content Include="clsGridGroup.cls" />
+    <Content Include="clsPeriods.cls" />
+    <Content Include="clsRecordSet.cls" />
+    <Content Include="clsReports.cls" />
+    <Content Include="clsRichTextBox.cls" />
+    <Content Include="clsTable.cls" />
+    <Content Include="clsUpgradeDatabase.cls" />
+    <Content Include="eAudit DATABASE MODIFICATION.txt" />
+    <Content Include="filedownload.txt" />
+    <Content Include="mdlAPI.bas" />
+    <Content Include="mdlDatabase.bas" />
+    <Content Include="mdlDate.bas" />
+    <Content Include="mdlDetachAttach.bas" />
+    <Content Include="mdlFormPosition.bas" />
+    <Content Include="mdlGeneral.bas" />
+    <Content Include="mdlGrid.bas" />
+    <Content Include="mdlMain.bas" />
+    <Content Include="mdlPrint.bas" />
+    <Content Include="mdlRegion.bas" />
+    <Content Include="mdlRegistry.bas" />
+    <Content Include="mdlReports.bas" />
+    <Content Include="mdlUser.bas" />
+    <Content Include="mdlVersionUpdates.bas" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>
