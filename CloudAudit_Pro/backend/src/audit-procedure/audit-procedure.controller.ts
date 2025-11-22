@@ -87,7 +87,7 @@ export class AuditProcedureController {
     description: 'Get available audit procedure templates'
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Templates retrieved successfully' })
-  async getTemplates() {
+  async getTemplates(): Promise<any> {
     return this.auditProcedureService.getTemplates();
   }
 

@@ -6,6 +6,7 @@ export enum UserRole {
   SENIOR_AUDITOR = 'SENIOR_AUDITOR',
   AUDITOR = 'AUDITOR',
   INTERN = 'INTERN',
+  USER = 'USER',
 }
 
 export enum TenantStatus {
@@ -13,18 +14,23 @@ export enum TenantStatus {
   SUSPENDED = 'SUSPENDED',
   CANCELLED = 'CANCELLED',
   TRIAL = 'TRIAL',
+  INACTIVE = 'INACTIVE',
 }
 
 export enum JournalEntryStatus {
   DRAFT = 'DRAFT',
   POSTED = 'POSTED',
   REVERSED = 'REVERSED',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
 }
 
 export interface User {
   id: string;
   email: string;
   passwordHash: string;
+  password: string; // Add for compatibility
   firstName: string;
   lastName: string;
   role: UserRole;

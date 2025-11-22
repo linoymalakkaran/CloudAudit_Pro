@@ -189,6 +189,21 @@ export class UpdateAuditProcedureDto {
   @IsDateString()
   dueDate?: string;
 
+  @ApiPropertyOptional({ description: 'Start date' })
+  @IsOptional()
+  @IsDateString()
+  startDate?: string;
+
+  @ApiPropertyOptional({ description: 'Completion date' })
+  @IsOptional()
+  @IsDateString()
+  completedDate?: string;
+
+  @ApiPropertyOptional({ description: 'Notes' })
+  @IsOptional()
+  @IsString()
+  notes?: string;
+
   @ApiPropertyOptional({ description: 'Completion percentage (0-100)' })
   @IsOptional()
   @IsNumber()

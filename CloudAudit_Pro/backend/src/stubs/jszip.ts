@@ -19,4 +19,5 @@ class JSZip {
   }
 }
 
-export default JSZip;
+// Export as constructor function
+export = JSZip;

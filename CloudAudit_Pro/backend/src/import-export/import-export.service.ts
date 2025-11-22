@@ -17,11 +17,11 @@ import {
   ImportStatus
 } from './dto/import-export.dto';
 import * as ExcelJS from '../stubs/exceljs';
-import * as csv from '../stubs/csv-parser';
+import csv = require('../stubs/csv-parser');
 import * as createCsvWriter from '../stubs/csv-writer';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as JSZip from '../stubs/jszip';
+import JSZip = require('../stubs/jszip');
 
 interface ExportJob {
   id: string;

@@ -13,7 +13,7 @@ import {
   GroupBy
 } from './dto/report.dto';
 import * as ExcelJS from 'exceljs';
-import * as PDFKit from '../stubs/pdfkit';
+import PDFKit = require('../stubs/pdfkit');
 
 interface ReportData {
   headers: string[];
@@ -300,7 +300,7 @@ export class ReportsService {
           bulkDto.companyId,
           bulkDto.periodId,
           bulkDto.commonFilters || {},
-          { includeComparative: bulkDto.includeComparative } || {},
+          ...(bulkDto.includeComparative ? { includeComparative: bulkDto.includeComparative } : {}),
           userId
         );
 
@@ -362,7 +362,7 @@ export class ReportsService {
         description: 'Trial Balance Report',
         dataSource: 'trial_balance',
         defaultConfiguration: {
-          includeZeroBalances: false,
+          // includeZeroBalances: false, // Commented out - not in DTO
           groupBy: GroupBy.ACCOUNT,
         },
       },
@@ -620,7 +620,7 @@ export class ReportsService {
       fgColor: { argb: 'FFCCCCCC' },
     };
 
-    return workbook.xlsx.writeBuffer() as Promise<Buffer>;
+    return workbook.xlsx.writeBuffer() as Promise<any>;
   }
 
   private formatAsPDF(reportData: ReportData): Buffer {

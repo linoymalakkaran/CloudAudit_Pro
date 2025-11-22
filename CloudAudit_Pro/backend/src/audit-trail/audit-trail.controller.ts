@@ -40,7 +40,7 @@ export class AuditTrailController {
   async createAuditLog(
     @Body() createAuditLogDto: CreateAuditLogDto,
     @GetUser('id') userId: string,
-  ) {
+  ): Promise<any> {
     return this.auditTrailService.createAuditLog(createAuditLogDto, userId);
   }
 
@@ -48,15 +48,15 @@ export class AuditTrailController {
   async getAuditLogs(
     @Query() query: AuditLogQueryDto,
     @GetUser('id') userId: string,
-  ) {
-    return this.auditTrailService.getAuditLogs(query);
+  ): Promise<any> {
+    return this.auditTrailService.getAuditLogs(query, userId);
   }
 
   @Get(':id')
   async getAuditLog(
     @Param('id') id: string,
     @GetUser('id') userId: string,
-  ) {
+  ): Promise<any> {
     return this.auditTrailService.getAuditLog(id);
   }
 

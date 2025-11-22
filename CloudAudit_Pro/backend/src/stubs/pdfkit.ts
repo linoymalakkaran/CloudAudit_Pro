@@ -1,4 +1,4 @@
-// Stub implementation for pdfkit when package is not available
+// Enhanced stub implementation for pdfkit when package is not available
 class PDFDocument {
   constructor(options?: any) {}
   
@@ -27,4 +27,5 @@ class PDFDocument {
   }
 }
 
-export default PDFDocument;
+// Export as default constructor function
+export = PDFDocument;

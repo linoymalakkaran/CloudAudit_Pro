@@ -61,7 +61,7 @@ export class ConfigController {
     description: 'Get available configuration templates with default values'
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Templates retrieved successfully' })
-  async getTemplates() {
+  async getTemplates(): Promise<any> {
     return this.configService.getTemplates();
   }
 

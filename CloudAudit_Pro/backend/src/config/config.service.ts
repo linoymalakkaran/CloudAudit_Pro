@@ -468,9 +468,9 @@ export class ConfigService {
     // Check backup service (simplified)
     const backupStatus: 'HEALTHY' | 'WARNING' | 'CRITICAL' = 'HEALTHY';
 
-    const overallStatus: 'HEALTHY' | 'WARNING' | 'CRITICAL' = [dbStatus, storageStatus, emailStatus, backupStatus].includes('CRITICAL')
+    const overallStatus: 'HEALTHY' | 'WARNING' | 'CRITICAL' = [dbStatus, storageStatus, emailStatus, backupStatus].includes('CRITICAL' as any)
       ? 'CRITICAL'
-      : [dbStatus, storageStatus, emailStatus, backupStatus].includes('WARNING')
+      : [dbStatus, storageStatus, emailStatus, backupStatus].includes('WARNING' as any)
       ? 'WARNING'
       : 'HEALTHY';
 

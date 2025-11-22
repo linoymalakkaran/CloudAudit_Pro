@@ -42,7 +42,7 @@ export class ImportExportController {
   async createExport(
     @Body() createExportDto: CreateExportDto,
     @GetUser('id') userId: string,
-  ) {
+  ): Promise<any> {
     return this.importExportService.createExport(createExportDto, userId);
   }
 
@@ -58,7 +58,7 @@ export class ImportExportController {
   async getExportJob(
     @Param('id') id: string,
     @GetUser('id') userId: string,
-  ) {
+  ): Promise<any> {
     return this.importExportService.getExportJob(id, userId);
   }
 
@@ -95,7 +95,7 @@ export class ImportExportController {
     @Body() createImportDto: CreateImportDto,
     @UploadedFile() file: Express.Multer.File,
     @GetUser('id') userId: string,
-  ) {
+  ): Promise<any> {
     // Save uploaded file
     const uploadDir = path.join(process.cwd(), 'uploads');
     if (!fs.existsSync(uploadDir)) {
@@ -123,7 +123,7 @@ export class ImportExportController {
   async getImportJob(
     @Param('id') id: string,
     @GetUser('id') userId: string,
-  ) {
+  ): Promise<any> {
     return this.importExportService.getImportJob(id, userId);
   }
 

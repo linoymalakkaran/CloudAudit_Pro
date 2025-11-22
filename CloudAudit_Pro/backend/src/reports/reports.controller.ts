@@ -120,7 +120,7 @@ export class ReportsController {
     description: 'Generate multiple reports in a single request'
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Reports generated successfully' })
-  async bulkGenerate(@Body() bulkDto: BulkReportDto, @Request() req) {
+  async bulkGenerate(@Body() bulkDto: BulkReportDto, @Request() req): Promise<any> {
     return this.reportsService.bulkGenerate(bulkDto, req.user.userId);
   }
 

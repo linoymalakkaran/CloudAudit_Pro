@@ -12,4 +12,5 @@ export function parse(data: string) {
   return [];
 }
 
-export default csvParser;
+// Export as callable function
+export = csvParser;
