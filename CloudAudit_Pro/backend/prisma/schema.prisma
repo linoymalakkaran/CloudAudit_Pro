@@ -42,6 +42,7 @@ model Tenant {
   users         TenantUser[]
   subscriptions Subscription[]
   usageMetrics  UsageMetric[]
+  documents     Document[]
 
   @@map("tenants")
 }
@@ -169,6 +170,7 @@ model Period {
   trialBalance    TrialBalanceEntry[]
   journalEntries  JournalEntry[]
   procedures      Procedure[]
+  documents       Document[]
 
   @@unique([companyId, name])
   @@map("periods")
@@ -217,6 +219,7 @@ model AccountHead {
   trialBalanceEntries   TrialBalanceEntry[]
   journalLineItems      JournalLineItem[]
   procedures            Procedure[]
+  documents             Document[]
 
   @@unique([companyId, code])
   @@map("account_heads")
@@ -367,30 +370,43 @@ model Procedure {
 
 model Document {
   id                   String         @id @default(cuid())
+  tenantId             String
   companyId            String
+  periodId             String?
+  accountId            String?
   procedureId          String?
   
   // Document metadata
   name                 String
-  originalFilename     String
-  fileExtension        String
-  mimeType             String
-  fileSizeBytes        BigInt
+  description          String?
+  originalFilename     String?
+  fileExtension        String?
+  mimeType             String?
+  fileSizeBytes        BigInt?
   
-  // Storage information
-  storageProvider      String         @default("azure_blob")
-  storagePath          String
-  storageBucket        String?
-  
-  // Document classification
-  documentType         String?
+  // Document classification  
+  type                 DocumentType
+  status               DocumentStatus @default(PENDING)
+  tags                 String[]       @default([])
   category             String?
   classification       Classification @default(CONFIDENTIAL)
+  
+  // Storage information
+  storageProvider      String         @default("local")
+  storagePath          String?
+  storageBucket        String?
   
   // Version control
   version              Int            @default(1)
   isCurrentVersion     Boolean        @default(true)
   parentDocumentId     String?
+  
+  // Review and approval
+  reviewNotes          String?
+  reviewedBy           String?
+  reviewedAt           DateTime?
+  approvedBy           String?
+  approvedAt           DateTime?
   
   // Security
   accessLevel          AccessLevel    @default(INTERNAL)
@@ -400,10 +416,17 @@ model Document {
   uploadedAt           DateTime       @default(now())
   uploadedBy           String
   lastAccessedAt       DateTime?
+  updatedAt            DateTime       @updatedAt
   
   // Relations
-  company              Company        @relation(fields: [companyId], references: [id])
-  procedure            Procedure?     @relation(fields: [procedureId], references: [id])
+  tenant               Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  company              Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period               Period?        @relation(fields: [periodId], references: [id], onDelete: SetNull)
+  account              AccountHead?   @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  procedure            Procedure?     @relation(fields: [procedureId], references: [id], onDelete: SetNull)
+  uploader             User           @relation(fields: [uploadedBy], references: [id])
+  reviewer             User?          @relation("DocumentReviewer", fields: [reviewedBy], references: [id])
+  approver             User?          @relation("DocumentApprover", fields: [approvedBy], references: [id])
   parentDocument       Document?      @relation("DocumentVersions", fields: [parentDocumentId], references: [id])
   childDocuments       Document[]     @relation("DocumentVersions")
 
@@ -451,6 +474,11 @@ model User {
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
   createdBy            String?
+
+  // Relations
+  documentsUploaded    Document[]
+  documentsReviewed    Document[]     @relation("DocumentReviewer")
+  documentsApproved    Document[]     @relation("DocumentApprover")
 
   @@map("users")
 }
@@ -607,4 +635,25 @@ enum RiskLevel {
   MEDIUM
   HIGH
   CRITICAL
+}
+
+enum DocumentType {
+  FINANCIAL_STATEMENT
+  TRIAL_BALANCE
+  GENERAL_LEDGER
+  BANK_STATEMENT
+  INVOICE
+  RECEIPT
+  CONTRACT
+  CORRESPONDENCE
+  WORKING_PAPER
+  MANAGEMENT_LETTER
+  OTHER
+}
+
+enum DocumentStatus {
+  PENDING
+  REVIEWED
+  APPROVED
+  REJECTED
 }
