@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateJournalEntryDto, UpdateJournalEntryDto, JournalEntryFilterDto } from './dto/journal-entry.dto';
-import { JournalEntryStatus } from '@prisma/client';
+import { JournalEntryStatus } from '../stubs/prisma-types';
 import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()

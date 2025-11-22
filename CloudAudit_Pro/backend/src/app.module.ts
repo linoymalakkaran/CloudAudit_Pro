@@ -16,6 +16,7 @@ import { ReportsModule } from './reports/reports.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SystemConfigModule } from './config/config.module';
 import { ImportExportModule } from './import-export/import-export.module';
+import { AuditTrailModule } from './audit-trail/audit-trail.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ImportExportModule } from './import-export/import-export.module';
     DashboardModule,
     SystemConfigModule,
     ImportExportModule,
+    AuditTrailModule,
   ],
 })
 export class AppModule {}

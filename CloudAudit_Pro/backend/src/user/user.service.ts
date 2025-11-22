@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-import { User, UserRole } from '@prisma/client';
+import { User, UserRole } from '../stubs/prisma-types';
 import * as bcrypt from 'bcryptjs';
 
 export interface CreateUserDto {

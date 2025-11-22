@@ -13,7 +13,7 @@ import {
   GroupBy
 } from './dto/report.dto';
 import * as ExcelJS from 'exceljs';
-import * as PDFKit from 'pdfkit';
+import * as PDFKit from '../stubs/pdfkit';
 
 interface ReportData {
   headers: string[];

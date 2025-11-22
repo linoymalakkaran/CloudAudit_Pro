@@ -27,7 +27,7 @@ import {
   ExportTrialBalanceDto,
   TrialBalanceValidationDto,
 } from './dto/trial-balance.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Trial Balance')
 @ApiBearerAuth()

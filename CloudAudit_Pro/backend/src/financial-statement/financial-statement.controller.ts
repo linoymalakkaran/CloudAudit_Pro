@@ -24,7 +24,7 @@ import {
   StatementFilterDto,
   ExportStatementDto,
 } from './dto/financial-statement.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Financial Statements')
 @ApiBearerAuth()

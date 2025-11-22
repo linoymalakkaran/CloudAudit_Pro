@@ -27,7 +27,7 @@ import {
   JournalEntryApprovalDto,
   JournalEntryReviewDto,
 } from './dto/journal-entry.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Journal Entries')
 @ApiBearerAuth()

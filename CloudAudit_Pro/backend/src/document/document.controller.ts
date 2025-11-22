@@ -78,15 +78,15 @@ export class DocumentController {
   @Get()
   @ApiOperation({ summary: 'Get all documents with filtering and pagination' })
   @ApiResponse({ status: 200, description: 'Documents retrieved successfully' })
-  @ApiQuery({ name: 'companyId', required: false, type: 'string', format: 'uuid' })
-  @ApiQuery({ name: 'periodId', required: false, type: 'string', format: 'uuid' })
-  @ApiQuery({ name: 'accountId', required: false, type: 'string', format: 'uuid' })
+  @ApiQuery({ name: 'companyId', required: false, type: 'string' })
+  @ApiQuery({ name: 'periodId', required: false, type: 'string' })
+  @ApiQuery({ name: 'accountId', required: false, type: 'string' })
   @ApiQuery({ name: 'type', required: false, enum: ['FINANCIAL_STATEMENT', 'TRIAL_BALANCE', 'GENERAL_LEDGER', 'BANK_STATEMENT', 'INVOICE', 'RECEIPT', 'CONTRACT', 'CORRESPONDENCE', 'WORKING_PAPER', 'MANAGEMENT_LETTER', 'OTHER'] })
   @ApiQuery({ name: 'status', required: false, enum: ['PENDING', 'REVIEWED', 'APPROVED', 'REJECTED'] })
   @ApiQuery({ name: 'search', required: false, type: 'string' })
-  @ApiQuery({ name: 'tags', required: false, type: 'array', items: { type: 'string' } })
-  @ApiQuery({ name: 'page', required: false, type: 'number', minimum: 1 })
-  @ApiQuery({ name: 'limit', required: false, type: 'number', minimum: 1, maximum: 100 })
+  @ApiQuery({ name: 'tags', required: false, type: 'array' })
+  @ApiQuery({ name: 'page', required: false, type: 'number' })
+  @ApiQuery({ name: 'limit', required: false, type: 'number' })
   async findAll(@Query() query: DocumentQueryDto, @TenantId() tenantId: string) {
     return this.documentService.findAll(query, tenantId);
   }
@@ -94,7 +94,7 @@ export class DocumentController {
   @Get('statistics')
   @ApiOperation({ summary: 'Get document statistics' })
   @ApiResponse({ status: 200, description: 'Statistics retrieved successfully' })
-  @ApiQuery({ name: 'companyId', required: false, type: 'string', format: 'uuid' })
+  @ApiQuery({ name: 'companyId', required: false, type: 'string' })
   async getStatistics(
     @Query('companyId') companyId: string,
     @TenantId() tenantId: string,
