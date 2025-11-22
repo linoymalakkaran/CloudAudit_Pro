@@ -1,17 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { TenantModule } from './tenant/tenant.module';
-import { CompaniesModule } from './companies/companies.module';
-import { PeriodsModule } from './periods/periods.module';
-import { AccountsModule } from './accounts/accounts.module';
-import { ProceduresModule } from './procedures/procedures.module';
-import { JournalEntriesModule } from './journal-entries/journal-entries.module';
-import { DocumentsModule } from './documents/documents.module';
-import { ReportsModule } from './reports/reports.module';
-import { NotificationsModule } from './notifications/notifications.module';
-import { DatabaseModule } from './database/database.module';
-import { CommonModule } from './common/common.module';
+import { CompanyModule } from './company/company.module';
+import { UserModule } from './user/user.module';
+import { PeriodModule } from './period/period.module';
+import { AccountModule } from './account/account.module';
 
 @Module({
   imports: [
@@ -20,17 +15,12 @@ import { CommonModule } from './common/common.module';
       envFilePath: ['.env.local', '.env'],
     }),
     DatabaseModule,
-    CommonModule,
     AuthModule,
     TenantModule,
-    CompaniesModule,
-    PeriodsModule,
-    AccountsModule,
-    ProceduresModule,
-    JournalEntriesModule,
-    DocumentsModule,
-    ReportsModule,
-    NotificationsModule,
+    CompanyModule,
+    UserModule,
+    PeriodModule,
+    AccountModule,
   ],
 })
 export class AppModule {}

@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../database/prisma.service';
 import { TenantService } from '../tenant/tenant.service';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 
 // Mock implementations
 const mockPrismaService = {
@@ -143,7 +143,7 @@ describe('AuthService', () => {
         password: 'password123',
       };
 
-      const hashedPassword = await bcrypt.hash('password123', 10);
+      const hashedPassword = await bcryptjs.hash('password123', 10);
       const mockUser = {
         id: 'user-id',
         email: 'test@example.com',
@@ -188,14 +188,18 @@ describe('AuthService', () => {
     it('should generate access and refresh tokens', async () => {
       const userId = 'user-id';
       const tenantId = 'tenant-id';
-      const email = 'test@example.com';
-      const role = 'ADMIN';
+      const user = {
+        id: userId,
+        email: 'test@example.com',
+        role: 'ADMIN'
+      };
 
       mockJwtService.signAsync
         .mockResolvedValueOnce('access-token')
         .mockResolvedValueOnce('refresh-token');
 
-      const result = await service.generateTokens(userId, tenantId, email, role);
+      // Using reflection to test private method
+      const result = await (service as any).generateTokens(user, tenantId);
 
       expect(result).toHaveProperty('accessToken', 'access-token');
       expect(result).toHaveProperty('refreshToken', 'refresh-token');
