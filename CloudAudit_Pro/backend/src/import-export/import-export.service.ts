@@ -16,14 +16,14 @@ import {
   ExportStatus,
   ImportStatus
 } from './dto/import-export.dto';
-import * as ExcelJS from '../stubs/exceljs';
-import csv = require('../stubs/csv-parser');
-import * as createCsvWriter from '../stubs/csv-writer';
+import * as ExcelJS from 'exceljs';
+import csv = require('csv-parser');
+import * as createCsvWriter from 'csv-writer';
 import * as fs from 'fs';
 import * as path from 'path';
-import JSZip = require('../stubs/jszip');
+import * as JSZip from 'jszip';
 
-interface ExportJob {
+export interface ExportJob {
   id: string;
   name: string;
   dataTypes: DataType[];
@@ -39,7 +39,7 @@ interface ExportJob {
   completedAt?: Date;
 }
 
-interface ImportJob {
+export interface ImportJob {
   id: string;
   name: string;
   dataType: DataType;
@@ -89,6 +89,7 @@ export class ImportExportService {
         totalRecords: 0,
         processedRecords: 0,
         createdBy: userId,
+        filename: `export_${Date.now()}`,
       },
     });
 
@@ -120,6 +121,7 @@ export class ImportExportService {
         dataType: createImportDto.dataType,
         format: createImportDto.format,
         filePath: createImportDto.filePath,
+        filename: path.basename(createImportDto.filePath),
         companyId: createImportDto.companyId,
         periodId: createImportDto.periodId,
         options: createImportDto.options ? JSON.stringify(createImportDto.options) : null,
@@ -451,8 +453,8 @@ export class ImportExportService {
 
     return templates.map(template => ({
       ...template,
-      fieldMappings: JSON.parse(template.fieldMappings || '[]'),
-      defaultOptions: template.defaultOptions ? JSON.parse(template.defaultOptions) : null,
+      fieldMappings: JSON.parse(String(template.fieldMappings) || '[]'),
+      defaultOptions: template.defaultOptions ? JSON.parse(String(template.defaultOptions)) : null,
     }));
   }
 
@@ -642,7 +644,7 @@ export class ImportExportService {
       where,
       include: job.options?.includeRelated ? {
         periods: true,
-        accounts: true,
+        accountHeads: true,
       } : undefined,
     });
   }
@@ -664,7 +666,7 @@ export class ImportExportService {
     return this.database.journalEntry.findMany({ 
       where,
       include: {
-        items: true,
+        lineItems: true,
       },
     });
   }
@@ -840,7 +842,7 @@ export class ImportExportService {
     return new Promise((resolve, reject) => {
       const results: any[] = [];
       fs.createReadStream(filePath)
-        .pipe(csv())
+        .pipe((csv as any)())
         .on('data', (data) => results.push(data))
         .on('end', () => resolve(results))
         .on('error', reject);
@@ -1068,6 +1070,7 @@ export class ImportExportService {
       await this.database.company.create({
         data: {
           name: record.name,
+          code: record.code || record.name.substring(0, 10).toUpperCase(),
           email: record.email,
           address: record.address,
         },
@@ -1099,11 +1102,29 @@ export class ImportExportService {
         return 'skipped';
       }
     } else {
+      // Find or create account type
+      let accountType = await this.database.accountType.findFirst({
+        where: { name: record.accountType }
+      });
+
+      if (!accountType) {
+        // Create a default account type if not found
+        accountType = await this.database.accountType.create({
+          data: {
+            name: record.accountType,
+            code: record.accountType.toUpperCase().replace(/[^A-Z0-9]/g, '_'),
+            category: 'ASSETS', // Default category
+            normalBalance: 'DEBIT', // Default balance type
+          }
+        });
+      }
+
       await this.database.accountHead.create({
         data: {
           code: record.code,
           name: record.name,
-          accountType: record.accountType,
+          accountTypeId: accountType.id,
+          accountTypeString: record.accountType,
           description: record.description,
           companyId: companyId,
           isActive: true,

@@ -13,7 +13,7 @@ import {
   GroupBy
 } from './dto/report.dto';
 import * as ExcelJS from 'exceljs';
-import PDFKit = require('../stubs/pdfkit');
+import PDFKit = require('pdfkit');
 
 interface ReportData {
   headers: string[];
@@ -181,9 +181,9 @@ export class ReportsService {
 
     return {
       ...report,
-      filters: report.filters ? JSON.parse(report.filters) : null,
-      configuration: report.configuration ? JSON.parse(report.configuration) : null,
-      recipients: report.recipients ? JSON.parse(report.recipients) : null,
+      filters: report.filters ? JSON.parse(String(report.filters)) : null,
+      configuration: report.configuration ? JSON.parse(String(report.configuration)) : null,
+      recipients: report.recipients ? JSON.parse(String(report.recipients)) : null,
     };
   }
 
@@ -252,7 +252,7 @@ export class ReportsService {
 
     // Generate the report data
     const reportData = await this.generateReportData(
-      report.reportType,
+      report.reportType as any,
       companyId,
       periodId,
       filters,
@@ -261,7 +261,7 @@ export class ReportsService {
     );
 
     // Format the output
-    const result = await this.formatReportOutput(reportData, format);
+    const result = await this.formatReportOutput(reportData, format as any);
 
     // Save if requested
     if (executeDto.saveReport) {
@@ -295,18 +295,23 @@ export class ReportsService {
 
     const reports = await Promise.all(
       bulkDto.reportTypes.map(async (reportType) => {
-        const reportData = await this.generateReportData(
-          reportType,
-          bulkDto.companyId,
-          bulkDto.periodId,
-          bulkDto.commonFilters || {},
-          ...(bulkDto.includeComparative ? { includeComparative: bulkDto.includeComparative } : {}),
+        const reportData = await this.generateAdhoc(
+          {
+            reportType,
+            companyId: bulkDto.companyId,
+            periodId: bulkDto.periodId,
+            filters: {
+              ...bulkDto.commonFilters || {},
+              ...(bulkDto.includeComparative ? { includeComparative: bulkDto.includeComparative } : {})
+            },
+            format: bulkDto.format
+          },
           userId
         );
 
         return {
           type: reportType,
-          data: await this.formatReportOutput(reportData, bulkDto.format),
+          data: reportData,
         };
       })
     );
@@ -492,27 +497,27 @@ export class ReportsService {
     const trialBalanceData = await this.database.trialBalance.findMany({
       where,
       include: {
-        account: {
-          select: { code: true, name: true, accountType: true },
+        accountHead: {
+          select: { code: true, name: true, accountTypeString: true },
         },
       },
       orderBy: [
-        { account: { accountType: 'asc' } },
-        { account: { code: 'asc' } },
+        { accountHead: { accountTypeString: 'asc' } },
+        { accountHead: { code: 'asc' } },
       ],
     });
 
     const headers = ['Account Code', 'Account Name', 'Account Type', 'Debit Balance', 'Credit Balance'];
     const rows = trialBalanceData.map(item => [
-      item.account.code,
-      item.account.name,
-      item.account.accountType,
+      item.accountHead.code,
+      item.accountHead.name,
+      item.accountHead.accountTypeString,
       item.debitBalance,
       item.creditBalance,
     ]);
 
-    const totalDebit = trialBalanceData.reduce((sum, item) => sum + item.debitBalance, 0);
-    const totalCredit = trialBalanceData.reduce((sum, item) => sum + item.creditBalance, 0);
+    const totalDebit = trialBalanceData.reduce((sum, item) => sum + Number(item.debitBalance), 0);
+    const totalCredit = trialBalanceData.reduce((sum, item) => sum + Number(item.creditBalance), 0);
 
     const summary = {
       totalRecords: trialBalanceData.length,

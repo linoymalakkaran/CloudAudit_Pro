@@ -51,7 +51,7 @@ export class DashboardController {
   @ApiQuery({ name: 'companyId', required: false, type: String, description: 'Filter by company' })
   @ApiQuery({ name: 'timeframe', required: false, enum: Timeframe, description: 'Time period for metrics' })
   @ApiQuery({ name: 'includeComparative', required: false, type: Boolean, description: 'Include comparative data' })
-  async getFinancialDashboard(@Query() filters: DashboardFilterDto, @Request() req) {
+  async getFinancialDashboard(@Query() filters: DashboardFilterDto, @Request() req): Promise<any> {
     return this.dashboardService.getFinancialDashboard(filters, req.user.userId);
   }
 
@@ -64,7 +64,7 @@ export class DashboardController {
   @ApiQuery({ name: 'companyId', required: false, type: String, description: 'Filter by company' })
   @ApiQuery({ name: 'periodId', required: false, type: String, description: 'Filter by period' })
   @ApiQuery({ name: 'timeframe', required: false, enum: Timeframe, description: 'Time period for metrics' })
-  async getAuditDashboard(@Query() filters: DashboardFilterDto, @Request() req) {
+  async getAuditDashboard(@Query() filters: DashboardFilterDto, @Request() req): Promise<any> {
     return this.dashboardService.getAuditDashboard(filters, req.user.userId);
   }
 
@@ -75,7 +75,7 @@ export class DashboardController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Operational dashboard data retrieved successfully' })
   @ApiQuery({ name: 'timeframe', required: false, enum: Timeframe, description: 'Time period for metrics' })
-  async getOperationalDashboard(@Query() filters: DashboardFilterDto, @Request() req) {
+  async getOperationalDashboard(@Query() filters: DashboardFilterDto, @Request() req): Promise<any> {
     return this.dashboardService.getOperationalDashboard(filters, req.user.userId);
   }
 
@@ -114,7 +114,7 @@ export class DashboardController {
     @Param('companyId') companyId: string,
     @Query() filters: DashboardFilterDto,
     @Request() req
-  ) {
+  ): Promise<any> {
     const companyFilters = { ...filters, companyId };
     return this.dashboardService.getFinancialDashboard(companyFilters, req.user.userId);
   }
@@ -129,7 +129,7 @@ export class DashboardController {
     @Param('companyId') companyId: string,
     @Query() filters: DashboardFilterDto,
     @Request() req
-  ) {
+  ): Promise<any> {
     const companyFilters = { ...filters, companyId };
     return this.dashboardService.getAuditDashboard(companyFilters, req.user.userId);
   }
@@ -200,7 +200,7 @@ export class DashboardController {
   })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'Alert created successfully' })
   async createAlert(@Body() alert: Omit<AlertDto, 'id' | 'createdAt'>, @Request() req) {
-    return this.dashboardService.createAlert(alert, req.user.userId);
+    return this.dashboardService.createAlert(alert, req.user.userId, req.user.companyId || 'default-company');
   }
 
   @Patch('alerts/:id/acknowledge')

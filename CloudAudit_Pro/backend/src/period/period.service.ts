@@ -62,7 +62,10 @@ export class PeriodService {
         description: data.description,
         fiscalYear: data.fiscalYear,
         periodType: data.periodType,
-        companyId: data.companyId,
+        auditType: 'ANNUAL', // Default audit type
+        company: {
+          connect: { id: data.companyId },
+        },
         tenantId: data.tenantId,
         status: 'PLANNING',
         isActive: true,
@@ -96,7 +99,7 @@ export class PeriodService {
         },
         _count: {
           select: {
-            accounts: true,
+            accountHeads: true,
             procedures: true,
             journalEntries: true,
           },
@@ -118,7 +121,7 @@ export class PeriodService {
         },
         _count: {
           select: {
-            accounts: true,
+            accountHeads: true,
             procedures: true,
             journalEntries: true,
           },
@@ -135,9 +138,9 @@ export class PeriodService {
       },
       include: {
         company: true,
-        accounts: {
+        accountHeads: {
           where: { isActive: true },
-          orderBy: { accountNumber: 'asc' },
+          orderBy: { code: 'asc' },
         },
         procedures: {
           where: { isActive: true },
@@ -145,7 +148,7 @@ export class PeriodService {
         },
         _count: {
           select: {
-            accounts: true,
+            accountHeads: true,
             procedures: true,
             journalEntries: true,
             documents: true,
@@ -252,9 +255,9 @@ export class PeriodService {
     }
 
     // Check if period has any data
-    const hasData = period._count.accounts > 0 || 
-                   period._count.procedures > 0 || 
-                   period._count.journalEntries > 0;
+    const hasData = period._count?.accountHeads > 0 ||
+                   period._count?.procedures > 0 ||
+                   period._count?.journalEntries > 0;
 
     if (hasData) {
       throw new ForbiddenException('Cannot delete period with existing data');

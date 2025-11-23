@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-import { User, UserRole } from '../stubs/prisma-types';
+import { User, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 export interface CreateUserDto {
@@ -32,11 +32,10 @@ export class UserService {
     return this.prisma.user.create({
       data: {
         email: data.email,
-        password: hashedPassword,
+        passwordHash: hashedPassword,
         firstName: data.firstName,
         lastName: data.lastName,
         role: data.role || UserRole.USER,
-        tenantId: data.tenantId,
         jobTitle: data.jobTitle,
         department: data.department,
         isActive: true,

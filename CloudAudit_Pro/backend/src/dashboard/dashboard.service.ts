@@ -274,16 +274,18 @@ export class DashboardService {
     };
   }
 
-  async createAlert(alert: Omit<AlertDto, 'id' | 'createdAt'>, userId: string) {
+  async createAlert(alert: Omit<AlertDto, 'id' | 'createdAt'>, userId: string, companyId: string) {
     return this.database.alert.create({
       data: {
+        companyId: companyId,
+        alertType: 'SYSTEM',
         title: alert.title,
         message: alert.message,
         severity: alert.severity,
-        category: alert.category,
-        entityId: alert.entityId,
-        entityType: alert.entityType,
-        actionRequired: alert.actionRequired,
+        category: alert.category || 'GENERAL',
+        entityId: alert.entityId || '',
+        entityType: alert.entityType || 'SYSTEM',
+        actionRequired: Boolean(alert.actionRequired),
         acknowledged: false,
         createdBy: userId,
       },
@@ -295,7 +297,6 @@ export class DashboardService {
       where: { id: alertId },
       data: {
         acknowledged: true,
-        acknowledgedBy: userId,
         acknowledgedAt: new Date(),
       },
     });
@@ -341,8 +342,8 @@ export class DashboardService {
         createdAt: timeRange,
       },
       include: {
-        account: {
-          select: { accountType: true },
+        accountHead: {
+          select: { accountTypeString: true },
         },
       },
     });
@@ -355,9 +356,9 @@ export class DashboardService {
     let totalEquity = 0;
 
     trialBalanceData.forEach(item => {
-      const balance = item.creditBalance - item.debitBalance;
+      const balance = Number(item.creditBalance) - Number(item.debitBalance);
       
-      switch (item.account.accountType) {
+      switch (item.accountHead.accountTypeString) {
         case 'REVENUE':
           totalRevenue += balance;
           break;
@@ -543,7 +544,7 @@ export class DashboardService {
       acknowledged: alert.acknowledged,
       entityId: alert.entityId,
       entityType: alert.entityType,
-      actionRequired: alert.actionRequired,
+      actionRequired: alert.actionRequired ? 'true' : 'false',
     }));
   }
 

@@ -167,7 +167,7 @@ export class AuditProcedureController {
   async startProcedure(@Param('id') id: string, @Request() req) {
     const updateDto: UpdateAuditProcedureDto = {
       status: ProcedureStatus.IN_PROGRESS,
-      startDate: new Date(),
+      startDate: new Date().toISOString(),
     };
     return this.auditProcedureService.update(id, updateDto, req.user.userId);
   }
@@ -181,7 +181,7 @@ export class AuditProcedureController {
   async completeProcedure(@Param('id') id: string, @Request() req) {
     const updateDto: UpdateAuditProcedureDto = {
       status: ProcedureStatus.COMPLETED,
-      completedDate: new Date(),
+      completedDate: new Date().toISOString(),
     };
     return this.auditProcedureService.update(id, updateDto, req.user.userId);
   }

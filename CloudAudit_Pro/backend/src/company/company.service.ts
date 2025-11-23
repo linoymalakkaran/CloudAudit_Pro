@@ -51,12 +51,12 @@ export class CompanyService {
     return this.prisma.company.create({
       data: {
         name: data.name,
+        code: data.name.substring(0, 10).toUpperCase().replace(/[^A-Z0-9]/g, ''), // Generate code from name
         registrationNumber: data.registrationNumber,
         taxId: data.taxId,
         businessType: data.businessType,
         industry: data.industry,
-        address: data.address,
-        contactInfo: data.contactInfo,
+        address: typeof data.address === 'string' ? data.address : JSON.stringify(data.address),
         tenantId: data.tenantId,
         isActive: true,
       },
@@ -87,7 +87,7 @@ export class CompanyService {
         _count: {
           select: {
             periods: true,
-            accounts: true,
+            accountHeads: true,
             procedures: true,
           },
         },
@@ -108,7 +108,13 @@ export class CompanyService {
     return this.prisma.company.update({
       where: { id },
       data: {
-        ...data,
+        name: data.name,
+        registrationNumber: data.registrationNumber,
+        taxId: data.taxId,
+        businessType: data.businessType,
+        industry: data.industry,
+        address: typeof data.address === 'string' ? data.address : JSON.stringify(data.address),
+        isActive: data.isActive,
         updatedAt: new Date(),
       },
     });

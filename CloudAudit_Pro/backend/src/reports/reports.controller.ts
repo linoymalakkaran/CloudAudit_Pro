@@ -78,7 +78,7 @@ export class ReportsController {
     description: 'Get available predefined report templates'
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Templates retrieved successfully' })
-  async getTemplates() {
+  async getTemplates(): Promise<any> {
     return this.reportsService.getTemplates();
   }
 

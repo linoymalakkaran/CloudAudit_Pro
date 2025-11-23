@@ -40,13 +40,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             id: true,
             name: true,
             subdomain: true,
-            isActive: true,
+            status: true,
           },
         },
       },
     });
 
-    if (!user || !user.tenant?.isActive) {
+    if (!user || !user.tenant || user.tenant.status !== 'ACTIVE') {
       return null; // This will trigger 401 Unauthorized
     }
 

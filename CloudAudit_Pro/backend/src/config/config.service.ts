@@ -65,11 +65,13 @@ export class ConfigService {
 
     return this.database.configuration.create({
       data: {
+        key: createConfigDto.name || 'default', // Required key field
+        value: processedSettings, // Required value field (Json)
         type: createConfigDto.type,
         name: createConfigDto.name,
         description: createConfigDto.description,
         companyId: createConfigDto.companyId,
-        settings: JSON.stringify(processedSettings),
+        settings: processedSettings, // Additional settings field
         isActive: createConfigDto.isActive ?? true,
         createdBy: userId,
         updatedBy: userId,
@@ -124,7 +126,11 @@ export class ConfigService {
     const processedConfigurations = await Promise.all(
       configurations.map(async (config) => ({
         ...config,
-        settings: await this.decryptSettings(JSON.parse(config.settings || '[]')),
+        settings: await this.decryptSettings(
+          typeof config.settings === 'string' 
+            ? JSON.parse(config.settings) 
+            : config.settings || {}
+        ),
       }))
     );
 
@@ -165,7 +171,11 @@ export class ConfigService {
 
     return {
       ...configuration,
-      settings: await this.decryptSettings(JSON.parse(configuration.settings || '[]')),
+      settings: await this.decryptSettings(
+        typeof configuration.settings === 'string'
+          ? JSON.parse(configuration.settings)
+          : configuration.settings || {}
+      ),
     };
   }
 
@@ -227,7 +237,11 @@ export class ConfigService {
     return Promise.all(
       configurations.map(async (config) => ({
         ...config,
-        settings: await this.decryptSettings(JSON.parse(config.settings || '[]')),
+        settings: await this.decryptSettings(
+          typeof config.settings === 'string'
+            ? JSON.parse(config.settings)
+            : config.settings || {}
+        ),
       }))
     );
   }
@@ -524,11 +538,13 @@ export class ConfigService {
 
     return this.database.configuration.create({
       data: {
+        key: template.name || 'default_template',
+        value: defaultSettings,
         type,
         name: template.name,
         description: template.description,
         companyId,
-        settings: JSON.stringify(defaultSettings),
+        settings: defaultSettings,
         isActive: true,
         createdBy: userId || 'system',
         updatedBy: userId || 'system',
@@ -559,7 +575,11 @@ export class ConfigService {
         description: config.description,
         companyId: config.companyId,
         companyName: config.company?.name,
-        settings: await this.decryptSettings(JSON.parse(config.settings || '[]')),
+        settings: await this.decryptSettings(
+          typeof config.settings === 'string'
+            ? JSON.parse(config.settings)
+            : config.settings || {}
+        ),
         isActive: config.isActive,
         createdAt: config.createdAt,
         updatedAt: config.updatedAt,

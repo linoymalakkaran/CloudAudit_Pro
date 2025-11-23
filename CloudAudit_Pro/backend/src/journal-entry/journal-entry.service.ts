@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateJournalEntryDto, UpdateJournalEntryDto, JournalEntryFilterDto } from './dto/journal-entry.dto';
-import { JournalEntryStatus } from '../stubs/prisma-types';
+import { JournalStatus, JournalType } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
@@ -30,19 +30,22 @@ export class JournalEntryService {
       data: {
         companyId: createJournalEntryDto.companyId,
         periodId: createJournalEntryDto.periodId,
+        journalNumber: `JE-${Date.now()}`,
         entryNumber: createJournalEntryDto.entryNumber,
         entryDate: new Date(createJournalEntryDto.entryDate),
+        journalDate: new Date(createJournalEntryDto.entryDate),
         description: createJournalEntryDto.description,
         notes: createJournalEntryDto.notes,
         entryType: createJournalEntryDto.entryType,
-        referenceDocumentId: createJournalEntryDto.referenceDocumentId,
+        referenceDocumentId: createJournalEntryDto.referenceDocumentId || null,
         referenceNumber: createJournalEntryDto.referenceNumber,
-        status: JournalEntryStatus.DRAFT,
+        status: JournalStatus.DRAFT,
         createdBy: userId,
         updatedBy: userId,
         lineItems: {
-          create: createJournalEntryDto.lineItems.map(item => ({
-            accountId: item.accountId,
+          create: createJournalEntryDto.lineItems.map((item, index) => ({
+            lineNumber: index + 1,
+            account: { connect: { id: item.accountId } },
             description: item.description,
             debitAmount: new Decimal(item.debitAmount),
             creditAmount: new Decimal(item.creditAmount),
@@ -217,7 +220,7 @@ export class JournalEntryService {
             },
           },
           orderBy: {
-            createdAt: 'asc',
+            lineNumber: 'asc',
           },
         },
         company: {
@@ -239,30 +242,6 @@ export class JournalEntryService {
             type: true,
           },
         },
-        creator: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
-        reviewer: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
-        approver: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
       },
     });
 
@@ -280,7 +259,7 @@ export class JournalEntryService {
     const existingEntry = await this.findOne(id, userId);
 
     // Only allow updates to draft entries
-    if (existingEntry.status !== JournalEntryStatus.DRAFT) {
+    if (existingEntry.status !== JournalStatus.DRAFT) {
       throw new BadRequestException('Can only update draft journal entries');
     }
 
@@ -372,7 +351,7 @@ export class JournalEntryService {
     const existingEntry = await this.findOne(id, userId);
 
     // Only allow deletion of draft entries
-    if (existingEntry.status !== JournalEntryStatus.DRAFT) {
+    if (existingEntry.status !== JournalStatus.DRAFT) {
       throw new BadRequestException('Can only delete draft journal entries');
     }
 
@@ -391,14 +370,14 @@ export class JournalEntryService {
   async submitForReview(id: string, userId: string) {
     const existingEntry = await this.findOne(id, userId);
 
-    if (existingEntry.status !== JournalEntryStatus.DRAFT) {
+    if (existingEntry.status !== JournalStatus.DRAFT) {
       throw new BadRequestException('Can only submit draft entries for review');
     }
 
     return this.database.journalEntry.update({
       where: { id },
       data: {
-        status: JournalEntryStatus.PENDING,
+        status: JournalStatus.DRAFT,
         updatedBy: userId,
       },
       include: {
@@ -420,11 +399,11 @@ export class JournalEntryService {
   async review(id: string, action: 'approve' | 'reject', reviewNotes: string, userId: string) {
     const existingEntry = await this.findOne(id, userId);
 
-    if (existingEntry.status !== JournalEntryStatus.PENDING) {
+    if (existingEntry.status !== JournalStatus.DRAFT) {
       throw new BadRequestException('Can only review pending entries');
     }
 
-    const newStatus = action === 'approve' ? JournalEntryStatus.APPROVED : JournalEntryStatus.REJECTED;
+    const newStatus = action === 'approve' ? JournalStatus.POSTED : JournalStatus.REVERSED;
 
     return this.database.journalEntry.update({
       where: { id },
@@ -454,14 +433,14 @@ export class JournalEntryService {
   async post(id: string, userId: string) {
     const existingEntry = await this.findOne(id, userId);
 
-    if (existingEntry.status !== JournalEntryStatus.APPROVED) {
+    if (existingEntry.status !== JournalStatus.POSTED) {
       throw new BadRequestException('Can only post approved entries');
     }
 
     return this.database.journalEntry.update({
       where: { id },
       data: {
-        status: JournalEntryStatus.POSTED,
+        status: JournalStatus.POSTED,
         postedBy: userId,
         postedAt: new Date(),
         updatedBy: userId,
@@ -504,11 +483,11 @@ export class JournalEntryService {
       totalCreditAmount,
     ] = await Promise.all([
       this.database.journalEntry.count({ where }),
-      this.database.journalEntry.count({ where: { ...where, status: JournalEntryStatus.DRAFT } }),
-      this.database.journalEntry.count({ where: { ...where, status: JournalEntryStatus.PENDING } }),
-      this.database.journalEntry.count({ where: { ...where, status: JournalEntryStatus.APPROVED } }),
-      this.database.journalEntry.count({ where: { ...where, status: JournalEntryStatus.POSTED } }),
-      this.database.journalEntry.count({ where: { ...where, status: JournalEntryStatus.REJECTED } }),
+      this.database.journalEntry.count({ where: { ...where, status: JournalStatus.DRAFT } }),
+      this.database.journalEntry.count({ where: { ...where, status: JournalStatus.DRAFT } }),
+      this.database.journalEntry.count({ where: { ...where, status: JournalStatus.POSTED } }),
+      this.database.journalEntry.count({ where: { ...where, status: JournalStatus.POSTED } }),
+      this.database.journalEntry.count({ where: { ...where, status: JournalStatus.REVERSED } }),
       this.database.journalLineItem.aggregate({
         where: { journalEntry: where },
         _sum: { debitAmount: true },

@@ -4,6 +4,15 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
+  // Create aliases for legacy service compatibility
+  get account() {
+    return this.accountHead;
+  }
+  
+  get trialBalance() {
+    return this.trialBalanceEntry;
+  }
+  
   constructor(private configService: ConfigService) {
     super({
       datasources: {
@@ -49,7 +58,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   // Utility method for transactions
-  async executeInTransaction<T>(fn: (prisma: PrismaClient) => Promise<T>): Promise<T> {
+  async executeInTransaction<T>(fn: (prisma: any) => Promise<T>): Promise<T> {
     return this.$transaction(async (prisma) => {
       return await fn(prisma);
     });

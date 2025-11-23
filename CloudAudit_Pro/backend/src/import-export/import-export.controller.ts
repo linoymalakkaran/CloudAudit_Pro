@@ -19,7 +19,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { GetUser } from '../auth/get-user.decorator';
-import { ImportExportService } from './import-export.service';
+import { ImportExportService, ExportJob, ImportJob } from './import-export.service';
 import {
   CreateExportDto,
   CreateImportDto,

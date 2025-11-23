@@ -1,63 +1,81 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// =============================================================================
+// CLOUDAUDIT PRO - DATABASE SCHEMA
+// =============================================================================
+// This is the main Prisma schema file for CloudAudit Pro
+// Organized in logical sections for better maintainability
+// Learn more: https://pris.ly/d/prisma-schema
+// =============================================================================
+
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// Central tenant management
+// =============================================================================
+// MULTI-TENANT MANAGEMENT MODELS
+// =============================================================================
+// Core tenant infrastructure for SaaS architecture
 model Tenant {
-  id          String      @id @default(cuid())
-  name        String
-  subdomain   String      @unique
-  databaseName String     @unique
-  
+  id           String @id @default(cuid())
+  name         String
+  subdomain    String @unique
+  databaseName String @unique
+
   // Subscription details
-  subscriptionTier String  @default("standard")
-  maxUsers        Int      @default(10)
-  maxCompanies    Int      @default(5)
-  storageLimitGb  Int      @default(10)
-  
+  subscriptionTier String @default("standard")
+  maxUsers         Int    @default(10)
+  maxCompanies     Int    @default(5)
+  storageLimitGb   Int    @default(10)
+
   // Status and lifecycle
-  status       TenantStatus @default(ACTIVE)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  suspendedAt  DateTime?
-  trialEndsAt  DateTime?
-  
+  status      TenantStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  suspendedAt DateTime?
+  trialEndsAt DateTime?
+
   // Billing
   billingEmail   String?
   billingAddress Json?
-  
+
   // Configuration
-  featureFlags   Json     @default("{}")
-  customConfig   Json     @default("{}")
-  
+  featureFlags Json @default("{}")
+  customConfig Json @default("{}")
+  settings     Json @default("{}")
+  metadata     Json @default("{}")
+  contactInfo  Json @default("{}")
+  deletedAt    DateTime?
+
   // Relations
   users         TenantUser[]
   subscriptions Subscription[]
   usageMetrics  UsageMetric[]
   documents     Document[]
+  systemUsers   User[]
+  accountHeads  AccountHead[] @relation("TenantAccountHeads")
 
   @@map("tenants")
 }
 
 model TenantUser {
-  id          String   @id @default(cuid())
-  tenantId    String
-  email       String
+  id           String    @id @default(cuid())
+  tenantId     String
+  email        String
   passwordHash String
-  firstName   String?
-  lastName    String?
-  role        String   @default("user")
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  lastLoginAt DateTime?
+  firstName    String?
+  lastName     String?
+  role         String    @default("user")
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -66,13 +84,13 @@ model TenantUser {
 }
 
 model Subscription {
-  id                   String            @id @default(cuid())
-  tenantId             String
-  planId               String
-  status               SubscriptionStatus
-  currentPeriodStart   DateTime
-  currentPeriodEnd     DateTime
-  createdAt            DateTime          @default(now())
+  id                 String             @id @default(cuid())
+  tenantId           String
+  planId             String
+  status             SubscriptionStatus
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  createdAt          DateTime           @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
@@ -94,439 +112,758 @@ model UsageMetric {
   @@map("usage_metrics")
 }
 
+// =============================================================================
+// CORE BUSINESS MODELS
+// =============================================================================
+// Company, Period, and fundamental business entities
+
 // Individual tenant database schema (replicated per tenant)
 model Company {
-  id              String        @id @default(cuid())
-  name            String
-  code            String
-  shortName       String?
-  
+  id        String  @id @default(cuid())
+  name      String
+  code      String
+  shortName String?
+
   // Contact information
-  addressLine1    String?
-  addressLine2    String?
-  addressLine3    String?
-  phone           String?
-  fax             String?
-  email           String?
-  website         String?
-  
+  address      String?
+  addressLine1 String?
+  addressLine2 String?
+  addressLine3 String?
+  phone        String?
+  fax          String?
+  email        String?
+  website      String?
+
   // Primary contact
-  contactPerson   String?
+  contactPerson      String?
   contactDesignation String?
-  contactPhone    String?
-  contactEmail    String?
-  
+  contactPhone       String?
+  contactEmail       String?
+
   // Business details
-  currencyId      Int?
-  industrySector  String?
-  fiscalYearEnd   DateTime?
+  businessType   String?
+  baseCurrency   String?
+  currencyId     Int?
+  industrySector String?
+  fiscalYearEnd  DateTime?
   
+  // Registration details
+  registrationNumber String?
+  taxId             String?
+  industry          String?
+  
+  // Tenant isolation
+  tenantId       String?
+
   // Status
-  status          CompanyStatus @default(ACTIVE)
-  
+  status   CompanyStatus @default(ACTIVE)
+  isActive Boolean       @default(true)
+
   // Metadata
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  createdBy       String?
-  updatedBy       String?
-  version         Int           @default(1)
-  isDeleted       Boolean       @default(false)
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  version   Int      @default(1)
+  isDeleted Boolean  @default(false)
+
   // Relations
-  periods         Period[]
-  accountHeads    AccountHead[]
-  procedures      Procedure[]
-  documents       Document[]
-  journalEntries  JournalEntry[]
+  periods             Period[]
+  accountHeads        AccountHead[]
+  procedures          Procedure[]
+  documents           Document[]
+  journalEntries      JournalEntry[]
+  trialBalanceEntries TrialBalanceEntry[]
+  reports             Report[]
+  configurations      Configuration[]
+  importJobs          ImportJob[] @relation("ImportJobs")
+  exportJobs          ExportJob[] @relation("ExportJobs")
+  auditLogs          AuditLog[] @relation("AuditLogCompany")
+  alerts             Alert[]     // Add alerts relation
 
   @@unique([code])
   @@map("companies")
 }
 
 model Period {
-  id              String       @id @default(cuid())
-  companyId       String
-  name            String
-  startDate       DateTime
-  endDate         DateTime
-  auditType       AuditType
-  
+  id        String    @id @default(cuid())
+  companyId String
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  auditType AuditType
+
   // Period status
-  status          PeriodStatus @default(OPEN)
-  isCurrent       Boolean      @default(false)
+  status      PeriodStatus @default(OPEN)
+  isCurrent   Boolean      @default(false)
+  isActive    Boolean      @default(true)
+  closedDate  DateTime?
+  description String?
+  fiscalYear  String?
+  periodType  String?
   
+  // Tenant isolation
+  tenantId    String?
+
   // Audit parameters
   materialityAmount     Decimal? @db.Decimal(15, 2)
   materialityPercentage Decimal? @db.Decimal(5, 2)
-  
+
   // Metadata
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  createdBy       String?
-  updatedBy       String?
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+
   // Relations
-  company         Company            @relation(fields: [companyId], references: [id])
-  trialBalance    TrialBalanceEntry[]
-  journalEntries  JournalEntry[]
-  procedures      Procedure[]
-  documents       Document[]
+  company        Company             @relation(fields: [companyId], references: [id])
+  trialBalance   TrialBalanceEntry[]
+  journalEntries JournalEntry[]
+  procedures     Procedure[]
+  documents      Document[]
+  reports        Report[]
+  accountHeads   AccountHead[]       @relation("PeriodAccountHeads")
+  auditLogs     AuditLog[] @relation("AuditLogPeriod")
+  exportJobs    ExportJob[] @relation("ExportJobPeriod")
+  importJobs    ImportJob[] @relation("ImportJobPeriod")
 
   @@unique([companyId, name])
   @@map("periods")
 }
 
+// =============================================================================
+// CHART OF ACCOUNTS & FINANCIAL MODELS
+// =============================================================================
+// Account types, account heads, trial balance, and journal entries
+
 model AccountType {
-  id            Int           @id @default(autoincrement())
+  id            Int             @id @default(autoincrement())
   name          String
-  code          String        @unique
+  code          String          @unique
   category      AccountCategory
   normalBalance BalanceType
   displayOrder  Int?
-  isActive      Boolean       @default(true)
-  createdAt     DateTime      @default(now())
+  isActive      Boolean         @default(true)
+  createdAt     DateTime        @default(now())
 
-  accountHeads  AccountHead[]
+  accountHeads AccountHead[]
 
   @@map("account_types")
 }
 
 model AccountHead {
-  id                    String            @id @default(cuid())
+  id                    String        @id @default(cuid())
   companyId             String
-  accountTypeId         Int
+  periodId              String?       // Add periodId field  
+  tenantId              String?       // Add tenantId field
+  accountTypeId         Int               // Make required for relation
+  accountTypeString     String?           // For string-based service operations
+  accountNumber         String?           // Account number field
+  accountName           String?           // Add accountName alias for name
   name                  String
   code                  String?
+  subType               String?           // Add subType field
   description           String?
   parentAccountId       String?
-  level                 Int               @default(1)
+  level                 Int           @default(1)
   trialBalanceOrder     Int?
-  includeInTrialBalance Boolean           @default(true)
-  status                AccountStatus     @default(ACTIVE)
-  isActive              Boolean           @default(true)
-  
+  includeInTrialBalance Boolean       @default(true)
+  openingBalance        Decimal       @default(0) @db.Decimal(15, 2)
+  currentBalance        Decimal       @default(0) @db.Decimal(15, 2)
+  status                AccountStatus @default(ACTIVE)
+  isActive              Boolean       @default(true)
+
   // Metadata
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
-  createdBy             String?
-  updatedBy             String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
 
   // Relations
-  company               Company           @relation(fields: [companyId], references: [id])
-  accountType           AccountType       @relation(fields: [accountTypeId], references: [id])
-  parentAccount         AccountHead?      @relation("AccountHierarchy", fields: [parentAccountId], references: [id])
-  childAccounts         AccountHead[]     @relation("AccountHierarchy")
-  trialBalanceEntries   TrialBalanceEntry[]
-  journalLineItems      JournalLineItem[]
-  procedures            Procedure[]
-  documents             Document[]
+  company             Company             @relation(fields: [companyId], references: [id])
+  period              Period?             @relation("PeriodAccountHeads", fields: [periodId], references: [id])
+  tenant              Tenant?             @relation("TenantAccountHeads", fields: [tenantId], references: [id])
+  accountType         AccountType         @relation(fields: [accountTypeId], references: [id])
+  parentAccount       AccountHead?        @relation("AccountHierarchy", fields: [parentAccountId], references: [id])
+  childAccounts       AccountHead[]       @relation("AccountHierarchy")
+  journalLineItems    JournalLineItem[]
+  journalEntries      JournalEntry[]      @relation("AccountJournalEntries")
+  procedures          Procedure[]
+  documents           Document[]
+  trialBalanceAccountHead TrialBalanceEntry[] @relation("TrialBalanceAccountHead")
 
   @@unique([companyId, code])
   @@map("account_heads")
 }
 
 model TrialBalanceEntry {
-  id                String      @id @default(cuid())
-  companyId         String
-  periodId          String
-  accountId         String
-  
+  id        String @id @default(cuid())
+  companyId String
+  periodId  String
+  accountId String
+  asOfDate  DateTime?
+
   // Balance amounts
-  openingDebit      Decimal     @default(0) @db.Decimal(15, 2)
-  openingCredit     Decimal     @default(0) @db.Decimal(15, 2)
-  periodDebit       Decimal     @default(0) @db.Decimal(15, 2)
-  periodCredit      Decimal     @default(0) @db.Decimal(15, 2)
-  closingDebit      Decimal     @default(0) @db.Decimal(15, 2)
-  closingCredit     Decimal     @default(0) @db.Decimal(15, 2)
-  adjustmentDebit   Decimal     @default(0) @db.Decimal(15, 2)
-  adjustmentCredit  Decimal     @default(0) @db.Decimal(15, 2)
+  openingDebit     Decimal @default(0) @db.Decimal(15, 2)
+  openingCredit    Decimal @default(0) @db.Decimal(15, 2)
+  periodDebit      Decimal @default(0) @db.Decimal(15, 2)
+  periodCredit     Decimal @default(0) @db.Decimal(15, 2)
+  closingDebit     Decimal @default(0) @db.Decimal(15, 2)
+  closingCredit    Decimal @default(0) @db.Decimal(15, 2)
+  adjustmentDebit  Decimal @default(0) @db.Decimal(15, 2)
+  adjustmentCredit Decimal @default(0) @db.Decimal(15, 2)
   
+  // Additional computed fields for compatibility
+  debitBalance     Decimal @default(0) @db.Decimal(15, 2)
+  creditBalance    Decimal @default(0) @db.Decimal(15, 2)
+
   // Status
-  isBalanced        Boolean     @default(true)
-  lastUpdated       DateTime    @default(now())
-  updatedBy         String?
+  isBalanced  Boolean  @default(true)
+  lastUpdated DateTime @default(now())
+  updatedBy   String?
 
   // Relations
-  company           Company     @relation(fields: [companyId], references: [id])
-  period            Period      @relation(fields: [periodId], references: [id])
-  account           AccountHead @relation(fields: [accountId], references: [id])
+  company     Company     @relation(fields: [companyId], references: [id])
+  period      Period      @relation(fields: [periodId], references: [id])
+  accountHead AccountHead @relation("TrialBalanceAccountHead", fields: [accountId], references: [id])
 
   @@unique([companyId, periodId, accountId])
   @@map("trial_balance")
 }
 
 model JournalEntry {
-  id               String            @id @default(cuid())
-  companyId        String
-  periodId         String
-  journalNumber    String
-  journalDate      DateTime
-  referenceNumber  String?
-  description      String?
-  journalType      JournalType       @default(ADJUSTMENT)
-  totalDebit       Decimal           @default(0) @db.Decimal(15, 2)
-  totalCredit      Decimal           @default(0) @db.Decimal(15, 2)
-  status           JournalStatus     @default(DRAFT)
-  isPosted         Boolean           @default(false)
-  
+  id              String        @id @default(cuid())
+  companyId       String
+  periodId        String
+  accountId       String?       // Add accountId field for compatibility
+  tenantId        String?       // Add tenantId field
+  journalNumber   String
+  entryNumber     String?
+  entryDate       DateTime
+  journalDate     DateTime
+  referenceNumber String?
+  description     String?
+  notes           String?       // Add notes field
+  journalType     JournalType   @default(ADJUSTMENT)
+  entryType       String?       // Add entryType for compatibility
+  amount          Decimal?      @db.Decimal(15, 2) // Add amount for compatibility
+  totalDebit      Decimal       @default(0) @db.Decimal(15, 2)
+  totalCredit     Decimal       @default(0) @db.Decimal(15, 2)
+  status          JournalStatus @default(DRAFT)
+  isPosted        Boolean       @default(false)
+  reviewNotes     String?
+  reviewedBy      String?       // Add reviewedBy field
+  reviewedAt      DateTime?     // Add reviewedAt field
+  referenceDocumentId String?   // Add referenceDocument field
+
   // Metadata
-  createdAt        DateTime          @default(now())
-  createdBy        String?
-  postedAt         DateTime?
-  postedBy         String?
+  createdAt DateTime  @default(now())
+  createdBy String?
+  updatedBy String?
+  postedAt  DateTime?
+  postedBy  String?
 
   // Relations
-  company          Company           @relation(fields: [companyId], references: [id])
-  period           Period            @relation(fields: [periodId], references: [id])
-  lineItems        JournalLineItem[]
+  company   Company           @relation(fields: [companyId], references: [id])
+  period    Period            @relation(fields: [periodId], references: [id])
+  account   AccountHead?      @relation("AccountJournalEntries", fields: [accountId], references: [id])
+  lineItems JournalLineItem[]
+  referenceDocument Document? @relation("JournalEntryReferences", fields: [referenceDocumentId], references: [id])
 
   @@unique([companyId, journalNumber])
   @@map("journal_entries")
 }
 
 model JournalLineItem {
-  id            String       @id @default(cuid())
+  id             String  @id @default(cuid())
   journalEntryId String
-  accountId     String
-  lineNumber    Int
-  description   String?
-  debitAmount   Decimal      @default(0) @db.Decimal(15, 2)
-  creditAmount  Decimal      @default(0) @db.Decimal(15, 2)
-  reference     String?
+  accountId      String
+  lineNumber     Int
+  description    String?
+  debitAmount    Decimal @default(0) @db.Decimal(15, 2)
+  creditAmount   Decimal @default(0) @db.Decimal(15, 2)
+  reference      String?
+  createdAt      DateTime @default(now())
+  createdBy      String?
+  updatedBy      String?
 
   // Relations
-  journalEntry  JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
-  account       AccountHead  @relation(fields: [accountId], references: [id])
+  journalEntry JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  account      AccountHead  @relation(fields: [accountId], references: [id])
 
   @@map("journal_line_items")
 }
 
-model ProcedureTemplate {
-  id               String      @id @default(cuid())
-  name             String
-  category         String?
-  procedureText    String
-  isMandatory      Boolean     @default(false)
-  estimatedHours   Decimal?    @db.Decimal(5, 2)
-  requiredSkills   Json?
-  isActive         Boolean     @default(true)
-  version          Int         @default(1)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+// =============================================================================
+// AUDIT PROCEDURES & WORKFLOW MODELS
+// =============================================================================
+// Templates, procedures, and audit workflow management
 
-  procedures       Procedure[]
+model ProcedureTemplate {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  category       String?
+  procedureText  String
+  isMandatory    Boolean  @default(false)
+  estimatedHours Decimal? @db.Decimal(5, 2)
+  requiredSkills Json?
+  isActive       Boolean  @default(true)
+  version        Int      @default(1)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  procedures Procedure[]
 
   @@map("procedure_templates")
 }
 
 model Procedure {
-  id                    String              @id @default(cuid())
-  companyId             String
-  periodId              String
-  templateId            String?
-  accountId             String?
-  
+  id         String  @id @default(cuid())
+  companyId  String
+  periodId   String
+  templateId String?
+  accountId  String?
+
   // Procedure details
-  name                  String
-  description           String?
-  procedureType         String?
-  
+  name          String
+  description   String?
+  procedureType String?
+
   // Assignment and tracking
-  assignedTo            String?
-  assignedDate          DateTime?
-  dueDate               DateTime?
-  estimatedHours        Decimal?            @db.Decimal(5, 2)
-  actualHours           Decimal?            @db.Decimal(5, 2)
-  
+  assignedTo     String?
+  assignedDate   DateTime?
+  dueDate        DateTime?
+  estimatedHours Decimal?  @db.Decimal(5, 2)
+  actualHours    Decimal?  @db.Decimal(5, 2)
+
   // Status tracking
-  status                ProcedureStatus     @default(NOT_STARTED)
-  completionPercentage  Int                 @default(0)
-  
+  status               ProcedureStatus @default(NOT_STARTED)
+  completionPercentage Int             @default(0)
+  isActive             Boolean         @default(true)
+
   // Review process
-  reviewStatus          ReviewStatus        @default(NOT_REVIEWED)
-  reviewerId            String?
-  reviewedDate          DateTime?
-  reviewNotes           String?
-  
+  reviewStatus ReviewStatus @default(NOT_REVIEWED)
+  reviewerId   String?
+  reviewedDate DateTime?
+  reviewNotes  String?
+
   // Final sign-off
-  signedOffBy           String?
-  signedOffDate         DateTime?
-  
+  signedOffBy   String?
+  signedOffDate DateTime?
+
   // Metadata
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  createdBy             String?
-  updatedBy             String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
 
   // Relations
-  company               Company             @relation(fields: [companyId], references: [id])
-  period                Period              @relation(fields: [periodId], references: [id])
-  template              ProcedureTemplate?  @relation(fields: [templateId], references: [id])
-  account               AccountHead?        @relation(fields: [accountId], references: [id])
-  documents             Document[]
+  company   Company            @relation(fields: [companyId], references: [id])
+  period    Period             @relation(fields: [periodId], references: [id])
+  template  ProcedureTemplate? @relation(fields: [templateId], references: [id])
+  account   AccountHead?       @relation(fields: [accountId], references: [id])
+  assignee  User?              @relation("ProcedureAssignee", fields: [assignedTo], references: [id])
+  reviewer  User?              @relation("ProcedureReviewer", fields: [reviewerId], references: [id])
+  creator   User?              @relation("ProcedureCreator", fields: [createdBy], references: [id])
+  documents Document[]
 
   @@map("procedures")
 }
 
+// =============================================================================
+// DOCUMENT MANAGEMENT MODELS
+// =============================================================================
+// Document storage, versioning, and access control
+
 model Document {
-  id                   String         @id @default(cuid())
-  tenantId             String
-  companyId            String
-  periodId             String?
-  accountId            String?
-  procedureId          String?
-  
+  id          String  @id @default(cuid())
+  tenantId    String
+  companyId   String
+  periodId    String?
+  accountId   String?
+  procedureId String?
+
   // Document metadata
-  name                 String
-  description          String?
-  originalFilename     String?
-  fileExtension        String?
-  mimeType             String?
-  fileSizeBytes        BigInt?
-  
+  name             String
+  description      String?
+  originalFilename String?
+  fileExtension    String?
+  mimeType         String?
+  fileSizeBytes    BigInt?
+  fileSize         BigInt?    // Add fileSize alias
+
   // Document classification  
-  type                 DocumentType
-  status               DocumentStatus @default(PENDING)
-  tags                 String[]       @default([])
-  category             String?
-  classification       Classification @default(CONFIDENTIAL)
-  
+  type           DocumentType
+  status         DocumentStatus @default(PENDING)
+  tags           String[]       @default([])
+  category       String?
+  classification Classification @default(CONFIDENTIAL)
+
   // Storage information
-  storageProvider      String         @default("local")
-  storagePath          String?
-  storageBucket        String?
-  
+  storageProvider String  @default("local")
+  storagePath     String?
+  storageBucket   String?
+  filePath        String? // Add filePath field
+
   // Version control
-  version              Int            @default(1)
-  isCurrentVersion     Boolean        @default(true)
-  parentDocumentId     String?
-  
+  version          Int     @default(1)
+  isCurrentVersion Boolean @default(true)
+  parentDocumentId String?
+
   // Review and approval
-  reviewNotes          String?
-  reviewedBy           String?
-  reviewedAt           DateTime?
-  approvedBy           String?
-  approvedAt           DateTime?
-  
+  reviewNotes String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  approvedBy  String?
+  approvedAt  DateTime?
+
   // Security
-  accessLevel          AccessLevel    @default(INTERNAL)
-  passwordProtected    Boolean        @default(false)
-  
+  accessLevel       AccessLevel @default(INTERNAL)
+  passwordProtected Boolean     @default(false)
+
   // Metadata
-  uploadedAt           DateTime       @default(now())
-  uploadedBy           String
-  lastAccessedAt       DateTime?
-  updatedAt            DateTime       @updatedAt
-  
+  createdAt      DateTime  @default(now()) // Add createdAt field
+  uploadedAt     DateTime  @default(now())
+  uploadedBy     String
+  lastAccessedAt DateTime?
+  updatedAt      DateTime  @updatedAt
+
   // Relations
-  tenant               Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  company              Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  period               Period?        @relation(fields: [periodId], references: [id], onDelete: SetNull)
-  account              AccountHead?   @relation(fields: [accountId], references: [id], onDelete: SetNull)
-  procedure            Procedure?     @relation(fields: [procedureId], references: [id], onDelete: SetNull)
-  uploader             User           @relation(fields: [uploadedBy], references: [id])
-  reviewer             User?          @relation("DocumentReviewer", fields: [reviewedBy], references: [id])
-  approver             User?          @relation("DocumentApprover", fields: [approvedBy], references: [id])
-  parentDocument       Document?      @relation("DocumentVersions", fields: [parentDocumentId], references: [id])
-  childDocuments       Document[]     @relation("DocumentVersions")
+  tenant         Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  company        Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period         Period?      @relation(fields: [periodId], references: [id], onDelete: SetNull)
+  account        AccountHead? @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  procedure      Procedure?   @relation(fields: [procedureId], references: [id], onDelete: SetNull)
+  uploader       User         @relation(fields: [uploadedBy], references: [id])
+  reviewer       User?        @relation("DocumentReviewer", fields: [reviewedBy], references: [id])
+  approver       User?        @relation("DocumentApprover", fields: [approvedBy], references: [id])
+  parentDocument Document?    @relation("DocumentVersions", fields: [parentDocumentId], references: [id])
+  childDocuments Document[]   @relation("DocumentVersions")
+  journalEntryReferences JournalEntry[] @relation("JournalEntryReferences")
 
   @@map("documents")
 }
 
+// =============================================================================
+// USER MANAGEMENT & SECURITY MODELS
+// =============================================================================
+// Users, roles, permissions, and security features
+
 model User {
-  id                   String         @id @default(cuid())
-  email                String         @unique
-  passwordHash         String
-  
+  id           String @id @default(cuid())
+  email        String @unique
+  passwordHash String
+  password     String? // For compatibility
+
   // Personal information
-  firstName            String
-  lastName             String
-  middleName           String?
-  jobTitle             String?
-  department           String?
-  employeeId           String?
-  
+  firstName  String
+  lastName   String
+  middleName String?
+  jobTitle   String?
+  department String?
+  employeeId String?
+
   // Contact information
-  phone                String?
-  mobile               String?
-  
+  phone  String?
+  mobile String?
+
   // System access
-  role                 UserRole       @default(AUDITOR)
-  permissions          Json           @default("[]")
-  isActive             Boolean        @default(true)
+  role        UserRole @default(AUDITOR)
+  permissions Json     @default("[]")
+  isActive    Boolean  @default(true)
   
+  // Tenant isolation
+  tenantId    String?
+
   // Session management
-  lastLoginAt          DateTime?
-  lastActivityAt       DateTime?
-  loginAttempts        Int            @default(0)
-  lockedUntil          DateTime?
-  
+  lastLoginAt    DateTime?
+  lastActivityAt DateTime?
+  loginAttempts  Int       @default(0)
+  lockedUntil    DateTime?
+
   // Preferences
-  timezone             String         @default("UTC")
-  language             String         @default("en")
-  theme                String         @default("light")
-  
+  timezone String @default("UTC")
+  language String @default("en")
+  theme    String @default("light")
+
   // Password policy
-  passwordChangedAt    DateTime       @default(now())
-  mustChangePassword   Boolean        @default(false)
-  
+  passwordChangedAt  DateTime @default(now())
+  mustChangePassword Boolean  @default(false)
+
   // Metadata
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
-  createdBy            String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
 
   // Relations
-  documentsUploaded    Document[]
-  documentsReviewed    Document[]     @relation("DocumentReviewer")
-  documentsApproved    Document[]     @relation("DocumentApprover")
+  documentsUploaded Document[]
+  documentsReviewed Document[] @relation("DocumentReviewer")
+  documentsApproved Document[] @relation("DocumentApprover")
+  tenant            Tenant?    @relation(fields: [tenantId], references: [id])
+  configurations    Configuration[]
+  reports           Report[]   @relation("ReportCreator")
+  exportJobs        ExportJob[] @relation("ExportJobCreator")
+  importJobs        ImportJob[] @relation("ImportJobCreator")
+  assignedProcedures Procedure[] @relation("ProcedureAssignee")
+  reviewedProcedures Procedure[] @relation("ProcedureReviewer")
+  createdProcedures Procedure[] @relation("ProcedureCreator")
+  auditLogs         AuditLog[] @relation("AuditLogUser")
+  alerts            Alert[]     // Add alerts relation
 
   @@map("users")
 }
 
+model Alert {
+  id          String      @id @default(cuid())
+  companyId   String
+  title       String
+  message     String
+  alertType   String
+  category    String?     // Add category field
+  entityId    String?     // Add entityId field
+  entityType  String?     // Add entityType field
+  acknowledged Boolean    @default(false) // Add acknowledged field
+  acknowledgedAt DateTime? // Add acknowledgedAt field
+  actionRequired Boolean  @default(false) // Add actionRequired field
+  severity    AuditSeverity
+  isRead      Boolean     @default(false)
+  userId      String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  createdBy   String
+
+  // Relations
+  company Company @relation(fields: [companyId], references: [id])
+  creator User    @relation(fields: [createdBy], references: [id])
+  
+  @@map("alerts")
+}
+
+// =============================================================================
+// DATA IMPORT/EXPORT & JOB MANAGEMENT
+// =============================================================================
+// Background jobs for data processing and file operations
+
+// Note: TrialBalance alias handled in service layer for legacy compatibility
+
+model ImportJob {
+  id          String         @id @default(cuid())
+  companyId   String
+  name        String
+  filename    String
+  filePath    String?        // Add filePath field
+  format      String?        // Add format field
+  dataType    String?
+  periodId    String?        // Add periodId field
+  options     Json?          // Add options field
+  status      ImportJobStatus @default(PENDING)
+  progress    Int            @default(0)
+  totalRecords Int?
+  processedRecords Int?
+  updatedRecords Int?        // Add updatedRecords field
+  errorRecords Int?
+  invalidRecords Int?        // Add invalidRecords field
+  createdRecords Int?
+  validRecords Int?          // Add validRecords field
+  skippedRecords Int?        // Add skippedRecords field
+  validationErrors Json?     // Add validationErrors field
+  startedAt   DateTime?
+  completedAt DateTime?
+  errorDetails Json?
+  error       String?
+  emailOnComplete String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  createdBy   String
+
+  creator User @relation("ImportJobCreator", fields: [createdBy], references: [id])
+  company Company @relation("ImportJobs", fields: [companyId], references: [id])
+  period  Period? @relation("ImportJobPeriod", fields: [periodId], references: [id])
+
+  @@map("import_jobs")
+}
+
+model ExportJob {
+  id          String         @id @default(cuid())
+  companyId   String
+  name        String
+  filename    String
+  format      String?        // Add format field
+  dataTypes   Json?          // Add dataTypes field
+  periodId    String?        // Add periodId field
+  startDate   DateTime?      // Add startDate field
+  endDate     DateTime?      // Add endDate field
+  options     Json?          // Add options field
+  scheduledFor DateTime?     // Add scheduledFor field
+  status      ExportJobStatus @default(PENDING)
+  progress    Int            @default(0)
+  totalRecords Int?
+  processedRecords Int?
+  startedAt   DateTime?
+  completedAt DateTime?
+  downloadUrl String?
+  expiresAt   DateTime?
+  filePath    String?
+  fileSize    BigInt?        // Add fileSize field
+  error       String?
+  emailOnComplete String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  createdBy   String
+
+  creator User @relation("ExportJobCreator", fields: [createdBy], references: [id])
+  company Company @relation("ExportJobs", fields: [companyId], references: [id])
+  period  Period? @relation("ExportJobPeriod", fields: [periodId], references: [id])
+
+  @@map("export_jobs")
+}
+
+// =============================================================================
+// REPORTING & CONFIGURATION MODELS
+// =============================================================================
+// Reports, templates, system configuration, and audit logging
+
+model Report {
+  id          String      @id @default(cuid())
+  companyId   String
+  periodId    String?
+  name        String
+  description String?
+  reportType  ReportType
+  templateId  String?
+  parameters  Json        @default("{}")
+  filters     Json?
+  configuration Json?
+  recipients  Json?
+  format      String?
+  schedule    Json?       // Add schedule field
+  generatedAt DateTime?
+  status      ReportStatus @default(DRAFT)
+  fileUrl     String?
+  isActive    Boolean     @default(true)  // Add isActive field
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  createdBy   String
+  updatedBy   String?     // Add updatedBy field
+
+  company Company @relation(fields: [companyId], references: [id])
+  period  Period? @relation(fields: [periodId], references: [id])
+  creator User    @relation("ReportCreator", fields: [createdBy], references: [id])
+
+  @@map("reports")
+}
+
+model Configuration {
+  id          String   @id @default(cuid())
+  companyId   String?
+  key         String
+  value       Json
+  name        String?   // Add name field
+  type        String?   // Add type field
+  settings    Json?     // Add settings field
+  description String?
+  category    String?
+  isSystem    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  updatedBy   String?
+
+  company Company? @relation(fields: [companyId], references: [id])
+  creator User?    @relation(fields: [createdBy], references: [id])
+
+  @@unique([companyId, key])
+  @@map("configurations")
+}
+
+model ImportTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  // Add description field
+  dataType    String
+  format      String?  // Add format field
+  fieldMapping Json    @default("{}")
+  fieldMappings Json?   // Add fieldMappings alias
+  defaultOptions Json?  // Add defaultOptions field
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String
+
+  @@map("import_templates")
+}
+
 model AuditLog {
-  id               String         @id @default(cuid())
-  
-  // Entity information
-  tableName        String
-  recordId         String
-  action           AuditAction
-  
+  id String @id @default(cuid())
+
+  // Required core fields
+  tableName  String
+  recordId   String 
+  action     AuditAction
+
+  // Optional entity information
+  eventType  String?     // Add eventType field
+  entityType String?     // Add entityType field  
+  entityId   String?     // Add entityId field
+
   // Change details
-  oldValues        Json?
-  newValues        Json?
-  
+  oldValues Json?
+  newValues Json?
+  hash      String? // Add hash field for audit trail integrity
+  previousHash String? // Add previousHash field
+
   // User context
-  userId           String?
-  userEmail        String?
-  
+  userId    String?
+  userEmail String?
+  companyId String?     // Add companyId field
+  periodId  String?     // Add periodId field
+
   // Session context
-  sessionId        String?
-  ipAddress        String?
-  userAgent        String?
-  
+  sessionId String?
+  ipAddress String?
+  userAgent String?
+
   // Request context
-  requestId        String?
-  endpoint         String?
-  httpMethod       String?
-  
+  requestId  String?
+  endpoint   String?
+  httpMethod String?
+
+  // Description and metadata  
+  description String?   // Add description field
+  tags        String?   // Add tags field (JSON string)
+  metadata    String?   // Add metadata field (JSON string)
+  severity    AuditSeverity @default(LOW)
+  status      String?   // Add status field
+
   // Timing
-  timestamp        DateTime       @default(now())
+  timestamp        DateTime @default(now())
   processingTimeMs Int?
-  
+
   // Classification
-  riskLevel        RiskLevel      @default(LOW)
-  complianceRelevant Boolean      @default(false)
-  
+  riskLevel          RiskLevel @default(LOW)
+  complianceRelevant Boolean   @default(false)
+
   // Retention
-  retentionPeriod  String         @default("7 years")
-  archivedAt       DateTime?
+  retentionPeriod String    @default("7 years")
+  archivedAt      DateTime?
+
+  // Relations
+  user    User?    @relation("AuditLogUser", fields: [userId], references: [id], onDelete: SetNull)
+  company Company? @relation("AuditLogCompany", fields: [companyId], references: [id], onDelete: SetNull)
+  period  Period?  @relation("AuditLogPeriod", fields: [periodId], references: [id], onDelete: SetNull)
 
   @@map("audit_logs")
 }
 
-// Enums
+// =============================================================================
+// ENUM DEFINITIONS
+// =============================================================================
+// All enumerated types used throughout the system
 enum TenantStatus {
   ACTIVE
+  INACTIVE
   SUSPENDED
   CANCELLED
   TRIAL
@@ -546,6 +883,8 @@ enum CompanyStatus {
 
 enum PeriodStatus {
   OPEN
+  PLANNING
+  IN_PROGRESS
   CLOSED
   ARCHIVED
 }
@@ -591,6 +930,7 @@ enum ProcedureStatus {
   IN_PROGRESS
   COMPLETED
   ON_HOLD
+  REVIEW_REQUIRED
 }
 
 enum ReviewStatus {
@@ -619,6 +959,7 @@ enum UserRole {
   SENIOR_AUDITOR
   AUDITOR
   INTERN
+  USER
 }
 
 enum AuditAction {
@@ -656,4 +997,68 @@ enum DocumentStatus {
   REVIEWED
   APPROVED
   REJECTED
+}
+
+enum ImportJobStatus {
+  PENDING
+  VALIDATING
+  IN_PROGRESS
+  PROCESSING
+  COMPLETED
+  FAILED
+  PARTIAL
+  CANCELLED
+}
+
+enum ExportJobStatus {
+  PENDING
+  IN_PROGRESS
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum ReportType {
+  FINANCIAL_POSITION
+  INCOME_STATEMENT
+  CASH_FLOW
+  TRIAL_BALANCE
+  GENERAL_LEDGER
+  AGED_RECEIVABLES
+  AGED_PAYABLES
+  JOURNAL_REGISTER
+  AUDIT_SUMMARY
+  PROCEDURE_STATUS
+  FINDINGS_REPORT
+  COMPLIANCE_REPORT
+  RISK_ASSESSMENT
+  BALANCE_SHEET
+  AUDIT_REPORT
+  MANAGEMENT_LETTER
+  CUSTOM
+}
+
+enum ReportStatus {
+  DRAFT
+  GENERATING
+  COMPLETED
+  FAILED
+}
+
+enum ReportFormat {
+  PDF
+  EXCEL
+  CSV
+  JSON
+}
+
+enum AuditSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+  WARNING
+  INFO
+  ERROR
 }

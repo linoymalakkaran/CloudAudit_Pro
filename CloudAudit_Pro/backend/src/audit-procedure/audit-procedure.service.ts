@@ -433,7 +433,7 @@ export class AuditProcedureService {
         critical: 0,
       }, // Would be calculated from actual risk data
       completionRate: Math.round(completionRate * 100) / 100,
-      averageHours: avgHours._avg.actualHours || 0,
+      averageHours: Number(avgHours._avg.actualHours) || 0,
       overdueProcedures,
     };
   }

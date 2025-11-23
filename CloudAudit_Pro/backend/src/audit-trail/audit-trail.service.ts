@@ -15,11 +15,11 @@ import {
   AuditStatus,
 } from './dto/audit-trail.dto';
 import * as crypto from 'crypto';
-import * as ExcelJS from '../stubs/exceljs';
+import * as ExcelJS from 'exceljs';
 import * as fs from 'fs';
 import * as path from 'path';
 
-interface AuditLog {
+export interface AuditLog {
   id: string;
   eventType: AuditEventType;
   entityType: AuditEntityType;
@@ -42,7 +42,7 @@ interface AuditLog {
   previousHash?: string;
 }
 
-interface AuditAnalytics {
+export interface AuditAnalytics {
   totalEvents: number;
   eventsByType: Record<string, number>;
   eventsByEntity: Record<string, number>;
@@ -80,6 +80,12 @@ export class AuditTrailService {
 
     const auditLog = await this.database.auditLog.create({
       data: {
+        // Required core fields
+        tableName: createAuditLogDto.entityType || 'unknown',
+        recordId: createAuditLogDto.entityId || 'unknown',
+        action: 'ACCESS', // Default action - should be mapped from eventType
+        
+        // Optional fields from service
         eventType: createAuditLogDto.eventType,
         entityType: createAuditLogDto.entityType,
         entityId: createAuditLogDto.entityId,
@@ -90,7 +96,7 @@ export class AuditTrailService {
         oldValues: createAuditLogDto.oldValues ? JSON.stringify(createAuditLogDto.oldValues) : null,
         newValues: createAuditLogDto.newValues ? JSON.stringify(createAuditLogDto.newValues) : null,
         severity: createAuditLogDto.severity || AuditSeverity.LOW,
-        status: AuditStatus.ACTIVE,
+        status: 'ACTIVE', // Use string instead of enum
         ipAddress: createAuditLogDto.ipAddress,
         userAgent: createAuditLogDto.userAgent,
         sessionId: createAuditLogDto.sessionId,
@@ -155,7 +161,7 @@ export class AuditTrailService {
             select: { id: true, name: true },
           },
           period: {
-            select: { id: true, name: true, year: true },
+            select: { id: true, name: true, fiscalYear: true },
           },
         },
       }),
@@ -184,7 +190,7 @@ export class AuditTrailService {
           select: { id: true, name: true },
         },
         period: {
-          select: { id: true, name: true, year: true },
+          select: { id: true, name: true, fiscalYear: true },
         },
       },
     });

@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { GetUser } from '../auth/get-user.decorator';
-import { AuditTrailService } from './audit-trail.service';
+import { AuditTrailService, AuditLog, AuditAnalytics } from './audit-trail.service';
 import {
   CreateAuditLogDto,
   AuditLogQueryDto,
@@ -49,7 +49,7 @@ export class AuditTrailController {
     @Query() query: AuditLogQueryDto,
     @GetUser('id') userId: string,
   ): Promise<any> {
-    return this.auditTrailService.getAuditLogs(query, userId);
+    return this.auditTrailService.getAuditLogs(query);
   }
 
   @Get(':id')

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../database/prisma.service';
-import { Prisma, Tenant, TenantStatus } from '../stubs/prisma-types';
+import { Prisma, Tenant, TenantStatus } from '@prisma/client';
 
 @Injectable()
 export class TenantService {
@@ -33,6 +33,7 @@ export class TenantService {
       data: {
         name: data.name,
         subdomain: data.subdomain,
+        databaseName: `tenant_${data.subdomain}`,
         status: TenantStatus.ACTIVE,
         settings: {
           timezone: data.timezone || 'UTC',
@@ -88,7 +89,7 @@ export class TenantService {
     return this.prisma.tenant.update({
       where: { id: tenantId },
       data: { 
-        settings,
+        settings: settings as any,
         updatedAt: new Date(),
       },
     });

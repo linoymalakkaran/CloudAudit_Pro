@@ -86,12 +86,18 @@ export class DocumentService {
 
     const document = await this.prisma.document.create({
       data: {
-        ...createDocumentDto,
+        name: createDocumentDto.name,
+        description: createDocumentDto.description,
+        type: createDocumentDto.type,
+        companyId: createDocumentDto.companyId,
+        periodId: createDocumentDto.periodId,
+        accountId: createDocumentDto.accountId,
         tenantId,
         filePath,
         fileSize,
         mimeType,
-        originalName,
+        originalFilename: originalName,
+        uploadedBy: 'system', // Default uploader
         tags: createDocumentDto.tags || [],
         status: 'PENDING',
       },
@@ -105,7 +111,7 @@ export class DocumentService {
         account: {
           select: { id: true, accountNumber: true, name: true },
         },
-        uploadedBy: {
+        uploader: {
           select: { id: true, email: true, firstName: true, lastName: true },
         },
       },
@@ -183,7 +189,7 @@ export class DocumentService {
           account: {
             select: { id: true, accountNumber: true, name: true },
           },
-          uploadedBy: {
+          uploader: {
             select: { id: true, email: true, firstName: true, lastName: true },
           },
         },
@@ -215,7 +221,7 @@ export class DocumentService {
         account: {
           select: { id: true, accountNumber: true, name: true },
         },
-        uploadedBy: {
+        uploader: {
           select: { id: true, email: true, firstName: true, lastName: true },
         },
       },
@@ -244,7 +250,7 @@ export class DocumentService {
         account: {
           select: { id: true, accountNumber: true, name: true },
         },
-        uploadedBy: {
+        uploader: {
           select: { id: true, email: true, firstName: true, lastName: true },
         },
       },
@@ -286,7 +292,7 @@ export class DocumentService {
       const fileBuffer = await fs.readFile(document.filePath);
       return {
         buffer: fileBuffer,
-        filename: document.originalName || `document_${id}`,
+        filename: document.originalFilename || `document_${id}`,
         mimeType: document.mimeType || 'application/octet-stream',
       };
     } catch (error) {

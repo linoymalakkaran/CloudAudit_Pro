@@ -54,7 +54,7 @@ async function bootstrap() {
   }));
 
   // API versioning
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('api');
 
   // Swagger documentation
   if (configService.get('NODE_ENV') !== 'production') {
