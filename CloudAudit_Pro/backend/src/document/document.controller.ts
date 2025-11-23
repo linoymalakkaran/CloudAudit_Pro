@@ -29,7 +29,7 @@ import { CreateDocumentDto, UpdateDocumentDto, DocumentQueryDto } from './dto/do
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantId } from '../auth/decorators/tenant-id.decorator';
 
-@ApiTags('Documents')
+@ApiTags('documents')
 @Controller('documents')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

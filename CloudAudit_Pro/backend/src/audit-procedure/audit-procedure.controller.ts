@@ -25,10 +25,10 @@ import {
 } from './dto/audit-procedure.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@ApiTags('Audit Procedures')
+@ApiTags('procedures')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('audit-procedures')
+@Controller('procedures')
 export class AuditProcedureController {
   constructor(private readonly auditProcedureService: AuditProcedureService) {}
 
