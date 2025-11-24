@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CloudAudit Pro - Tenant {{#eq status "APPROVED"}}Approved{{else}}Update{{/eq}}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f4f4f4;">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <table cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: left;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                                CloudAudit Pro
+                            </h1>
+                            <p style="margin: 8px 0 0 0; color: #ffffff; font-size: 16px; opacity: 0.9;">
+                                Enterprise Audit Management Platform
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            {{#eq status "APPROVED"}}
+                            <h2 style="margin: 0 0 20px 0; color: #28a745; font-size: 24px; font-weight: bold;">
+                                🎉 Congratulations! Your tenant has been approved
+                            </h2>
+                            {{else}}
+                            <h2 style="margin: 0 0 20px 0; color: #6c757d; font-size: 24px; font-weight: bold;">
+                                📧 Update on your tenant application
+                            </h2>
+                            {{/eq}}
+                            
+                            <p style="margin: 0 0 20px 0; color: #333; font-size: 16px; line-height: 1.6;">
+                                Dear <strong>{{adminName}}</strong>,
+                            </p>
+                            
+                            {{#eq status "APPROVED"}}
+                            <p style="margin: 0 0 25px 0; color: #333; font-size: 16px; line-height: 1.6;">
+                                We're excited to inform you that your CloudAudit Pro tenant "<strong style="color: #667eea;">{{tenantName}}</strong>" has been approved and is now active!
+                            </p>
+                            
+                            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 25px 0;">
+                                <tr>
+                                    <td style="background-color: #d4edda; border-left: 5px solid #28a745; padding: 20px; border-radius: 5px;">
+                                        <p style="margin: 0; color: #155724; font-size: 16px; font-weight: bold;">
+                                            ✅ Your tenant is now live and ready to use!
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 35px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{loginUrl}}" style="display: inline-block; background-color: #28a745; color: #ffffff; font-size: 16px; font-weight: bold; text-decoration: none; padding: 15px 40px; border-radius: 8px; text-align: center; box-shadow: 0 3px 6px rgba(40, 167, 69, 0.3);">
+                                            Access Your Dashboard
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            {{else}}
+                            <p style="margin: 0 0 25px 0; color: #333; font-size: 16px; line-height: 1.6;">
+                                Thank you for your interest in CloudAudit Pro. We have reviewed your tenant application for "<strong style="color: #667eea;">{{tenantName}}</strong>".
+                            </p>
+                            
+                            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 25px 0;">
+                                <tr>
+                                    <td style="background-color: #fff3cd; border-left: 5px solid #ffc107; padding: 20px; border-radius: 5px;">
+                                        <p style="margin: 0 0 10px 0; color: #856404; font-size: 16px; font-weight: bold;">
+                                            Status: {{status}}
+                                        </p>
+                                        {{#if reviewNotes}}
+                                        <p style="margin: 0; color: #856404; font-size: 14px; line-height: 1.5;">
+                                            <strong>Notes:</strong> {{reviewNotes}}
+                                        </p>
+                                        {{/if}}
+                                    </td>
+                                </tr>
+                            </table>
+                            {{/eq}}
+                            
+                            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 25px 0;">
+                                <tr>
+                                    <td style="background-color: #f8f9fa; padding: 25px; border-radius: 8px;">
+                                        <h3 style="margin: 0 0 15px 0; color: #495057; font-size: 18px;">Need Help?</h3>
+                                        <p style="margin: 0; color: #495057; font-size: 14px; line-height: 1.6;">
+                                            Contact our support team at 
+                                            <a href="mailto:{{supportEmail}}" style="color: #007bff; text-decoration: none; font-weight: bold;">{{supportEmail}}</a>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

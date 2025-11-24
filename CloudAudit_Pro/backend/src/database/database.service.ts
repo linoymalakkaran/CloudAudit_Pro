@@ -3,13 +3,16 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class DatabaseService extends PrismaClient implements OnModuleInit {
+  private isMockMode = false;
+  private mockDb: any = null;
+
   // Create aliases for legacy service compatibility
   get account() {
-    return this.accountHead;
+    return this.isMockMode ? this.mockDb.account : this.accountHead;
   }
   
   get trialBalance() {
-    return this.trialBalanceEntry;
+    return this.isMockMode ? this.mockDb.trialBalance : this.trialBalanceEntry;
   }
   
   async onModuleInit() {
@@ -18,14 +21,50 @@ export class DatabaseService extends PrismaClient implements OnModuleInit {
       console.log('💾 Database connected successfully');
     } catch (error) {
       console.error('❌ Database connection failed:', error);
-      // Fallback to mock for development
-      console.log('💡 Falling back to mock database service');
-      Object.assign(this, this.createMockDatabase());
+      // Enable mock mode for development
+      console.log('💡 Enabling mock database mode');
+      this.isMockMode = true;
+      this.mockDb = this.createMockDatabase();
     }
   }
 
   async onModuleDestroy() {
-    await this.$disconnect();
+    if (!this.isMockMode) {
+      await this.$disconnect();
+    }
+  }
+
+  // Override Prisma methods to handle mock mode
+  get user() {
+    return this.isMockMode ? this.mockDb.user : super.user;
+  }
+
+  get company() {
+    return this.isMockMode ? this.mockDb.company : super.company;
+  }
+
+  get tenant() {
+    return this.isMockMode ? this.mockDb.tenant : super.tenant;
+  }
+
+  get tenantUser() {
+    return this.isMockMode ? this.mockDb.tenantUser : super.tenantUser;
+  }
+
+  get procedure() {
+    return this.isMockMode ? this.mockDb.procedure : super.procedure;
+  }
+
+  get document() {
+    return this.isMockMode ? this.mockDb.document : super.document;
+  }
+
+  get report() {
+    return this.isMockMode ? this.mockDb.report : super.report;
+  }
+
+  get auditLog() {
+    return this.isMockMode ? this.mockDb.auditLog : super.auditLog;
   }
 
   private createMockDatabase() {

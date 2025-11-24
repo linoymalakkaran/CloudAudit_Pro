@@ -119,74 +119,130 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    const { email, password, firstName, lastName, tenantSubdomain } = registerDto;
+    const { email, password, firstName, lastName, companyName, jobTitle, department } = registerDto;
+    let { tenantSubdomain } = registerDto;
 
-    // Check if user already exists
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email },
-    });
+    try {
+      // Check if user already exists in either users or tenant_users table
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email },
+      });
 
-    if (existingUser) {
-      throw new BadRequestException('User with this email already exists');
-    }
+      const existingTenantUser = await this.prisma.tenantUser.findFirst({
+        where: { email },
+      });
 
-    // Hash password
-    const saltRounds = 12;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+      if (existingUser || existingTenantUser) {
+        throw new BadRequestException('User with this email already exists');
+      }
 
-    let user: any;
-    let tenantId: string | undefined;
+      // Hash password
+      const saltRounds = 12;
+      const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    if (tenantSubdomain) {
-      // Register as tenant user
-      const tenant = await this.prisma.tenant.findUnique({
+      // If tenantSubdomain is provided, clean it up (remove domain part if present)
+      if (tenantSubdomain) {
+        tenantSubdomain = tenantSubdomain.split('.')[0].toLowerCase();
+      } else {
+        // Generate subdomain from company name if not provided
+        tenantSubdomain = companyName
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')
+          .substring(0, 30);
+      }
+
+      // Check if tenant subdomain already exists
+      const existingTenant = await this.prisma.tenant.findUnique({
         where: { subdomain: tenantSubdomain },
       });
 
-      if (!tenant) {
-        throw new BadRequestException('Invalid tenant subdomain');
+      if (existingTenant) {
+        throw new BadRequestException('Tenant subdomain already exists. Please choose a different subdomain.');
       }
 
-      tenantId = tenant.id;
+      // Start transaction to create tenant and tenant user in PENDING status
+      const result = await this.prisma.$transaction(async (prisma) => {
+        // Create tenant with PENDING status
+        const tenant = await prisma.tenant.create({
+          data: {
+            name: companyName,
+            subdomain: tenantSubdomain,
+            databaseName: `tenant_${tenantSubdomain}`,
+            subscriptionTier: 'trial',
+            status: 'PENDING',
+            approvalStatus: 'PENDING',
+            trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days trial
+            billingEmail: email,
+            contactInfo: {
+              email,
+              firstName,
+              lastName,
+            },
+          },
+        });
 
-      user = await this.prisma.user.create({
-        data: {
-          email,
-          passwordHash,
-          firstName,
-          lastName,
-          role: 'AUDITOR', // Default role
-          isActive: true,
-        },
+        // Create tenant user (organization owner) with PENDING status
+        const tenantUser = await prisma.tenantUser.create({
+          data: {
+            tenantId: tenant.id,
+            email,
+            passwordHash,
+            firstName,
+            lastName,
+            role: 'ADMIN', // Organization owner
+            status: 'PENDING',
+            approvalStatus: 'PENDING',
+            isActive: false, // Will be activated upon approval
+          },
+        });
+
+        // Create tenant approval request
+        const approvalRequest = await prisma.tenantApprovalRequest.create({
+          data: {
+            tenantId: tenant.id,
+            requestedBy: tenantUser.id,
+            status: 'PENDING',
+          },
+        });
+
+        return { tenant, tenantUser, approvalRequest };
       });
-    } else {
-      // Register as system user (for tenant management)
-      user = await this.prisma.tenantUser.create({
-        data: {
-          tenantId: '', // Will be set when creating tenant
-          email,
-          passwordHash,
-          firstName,
-          lastName,
-          role: 'admin',
-          isActive: true,
+
+      const { tenant, tenantUser } = result;
+
+      // Return pending status instead of tokens
+      return {
+        message: 'Registration submitted successfully. Your application is pending approval.',
+        status: 'PENDING_APPROVAL',
+        tenant: {
+          id: tenant.id,
+          name: tenant.name,
+          subdomain: tenant.subdomain,
+          status: tenant.status,
         },
-      });
+        user: {
+          id: tenantUser.id,
+          email: tenantUser.email,
+          firstName: tenantUser.firstName,
+          lastName: tenantUser.lastName,
+          status: tenantUser.status,
+        },
+        estimatedReviewTime: '24-48 hours',
+      };
+    } catch (error) {
+      console.error('Registration error details:', error);
+      
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      
+      // Log the full error for debugging
+      console.error('Full error stack:', error.stack);
+      
+      throw new BadRequestException('Failed to create organization. Please try again.');
     }
-
-    const tokens = await this.generateTokens(user, tenantId);
-
-    return {
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-        tenantId,
-      },
-      ...tokens,
-    };
   }
 
   async refreshToken(refreshToken: string) {

@@ -20,6 +20,98 @@ datasource db {
 }
 
 // =============================================================================
+// SUPER ADMIN & APPROVAL WORKFLOW MODELS
+// =============================================================================
+// System-level administration and approval workflows
+
+model SuperAdmin {
+  id           String @id @default(cuid())
+  email        String @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  role         String @default("SUPER_ADMIN")
+  isActive     Boolean @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  tenantApprovals TenantApprovalRequest[]
+
+  @@map("super_admins")
+}
+
+model TenantApprovalRequest {
+  id          String @id @default(cuid())
+  tenantId    String
+  requestedBy String
+  status      TenantApprovalStatus @default(PENDING)
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  reviewNotes String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  requester TenantUser @relation(fields: [requestedBy], references: [id])
+  reviewer  SuperAdmin? @relation(fields: [reviewedBy], references: [id])
+
+  @@map("tenant_approval_requests")
+}
+
+model UserApprovalRequest {
+  id            String @id @default(cuid())
+  tenantId      String
+  userId        String
+  requestedBy   String
+  approvalType  UserApprovalType @default(REGISTRATION)
+  status        UserApprovalStatus @default(PENDING)
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  reviewNotes   String?
+  requestedRole String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      TenantUser @relation("UserRequests", fields: [userId], references: [id], onDelete: Cascade)
+  requester TenantUser @relation("RequestedBy", fields: [requestedBy], references: [id])
+  reviewer  TenantUser? @relation("ReviewedBy", fields: [reviewedBy], references: [id])
+
+  @@map("user_approval_requests")
+}
+
+enum TenantApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REQUIRES_CHANGES
+}
+
+enum UserApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REQUIRES_CHANGES
+}
+
+enum UserApprovalType {
+  REGISTRATION
+  ROLE_CHANGE
+  ACCESS_REQUEST
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+// =============================================================================
 // MULTI-TENANT MANAGEMENT MODELS
 // =============================================================================
 // Core tenant infrastructure for SaaS architecture
@@ -30,17 +122,21 @@ model Tenant {
   databaseName String @unique
 
   // Subscription details
-  subscriptionTier String @default("standard")
+  subscriptionTier String @default("trial")
   maxUsers         Int    @default(10)
   maxCompanies     Int    @default(5)
   storageLimitGb   Int    @default(10)
 
   // Status and lifecycle
-  status      TenantStatus @default(ACTIVE)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  suspendedAt DateTime?
-  trialEndsAt DateTime?
+  status           TenantStatus @default(PENDING)
+  approvalStatus   TenantApprovalStatus @default(PENDING)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  suspendedAt      DateTime?
+  trialEndsAt      DateTime?
+  approvedBy       String?
+  approvedAt       DateTime?
+  rejectedReason   String?
 
   // Billing
   billingEmail   String?
@@ -55,29 +151,60 @@ model Tenant {
   deletedAt    DateTime?
 
   // Relations
-  users         TenantUser[]
-  subscriptions Subscription[]
-  usageMetrics  UsageMetric[]
-  documents     Document[]
-  systemUsers   User[]
-  accountHeads  AccountHead[] @relation("TenantAccountHeads")
+  users                 TenantUser[]
+  subscriptions         Subscription[]
+  usageMetrics          UsageMetric[]
+  documents             Document[]
+  systemUsers           User[]
+  accountHeads          AccountHead[] @relation("TenantAccountHeads")
+  approvalRequests      TenantApprovalRequest[]
+  userApprovalRequests  UserApprovalRequest[]
 
   @@map("tenants")
 }
 
 model TenantUser {
-  id           String    @id @default(cuid())
-  tenantId     String
-  email        String
-  passwordHash String
-  firstName    String?
-  lastName     String?
-  role         String    @default("user")
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  lastLoginAt  DateTime?
+  id               String @id @default(cuid())
+  tenantId         String
+  email            String
+  passwordHash     String
+  firstName        String?
+  lastName         String?
+  role             String @default("USER")
+  status           UserStatus @default(PENDING)
+  approvalStatus   UserApprovalStatus @default(PENDING)
+  isActive         Boolean @default(false)
+  
+  // Invitation and approval tracking
+  invitedBy        String?
+  invitedAt        DateTime?
+  approvedBy       String?
+  approvedAt       DateTime?
+  
+  // Additional user information
+  jobTitle         String?
+  department       String?
+  phoneNumber      String?
+  
+  // Password management
+  requirePasswordChange Boolean @default(false)
+  passwordResetAt       DateTime?
+  passwordResetBy       String?
+  
+  // Account lifecycle
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt @default(now())
+  lastLoginAt      DateTime?
+  isDeleted        Boolean @default(false)
+  deletedAt        DateTime?
+  deletedBy        String?
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  // Relations
+  tenant                    Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  approvalRequests         UserApprovalRequest[] @relation("UserRequests")
+  requestedApprovals       UserApprovalRequest[] @relation("RequestedBy")
+  reviewedApprovals        UserApprovalRequest[] @relation("ReviewedBy")
+  tenantApprovalRequests   TenantApprovalRequest[]
 
   @@unique([tenantId, email])
   @@map("tenant_users")
@@ -862,11 +989,13 @@ model AuditLog {
 // =============================================================================
 // All enumerated types used throughout the system
 enum TenantStatus {
+  PENDING
   ACTIVE
   INACTIVE
   SUSPENDED
   CANCELLED
   TRIAL
+  REJECTED
 }
 
 enum SubscriptionStatus {

@@ -18,6 +18,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { SystemConfigModule } from './config/config.module';
 import { ImportExportModule } from './import-export/import-export.module';
 import { AuditTrailModule } from './audit-trail/audit-trail.module';
+import { SuperAdminModule } from './super-admin/super-admin.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { AuditTrailModule } from './audit-trail/audit-trail.module';
     DocumentModule,
     AuditProcedureModule,
     ReportsModule,
+    SuperAdminModule,
+    EmailModule,
   ],
 })
 export class AppModule {}
