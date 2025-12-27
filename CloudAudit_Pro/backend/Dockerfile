@@ -1,89 +1,65 @@
-# Multi-stage Dockerfile for CloudAudit Pro Backend
-FROM node:18-alpine AS base
+# Multi-stage Dockerfile for CloudAudit Pro Backend (Monorepo)
+# Optimized for npm workspaces monorepo structure
+
+FROM node:18-slim
+LABEL maintainer="CloudAudit Pro Team"
+LABEL description="CloudAudit Pro Backend API - NestJS"
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Install required runtime tools
+# - dumb-init: proper signal handling
+# - curl: used by container healthcheck
+# - ca-certificates + openssl: required by Prisma to download engines over TLS
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends dumb-init curl ca-certificates openssl && \
+  update-ca-certificates && \
+  rm -rf /var/lib/apt/lists/*
 
-# Create app user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001
+# Create non-root user
+RUN groupadd -r nodejs && useradd -r -g nodejs nextjs
 
-# Development stage
-FROM base AS development
-ENV NODE_ENV=development
+# Copy root-level package files (for monorepo workspace)
+COPY --chown=nextjs:nodejs package*.json ./
+COPY --chown=nextjs:nodejs .npmrc* ./
 
-# Install all dependencies (including devDependencies)
-RUN npm ci
+# Copy backend package files
+COPY --chown=nextjs:nodejs backend/package*.json ./backend/
 
-# Copy source code
-COPY . .
-COPY .env.example .env
+# Install dependencies (production + dev)
+# Clean install without optional dependencies
+RUN npm ci --workspaces --include-workspace-root --legacy-peer-deps 2>&1 | grep -v "^npm warn"
 
-# Generate Prisma client
+# Copy backend source code
+COPY --chown=nextjs:nodejs backend ./backend
+
+# Copy prisma schema for database migrations
+COPY --chown=nextjs:nodejs backend/prisma ./backend/prisma
+
+# Set backend as working directory
+WORKDIR /app/backend
+
+# Generate Prisma client (requires OpenSSL and CA certs present)
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 RUN npx prisma generate
-
-# Change ownership to app user
-RUN chown -R nextjs:nodejs /app
-USER nextjs
-
-# Expose port
-EXPOSE 3001
-
-# Start development server
-CMD ["npm", "run", "start:dev"]
-
-# Build stage
-FROM base AS builder
-ENV NODE_ENV=production
-
-# Install all dependencies
-RUN npm ci
-
-# Copy source code
-COPY . .
-
-# Generate Prisma client
-RUN npx prisma generate
+ENV NODE_TLS_REJECT_UNAUTHORIZED=1
 
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine AS production
-ENV NODE_ENV=production
-
-WORKDIR /app
-
-# Create app user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001
-
-# Copy package files
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
-
-# Copy built application from builder stage
-COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
-
-# Create uploads directory
-RUN mkdir -p uploads && chown nextjs:nodejs uploads
-
 # Switch to non-root user
 USER nextjs
 
-# Expose port
-EXPOSE 3001
+# Expose API port
+EXPOSE 3001 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:3001/health || exit 1
 
-# Start production server
+# Use dumb-init to handle signals
+ENTRYPOINT ["/usr/sbin/dumb-init", "--"]
+
+# Start application
 CMD ["npm", "run", "start:prod"]

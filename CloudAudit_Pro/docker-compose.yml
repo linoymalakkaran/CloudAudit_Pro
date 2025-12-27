@@ -44,12 +44,12 @@ services:
   # Backend API (NestJS)
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-      target: development
+      context: .
+      dockerfile: ./backend/Dockerfile
     container_name: cloudaudit-backend
     ports:
       - "8000:8000"
+      - "3001:3001"
     environment:
       NODE_ENV: development
       PORT: 8000
@@ -64,8 +64,6 @@ services:
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
     volumes:
-      - ./backend:/app
-      - /app/node_modules
       - ./uploads:/app/uploads
     depends_on:
       postgres:
@@ -75,7 +73,6 @@ services:
     networks:
       - cloudaudit-network
     restart: unless-stopped
-    command: npm run start:dev
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -85,9 +82,8 @@ services:
   # Frontend (React)
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      target: development
+      context: .
+      dockerfile: ./frontend/Dockerfile
     container_name: cloudaudit-frontend
     ports:
       - "3000:3000"
@@ -95,17 +91,16 @@ services:
       REACT_APP_API_URL: http://localhost:8000/api
       REACT_APP_WEBSOCKET_URL: ws://localhost:8000
       REACT_APP_ENV: development
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     depends_on:
       - backend
     networks:
       - cloudaudit-network
     restart: unless-stopped
-    command: npm run dev
-    stdin_open: true
-    tty: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # NGINX Reverse Proxy
   nginx:

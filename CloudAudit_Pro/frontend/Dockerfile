@@ -1,69 +1,63 @@
-# Multi-stage Dockerfile for CloudAudit Pro Frontend
-FROM node:18-alpine AS base
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Create app user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001
-
-# Development stage
-FROM base AS development
-ENV NODE_ENV=development
-
-# Install all dependencies
-RUN npm ci
-
-# Copy source code
-COPY . .
-
-# Change ownership to app user
-RUN chown -R nextjs:nodejs /app
-USER nextjs
-
-# Expose port
-EXPOSE 3000
-
-# Start development server
-CMD ["npm", "run", "dev"]
+# Multi-stage Dockerfile for CloudAudit Pro Frontend (Monorepo)
+# Optimized for npm workspaces monorepo structure
 
 # Build stage
-FROM base AS builder
-ENV NODE_ENV=production
+FROM node:18-slim AS builder
+LABEL maintainer="CloudAudit Pro Team"
+LABEL description="CloudAudit Pro Frontend Builder - React + Vite"
 
-# Install all dependencies
-RUN npm ci
+WORKDIR /app
 
-# Copy source code
-COPY . .
+# Copy root-level package files (for monorepo workspace)
+COPY package*.json ./
+COPY .npmrc* ./
+
+# Copy frontend package files
+COPY frontend/package*.json ./frontend/
+
+# Install dependencies using npm ci (clean install)
+# Uses lock file for exact versions
+RUN npm ci --workspaces --include-workspace-root --legacy-peer-deps 2>&1 | grep -v "^npm warn"
+
+# Copy frontend source code
+COPY frontend ./frontend
+
+# Set frontend as working directory
+WORKDIR /app/frontend
 
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine AS production
+# Production stage - lightweight nginx
+FROM nginx:alpine
+LABEL maintainer="CloudAudit Pro Team"
+LABEL description="CloudAudit Pro Frontend - Production Server"
+
+# Install curl for health checks
+RUN apk add --no-cache curl
 
 # Copy built application from builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/frontend/dist /usr/share/nginx/html
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy nginx configuration for SPA routing
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Create non-root user for nginx
-RUN adduser -D -s /bin/sh www-data
+RUN addgroup -g 1001 nginx-user && \
+    adduser -D -s /bin/sh -G nginx-user nginx-user
 
 # Change ownership of nginx directories
-RUN chown -R www-data:www-data /usr/share/nginx/html && \
-    chown -R www-data:www-data /var/cache/nginx && \
-    chown -R www-data:www-data /var/log/nginx && \
-    chown -R www-data:www-data /etc/nginx/conf.d
+RUN chown -R nginx-user:nginx-user /usr/share/nginx/html && \
+    chown -R nginx-user:nginx-user /var/cache/nginx && \
+    chown -R nginx-user:nginx-user /var/log/nginx && \
+    chown -R nginx-user:nginx-user /etc/nginx/conf.d
+
+# Create pid directory with correct permissions
+RUN mkdir -p /var/run/nginx && \
+    chown -R nginx-user:nginx-user /var/run/nginx
 
 # Switch to non-root user
-USER www-data
+USER nginx-user
 
 # Expose port
 EXPOSE 3000

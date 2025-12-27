@@ -22,8 +22,8 @@ import {
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import '@fullcalendar/core/index.js';
-import '@fullcalendar/daygrid/index.js';
+import '@fullcalendar/core';
+import '@fullcalendar/daygrid';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../services/api';
 
