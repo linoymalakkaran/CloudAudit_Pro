@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
+import { LedgerService } from '../ledger/ledger.service';
+import { TrialBalanceService } from '../trial-balance/trial-balance.service';
 import { 
   GenerateStatementDto, 
   StatementFilterDto, 
@@ -8,6 +10,7 @@ import {
   ExportStatementDto 
 } from './dto/financial-statement.dto';
 import { Decimal } from '@prisma/client/runtime/library';
+import * as ExcelJS from 'exceljs';
 
 export interface StatementLineItem {
   id: string;
@@ -51,7 +54,11 @@ export interface FinancialStatement {
 
 @Injectable()
 export class FinancialStatementService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(
+    private readonly database: DatabaseService,
+    private readonly ledgerService: LedgerService,
+    private readonly trialBalanceService: TrialBalanceService,
+  ) {}
 
   async generateStatement(
     generateDto: GenerateStatementDto,

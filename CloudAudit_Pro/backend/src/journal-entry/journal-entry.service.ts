@@ -1,12 +1,16 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
+import { LedgerService } from '../ledger/ledger.service';
 import { CreateJournalEntryDto, UpdateJournalEntryDto, JournalEntryFilterDto } from './dto/journal-entry.dto';
 import { JournalStatus, JournalType } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class JournalEntryService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(
+    private readonly database: DatabaseService,
+    private readonly ledgerService: LedgerService,
+  ) {}
 
   async create(createJournalEntryDto: CreateJournalEntryDto, userId: string) {
     // Validate that debit and credit amounts are balanced
@@ -437,10 +441,12 @@ export class JournalEntryService {
       throw new BadRequestException('Can only post approved entries');
     }
 
-    return this.database.journalEntry.update({
+    // Update journal entry status to POSTED
+    const updatedEntry = await this.database.journalEntry.update({
       where: { id },
       data: {
         status: JournalStatus.POSTED,
+        isPosted: true,
         postedBy: userId,
         postedAt: new Date(),
         updatedBy: userId,
@@ -457,8 +463,29 @@ export class JournalEntryService {
             },
           },
         },
+        company: {
+          select: {
+            id: true,
+            name: true,
+            tenantId: true,
+          },
+        },
       },
     });
+
+    // Generate ledger entries
+    try {
+      await this.ledgerService.generateLedgerFromJournal(
+        id,
+        updatedEntry.company.tenantId || 'default',
+      );
+    } catch (error) {
+      // Log error but don't fail the posting
+      console.error('Error generating ledger entries:', error);
+      // TODO: Add proper error logging/monitoring
+    }
+
+    return updatedEntry;
   }
 
   async getStatistics(companyId?: string, periodId?: string, userId?: string) {

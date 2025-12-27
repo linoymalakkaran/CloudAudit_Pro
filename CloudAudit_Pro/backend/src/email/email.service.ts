@@ -180,4 +180,86 @@ export class EmailService {
       throw error;
     }
   }
+
+  async sendProcedureAssignmentNotification(
+    to: string,
+    assigneeName: string,
+    procedureName: string,
+    companyName: string,
+    dueDate?: Date,
+  ): Promise<void> {
+    try {
+      const dueDateStr = dueDate ? new Date(dueDate).toLocaleDateString() : 'No due date set';
+      const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
+      
+      const mailOptions = {
+        from: this.configService.get('SMTP_FROM') || this.configService.get('SMTP_USER'),
+        to,
+        subject: `Audit Procedure Assigned: ${procedureName}`,
+        html: `
+          <h2>New Audit Procedure Assignment</h2>
+          <p>Hi ${assigneeName},</p>
+          <p>You have been assigned a new audit procedure:</p>
+          <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #1976d2; margin: 15px 0;">
+            <strong>Procedure:</strong> ${procedureName}<br/>
+            <strong>Company:</strong> ${companyName}<br/>
+            <strong>Due Date:</strong> ${dueDateStr}
+          </div>
+          <p>Please log in to CloudAudit Pro to view the details and start working on this procedure.</p>
+          <a href="${frontendUrl}/audit/procedures" style="background-color: #1976d2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">View Procedure</a>
+          <p style="margin-top: 20px;">Thank you,<br/>CloudAudit Pro Team</p>
+        `,
+      };
+
+      await this.sendEmail(mailOptions);
+    } catch (error) {
+      this.logger.error('Failed to send procedure assignment notification', error.stack);
+      throw error;
+    }
+  }
+
+  async sendProcedureReviewNotification(
+    to: string,
+    assigneeName: string,
+    procedureName: string,
+    companyName: string,
+    reviewStatus: string,
+    reviewNotes?: string,
+  ): Promise<void> {
+    try {
+      const statusMessages = {
+        APPROVED: { title: 'Approved', color: '#28a745', message: 'Your procedure has been approved! Great work!' },
+        REJECTED: { title: 'Rejected', color: '#dc3545', message: 'Your procedure has been rejected and requires rework.' },
+        REQUIRES_REVISION: { title: 'Revision Required', color: '#ffc107', message: 'Your procedure requires some revisions before approval.' },
+      };
+
+      const statusInfo = statusMessages[reviewStatus] || statusMessages.REQUIRES_REVISION;
+      const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
+      
+      const mailOptions = {
+        from: this.configService.get('SMTP_FROM') || this.configService.get('SMTP_USER'),
+        to,
+        subject: `Procedure Review: ${procedureName} - ${statusInfo.title}`,
+        html: `
+          <h2 style="color: ${statusInfo.color}">Procedure Review: ${statusInfo.title}</h2>
+          <p>Hi ${assigneeName},</p>
+          <p>${statusInfo.message}</p>
+          <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid ${statusInfo.color}; margin: 15px 0;">
+            <strong>Procedure:</strong> ${procedureName}<br/>
+            <strong>Company:</strong> ${companyName}<br/>
+            <strong>Status:</strong> ${statusInfo.title}
+            ${reviewNotes ? `<br/><br/><strong>Reviewer Notes:</strong><br/>${reviewNotes}` : ''}
+          </div>
+          <p>Please log in to CloudAudit Pro to view the full details.</p>
+          <a href="${frontendUrl}/audit/procedures" style="background-color: #1976d2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">View Procedure</a>
+          <p style="margin-top: 20px;">Thank you,<br/>CloudAudit Pro Team</p>
+        `,
+      };
+
+      await this.sendEmail(mailOptions);
+    } catch (error) {
+      this.logger.error('Failed to send procedure review notification', error.stack);
+      throw error;
+    }
+  }
 }

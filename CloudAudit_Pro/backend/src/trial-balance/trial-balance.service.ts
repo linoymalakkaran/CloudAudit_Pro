@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
+import { LedgerService } from '../ledger/ledger.service';
 import { 
   GenerateTrialBalanceDto, 
   TrialBalanceFilterDto, 
@@ -21,6 +22,12 @@ interface TrialBalanceLineItem {
   isActive: boolean;
   level: number;
   parentAccountId?: string;
+  // Enhanced fields from ledger
+  openingBalance?: string;
+  periodDebit?: string;
+  periodCredit?: string;
+  closingBalance?: string;
+  transactionCount?: number;
 }
 
 export interface TrialBalanceReport {
@@ -41,12 +48,20 @@ export interface TrialBalanceReport {
     isBalanced: boolean;
     accountCount: number;
     activeAccountCount: number;
+    // Enhanced summary
+    totalOpeningBalance?: string;
+    totalPeriodDebit?: string;
+    totalPeriodCredit?: string;
+    totalClosingBalance?: string;
   };
 }
 
 @Injectable()
 export class TrialBalanceService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(
+    private readonly database: DatabaseService,
+    private readonly ledgerService: LedgerService,
+  ) {}
 
   async generateTrialBalance(
     generateDto: GenerateTrialBalanceDto,
@@ -115,9 +130,19 @@ export class TrialBalanceService {
     const lineItems: TrialBalanceLineItem[] = [];
     let totalDebits = new Decimal(0);
     let totalCredits = new Decimal(0);
+    let totalOpeningBalance = new Decimal(0);
+    let totalPeriodDebit = new Decimal(0);
+    let totalPeriodCredit = new Decimal(0);
+    let totalClosingBalance = new Decimal(0);
 
     for (const account of accounts) {
-      const balance = await this.calculateAccountBalance(account.id, asOfDate);
+      // Use enhanced ledger-based calculation
+      const balance = await this.calculateAccountBalanceFromLedger(
+        account.id,
+        generateDto.companyId,
+        generateDto.periodId,
+        asOfDate,
+      );
       
       // Skip zero balances if requested
       if (!generateDto.includeZeroBalances && balance.netBalance.equals(0)) {
@@ -129,6 +154,10 @@ export class TrialBalanceService {
 
       totalDebits = totalDebits.plus(debitBalance);
       totalCredits = totalCredits.plus(creditBalance);
+      totalOpeningBalance = totalOpeningBalance.plus(balance.openingBalance);
+      totalPeriodDebit = totalPeriodDebit.plus(balance.periodDebit);
+      totalPeriodCredit = totalPeriodCredit.plus(balance.periodCredit);
+      totalClosingBalance = totalClosingBalance.plus(balance.closingBalance);
 
       lineItems.push({
         accountId: account.id,
@@ -142,6 +171,12 @@ export class TrialBalanceService {
         isActive: account.isActive,
         level: account.level,
         parentAccountId: account.parentAccountId,
+        // Enhanced fields from ledger
+        openingBalance: balance.openingBalance.toString(),
+        periodDebit: balance.periodDebit.toString(),
+        periodCredit: balance.periodCredit.toString(),
+        closingBalance: balance.closingBalance.toString(),
+        transactionCount: balance.transactionCount,
       });
     }
 
@@ -167,6 +202,11 @@ export class TrialBalanceService {
         isBalanced,
         accountCount: accounts.length,
         activeAccountCount: lineItems.length,
+        // Enhanced summary from ledger
+        totalOpeningBalance: totalOpeningBalance.toString(),
+        totalPeriodDebit: totalPeriodDebit.toString(),
+        totalPeriodCredit: totalPeriodCredit.toString(),
+        totalClosingBalance: totalClosingBalance.toString(),
       },
     };
 
@@ -352,6 +392,56 @@ export class TrialBalanceService {
         return this.exportAsCSV(trialBalance, exportDto);
       default:
         throw new BadRequestException('Unsupported export format');
+    }
+  }
+
+  /**
+   * Calculate account balance using ledger data (more accurate and performant)
+   */
+  private async calculateAccountBalanceFromLedger(
+    accountId: string,
+    companyId: string,
+    periodId: string,
+    asOfDate?: Date,
+  ) {
+    try {
+      // Get ledger data for the account
+      const ledgerData = await this.ledgerService.getAccountLedger({
+        companyId,
+        periodId,
+        accountId,
+        endDate: asOfDate?.toISOString(),
+      });
+
+      // Calculate period movements
+      let periodDebit = new Decimal(0);
+      let periodCredit = new Decimal(0);
+
+      for (const entry of ledgerData.entries) {
+        periodDebit = periodDebit.plus(entry.debitAmount);
+        periodCredit = periodCredit.plus(entry.creditAmount);
+      }
+
+      return {
+        openingBalance: new Decimal(ledgerData.openingBalance),
+        periodDebit,
+        periodCredit,
+        closingBalance: new Decimal(ledgerData.closingBalance),
+        transactionCount: ledgerData.entries.length,
+        netBalance: new Decimal(ledgerData.closingBalance),
+      };
+    } catch (error) {
+      // Fall back to old method if ledger data not available
+      console.warn(`Falling back to journal calculation for account ${accountId}:`, error.message);
+      const oldBalance = await this.calculateAccountBalance(accountId, asOfDate);
+      return {
+        openingBalance: new Decimal(0),
+        periodDebit: oldBalance.totalDebits,
+        periodCredit: oldBalance.totalCredits,
+        closingBalance: oldBalance.netBalance,
+        transactionCount: 0,
+        netBalance: oldBalance.netBalance,
+      };
     }
   }
 

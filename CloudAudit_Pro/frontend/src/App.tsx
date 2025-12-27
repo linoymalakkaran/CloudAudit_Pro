@@ -14,6 +14,14 @@ import Users from './pages/admin/Users'
 import AuditProcedures from './pages/auditor/AuditProcedures'
 import Reports from './pages/Reports'
 import Documents from './pages/Documents'
+import GeneralLedger from './pages/GeneralLedger'
+import FinancialStatements from './pages/FinancialStatements'
+import AuditProceduresNew from './pages/AuditProcedures'
+import ProcedureDetails from './pages/ProcedureDetails'
+import TemplateLibrary from './pages/TemplateLibrary'
+import MyWork from './pages/MyWork'
+import KanbanBoard from './pages/KanbanBoard'
+import CalendarView from './pages/CalendarView'
 import { AdminDashboard } from './components/admin/AdminDashboard'
 import { UserManagement } from './components/admin/UserManagement'
 import { InviteUser } from './components/admin/InviteUser'
@@ -75,7 +83,15 @@ function AppRoutes() {
             <>
               <Route path="/auditor" element={<AuditorPortal />} />
               <Route path="/procedures" element={<AuditProcedures />} />
+              <Route path="/audit/procedures" element={<AuditProceduresNew />} />
+              <Route path="/audit/procedures/:id" element={<ProcedureDetails />} />
+              <Route path="/audit/kanban" element={<KanbanBoard />} />
+              <Route path="/audit/calendar" element={<CalendarView />} />
+              <Route path="/audit/templates" element={<TemplateLibrary />} />
+              <Route path="/audit/my-work" element={<MyWork />} />
               <Route path="/documents" element={<Documents />} />
+              <Route path="/ledger" element={<GeneralLedger />} />
+              <Route path="/financial-statements" element={<FinancialStatements />} />
             </>
           )}
           

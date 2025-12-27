@@ -159,6 +159,11 @@ model Tenant {
   accountHeads          AccountHead[] @relation("TenantAccountHeads")
   approvalRequests      TenantApprovalRequest[]
   userApprovalRequests  UserApprovalRequest[]
+  procedureTemplates    ProcedureTemplate[]
+  auditProcedures       AuditProcedure[]
+  workpapers            Workpaper[]
+  findings              Finding[]
+  procedureComments     ProcedureComment[]
 
   @@map("tenants")
 }
@@ -205,6 +210,18 @@ model TenantUser {
   requestedApprovals       UserApprovalRequest[] @relation("RequestedBy")
   reviewedApprovals        UserApprovalRequest[] @relation("ReviewedBy")
   tenantApprovalRequests   TenantApprovalRequest[]
+  
+  // Procedure relations
+  createdTemplates         ProcedureTemplate[] @relation("CreatedTemplates")
+  assignedProcedures       AuditProcedure[] @relation("AssignedProcedures")
+  assignedByProcedures     AuditProcedure[] @relation("AssignedByUser")
+  reviewedProcedures       AuditProcedure[] @relation("ReviewedProcedures")
+  createdProcedures        AuditProcedure[] @relation("CreatedProcedures")
+  preparedWorkpapers       Workpaper[] @relation("PreparedWorkpapers")
+  reviewedWorkpapers       Workpaper[] @relation("ReviewedWorkpapers")
+  identifiedFindings       Finding[] @relation("IdentifiedFindings")
+  resolvedFindings         Finding[] @relation("ResolvedFindings")
+  procedureComments        ProcedureComment[] @relation("ProcedureComments")
 
   @@unique([tenantId, email])
   @@map("tenant_users")
@@ -307,6 +324,9 @@ model Company {
   exportJobs          ExportJob[] @relation("ExportJobs")
   auditLogs          AuditLog[] @relation("AuditLogCompany")
   alerts             Alert[]     // Add alerts relation
+  ledgerEntries      Ledger[]
+  auditProcedures    AuditProcedure[]
+  findings           Finding[]
 
   @@unique([code])
   @@map("companies")
@@ -353,6 +373,9 @@ model Period {
   auditLogs     AuditLog[] @relation("AuditLogPeriod")
   exportJobs    ExportJob[] @relation("ExportJobPeriod")
   importJobs    ImportJob[] @relation("ImportJobPeriod")
+  ledgerEntries  Ledger[]
+  auditProcedures AuditProcedure[]
+  findings       Finding[]
 
   @@unique([companyId, name])
   @@map("periods")
@@ -418,6 +441,7 @@ model AccountHead {
   procedures          Procedure[]
   documents           Document[]
   trialBalanceAccountHead TrialBalanceEntry[] @relation("TrialBalanceAccountHead")
+  ledgerEntries       Ledger[]
 
   @@unique([companyId, code])
   @@map("account_heads")
@@ -496,6 +520,7 @@ model JournalEntry {
   account   AccountHead?      @relation("AccountJournalEntries", fields: [accountId], references: [id])
   lineItems JournalLineItem[]
   referenceDocument Document? @relation("JournalEntryReferences", fields: [referenceDocumentId], references: [id])
+  ledgerEntries Ledger[]
 
   @@unique([companyId, journalNumber])
   @@map("journal_entries")
@@ -517,8 +542,55 @@ model JournalLineItem {
   // Relations
   journalEntry JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
   account      AccountHead  @relation(fields: [accountId], references: [id])
+  ledgerEntries Ledger[]
 
   @@map("journal_line_items")
+}
+
+// =============================================================================
+// GENERAL LEDGER MODEL
+// =============================================================================
+// Ledger entries for tracking account transactions and running balances
+
+model Ledger {
+  id              String   @id @default(cuid())
+  companyId       String
+  periodId        String
+  accountId       String
+  journalEntryId  String
+  lineItemId      String
+  tenantId        String
+  
+  // Transaction details
+  transactionDate DateTime
+  journalNumber   String
+  description     String?
+  reference       String?
+  
+  // Amounts
+  debitAmount     Decimal  @default(0) @db.Decimal(15, 2)
+  creditAmount    Decimal  @default(0) @db.Decimal(15, 2)
+  runningBalance  Decimal  @default(0) @db.Decimal(15, 2)
+  
+  // Sequencing
+  sequenceNumber  Int
+  
+  // Metadata
+  createdAt       DateTime @default(now())
+  createdBy       String?
+  
+  // Relations
+  company      Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period       Period           @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  account      AccountHead      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  journalEntry JournalEntry     @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  lineItem     JournalLineItem  @relation(fields: [lineItemId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, accountId, periodId, sequenceNumber])
+  @@index([companyId, accountId, periodId, transactionDate])
+  @@index([journalEntryId])
+  @@index([tenantId])
+  @@map("ledger")
 }
 
 // =============================================================================
@@ -528,6 +600,7 @@ model JournalLineItem {
 
 model ProcedureTemplate {
   id             String   @id @default(cuid())
+  tenantId       String?  // Make optional for backwards compatibility
   name           String
   description    String?
   category       String?
@@ -537,10 +610,15 @@ model ProcedureTemplate {
   requiredSkills Json?
   isActive       Boolean  @default(true)
   version        Int      @default(1)
+  createdBy      String?  // Add createdBy field
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  procedures Procedure[]
+  // Relations
+  tenant          Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  creator         TenantUser? @relation("CreatedTemplates", fields: [createdBy], references: [id])
+  procedures      Procedure[]
+  auditProcedures AuditProcedure[]
 
   @@map("procedure_templates")
 }
@@ -598,6 +676,146 @@ model Procedure {
   @@map("procedures")
 }
 
+model AuditProcedure {
+  id                String @id @default(cuid())
+  tenantId          String
+  companyId         String
+  periodId          String
+  templateId        String?
+  name              String
+  description       String? @db.Text
+  category          ProcedureCategory
+  riskLevel         RiskLevel
+  status            ProcedureStatus @default(NOT_STARTED)
+  priority          Priority @default(MEDIUM)
+  
+  // Assignment
+  assignedToId      String?
+  assignedBy        String?
+  assignedAt        DateTime?
+  dueDate           DateTime?
+  
+  // Completion
+  startedAt         DateTime?
+  completedAt       DateTime?
+  actualHours       Float?
+  
+  // Review
+  reviewStatus      ReviewStatus @default(NOT_REVIEWED)
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  reviewNotes       String? @db.Text
+  
+  createdBy         String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  tenant            Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  company           Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period            Period @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  template          ProcedureTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  assignedTo        TenantUser? @relation("AssignedProcedures", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assigner          TenantUser? @relation("AssignedByUser", fields: [assignedBy], references: [id])
+  reviewer          TenantUser? @relation("ReviewedProcedures", fields: [reviewedBy], references: [id])
+  creator           TenantUser @relation("CreatedProcedures", fields: [createdBy], references: [id])
+  
+  workpapers        Workpaper[]
+  findings          Finding[]
+  comments          ProcedureComment[]
+
+  @@index([tenantId])
+  @@index([companyId])
+  @@index([periodId])
+  @@index([assignedToId])
+  @@index([status])
+  @@map("audit_procedures")
+}
+
+model Workpaper {
+  id                String @id @default(cuid())
+  procedureId       String
+  tenantId          String
+  title             String
+  content           String @db.Text
+  preparedBy        String
+  preparedAt        DateTime @default(now())
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  reviewNotes       String? @db.Text
+  version           Int @default(1)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  tenant            Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  procedure         AuditProcedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  preparer          TenantUser @relation("PreparedWorkpapers", fields: [preparedBy], references: [id])
+  reviewer          TenantUser? @relation("ReviewedWorkpapers", fields: [reviewedBy], references: [id])
+  attachments       Document[]
+
+  @@index([tenantId])
+  @@index([procedureId])
+  @@map("workpapers")
+}
+
+model Finding {
+  id                String @id @default(cuid())
+  procedureId       String
+  tenantId          String
+  companyId         String
+  periodId          String
+  title             String
+  description       String @db.Text
+  severity          Severity
+  status            FindingStatus @default(OPEN)
+  recommendation    String? @db.Text
+  managementResponse String? @db.Text
+  
+  identifiedBy      String
+  identifiedAt      DateTime @default(now())
+  resolvedBy        String?
+  resolvedAt        DateTime?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  tenant            Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  procedure         AuditProcedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  company           Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period            Period @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  identifier        TenantUser @relation("IdentifiedFindings", fields: [identifiedBy], references: [id])
+  resolver          TenantUser? @relation("ResolvedFindings", fields: [resolvedBy], references: [id])
+
+  @@index([tenantId])
+  @@index([procedureId])
+  @@index([companyId])
+  @@index([status])
+  @@index([severity])
+  @@map("findings")
+}
+
+model ProcedureComment {
+  id                String @id @default(cuid())
+  procedureId       String
+  tenantId          String
+  userId            String
+  comment           String @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  tenant            Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  procedure         AuditProcedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  user              TenantUser @relation("ProcedureComments", fields: [userId], references: [id])
+
+  @@index([tenantId])
+  @@index([procedureId])
+  @@map("procedure_comments")
+}
+
 // =============================================================================
 // DOCUMENT MANAGEMENT MODELS
 // =============================================================================
@@ -610,6 +828,7 @@ model Document {
   periodId    String?
   accountId   String?
   procedureId String?
+  workpaperId String?  // Add workpaper reference
 
   // Document metadata
   name             String
@@ -662,6 +881,7 @@ model Document {
   period         Period?      @relation(fields: [periodId], references: [id], onDelete: SetNull)
   account        AccountHead? @relation(fields: [accountId], references: [id], onDelete: SetNull)
   procedure      Procedure?   @relation(fields: [procedureId], references: [id], onDelete: SetNull)
+  workpaper      Workpaper?   @relation(fields: [workpaperId], references: [id], onDelete: SetNull)
   uploader       User         @relation(fields: [uploadedBy], references: [id])
   reviewer       User?        @relation("DocumentReviewer", fields: [reviewedBy], references: [id])
   approver       User?        @relation("DocumentApprover", fields: [approvedBy], references: [id])
@@ -1060,6 +1280,7 @@ enum ProcedureStatus {
   COMPLETED
   ON_HOLD
   REVIEW_REQUIRED
+  CANCELLED  // Added
 }
 
 enum ReviewStatus {
@@ -1067,6 +1288,8 @@ enum ReviewStatus {
   IN_REVIEW
   REVIEWED
   APPROVED
+  REJECTED  // Added
+  REQUIRES_CHANGES  // Added
 }
 
 enum Classification {
@@ -1190,4 +1413,43 @@ enum AuditSeverity {
   WARNING
   INFO
   ERROR
+}
+
+enum ProcedureCategory {
+  CASH_AND_BANK
+  ACCOUNTS_RECEIVABLE
+  INVENTORY
+  FIXED_ASSETS
+  ACCOUNTS_PAYABLE
+  REVENUE
+  EXPENSES
+  EQUITY
+  ANALYTICAL_PROCEDURES
+  INTERNAL_CONTROLS
+  COMPLIANCE
+  SUBSTANTIVE_TESTING
+  OTHER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum Severity {
+  MINOR
+  MODERATE
+  SIGNIFICANT
+  MATERIAL
+  CRITICAL
+}
+
+enum FindingStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  DEFERRED
 }

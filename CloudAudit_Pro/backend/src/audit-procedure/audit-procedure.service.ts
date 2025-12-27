@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
+import { EmailService } from '../email/email.service';
 import { 
   CreateAuditProcedureDto,
   UpdateAuditProcedureDto,
@@ -54,7 +55,10 @@ export interface AuditProcedureStats {
 
 @Injectable()
 export class AuditProcedureService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(
+    private readonly database: DatabaseService,
+    private readonly emailService: EmailService,
+  ) {}
 
   async create(createAuditProcedureDto: CreateAuditProcedureDto, userId: string) {
     // Verify user has access to company
@@ -299,31 +303,57 @@ export class AuditProcedureService {
       updatedBy: userId,
     };
 
+    let reviewStatus: string = 'REQUIRES_REVISION';
     switch (reviewDto.action) {
       case 'approve':
+        reviewStatus = 'APPROVED';
         updateData.reviewStatus = 'APPROVED';
         updateData.signedOffBy = userId;
         updateData.signedOffDate = new Date();
         break;
       case 'reject':
+        reviewStatus = 'REJECTED';
         updateData.reviewStatus = 'REJECTED';
         updateData.status = ProcedureStatus.REVIEW_REQUIRED;
         break;
       case 'return':
+        reviewStatus = 'REQUIRES_REVISION';
         updateData.reviewStatus = 'REQUIRES_REVISION';
         updateData.status = ProcedureStatus.IN_PROGRESS;
         break;
     }
 
-    return this.database.procedure.update({
+    const updatedProcedure = await this.database.procedure.update({
       where: { id },
       data: updateData,
       include: {
         assignee: {
           select: { id: true, firstName: true, lastName: true, email: true },
         },
+        company: {
+          select: { id: true, name: true },
+        },
       },
     });
+
+    // Send email notification to assignee
+    if (updatedProcedure.assignee) {
+      try {
+        await this.emailService.sendProcedureReviewNotification(
+          updatedProcedure.assignee.email,
+          `${updatedProcedure.assignee.firstName} ${updatedProcedure.assignee.lastName}`,
+          updatedProcedure.name || 'Audit Procedure',
+          updatedProcedure.company?.name || 'Unknown Company',
+          reviewStatus,
+          reviewDto.reviewNotes,
+        );
+      } catch (error) {
+        // Log error but don't fail the review
+        console.error('Failed to send review notification email:', error);
+      }
+    }
+
+    return updatedProcedure;
   }
 
   async bulkAssign(bulkAssignDto: BulkAssignProceduresDto, userId: string) {
@@ -332,8 +362,15 @@ export class AuditProcedureService {
       bulkAssignDto.procedureIds.map(id => this.findOne(id, userId))
     );
 
-    // Verify assignee exists
-    await this.verifyUserExists(bulkAssignDto.assignedTo);
+    // Verify assignee exists and get user details
+    const assignee = await this.database.user.findUnique({
+      where: { id: bulkAssignDto.assignedTo },
+      select: { id: true, firstName: true, lastName: true, email: true },
+    });
+
+    if (!assignee) {
+      throw new NotFoundException(`User with ID ${bulkAssignDto.assignedTo} not found`);
+    }
 
     const updateData: any = {
       assignedTo: bulkAssignDto.assignedTo,
@@ -351,6 +388,22 @@ export class AuditProcedureService {
       },
       data: updateData,
     });
+
+    // Send email notification to assignee
+    try {
+      for (const procedure of procedures) {
+        await this.emailService.sendProcedureAssignmentNotification(
+          assignee.email,
+          `${assignee.firstName} ${assignee.lastName}`,
+          procedure.name || 'Audit Procedure',
+          procedure.company?.name || 'Unknown Company',
+          bulkAssignDto.dueDate ? new Date(bulkAssignDto.dueDate) : undefined,
+        );
+      }
+    } catch (error) {
+      // Log error but don't fail the assignment
+      console.error('Failed to send assignment notification emails:', error);
+    }
 
     return {
       message: `${bulkAssignDto.procedureIds.length} procedures assigned successfully`,
@@ -529,6 +582,50 @@ export class AuditProcedureService {
   private async getUserCompanies(userId: string) {
     return this.database.company.findMany({
       select: { id: true, name: true },
+    });
+  }
+
+  async getComments(procedureId: string, userId: string) {
+    // Verify user has access to the procedure
+    await this.findOne(procedureId, userId);
+
+    return this.database.procedureComment.findMany({
+      where: { procedureId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async addComment(procedureId: string, comment: string, userId: string, tenantId: string) {
+    // Verify user has access to the procedure
+    await this.findOne(procedureId, userId);
+
+    return this.database.procedureComment.create({
+      data: {
+        procedureId,
+        tenantId,
+        userId,
+        comment,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
     });
   }
 }

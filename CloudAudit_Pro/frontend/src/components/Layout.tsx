@@ -27,7 +27,8 @@ import {
   Assessment as ReportIcon,
   AdminPanelSettings as AdminIcon,
   AccountCircle,
-  Logout
+  Logout,
+  CalendarToday as CalendarIcon,
 } from '@mui/icons-material'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
@@ -78,7 +79,10 @@ function Layout({ children }: LayoutProps) {
     // Auditor items
     if (['ADMIN', 'MANAGER', 'SENIOR_AUDITOR', 'AUDITOR'].includes(user?.role || '')) {
       items.push(
-        { text: 'Audit Procedures', icon: <AssignmentIcon />, path: '/procedures' },
+        { text: 'My Work', icon: <AssignmentIcon />, path: '/audit/my-work' },
+        { text: 'Audit Procedures', icon: <AssignmentIcon />, path: '/audit/procedures' },
+        { text: 'Calendar View', icon: <CalendarIcon />, path: '/audit/calendar' },
+        { text: 'Procedure Templates', icon: <AssignmentIcon />, path: '/audit/templates' },
         { text: 'Documents', icon: <DocumentIcon />, path: '/documents' },
       )
     }

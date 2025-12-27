@@ -266,4 +266,28 @@ export class AuditProcedureController {
       lastUpdated: new Date(),
     };
   }
+
+  @Get(':id/comments')
+  @ApiOperation({ 
+    summary: 'Get procedure comments',
+    description: 'Retrieve all comments for a specific audit procedure'
+  })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Comments retrieved successfully' })
+  async getComments(@Param('id') id: string, @Request() req) {
+    return this.auditProcedureService.getComments(id, req.user.userId);
+  }
+
+  @Post(':id/comments')
+  @ApiOperation({ 
+    summary: 'Add procedure comment',
+    description: 'Add a new comment to an audit procedure'
+  })
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'Comment added successfully' })
+  async addComment(
+    @Param('id') id: string,
+    @Body('comment') comment: string,
+    @Request() req
+  ) {
+    return this.auditProcedureService.addComment(id, comment, req.user.userId, req.user.tenantId);
+  }
 }

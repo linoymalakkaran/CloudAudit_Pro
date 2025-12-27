@@ -13,6 +13,9 @@ import { JournalEntryModule } from './journal-entry/journal-entry.module';
 import { TrialBalanceModule } from './trial-balance/trial-balance.module';
 import { FinancialStatementModule } from './financial-statement/financial-statement.module';
 import { AuditProcedureModule } from './audit-procedure/audit-procedure.module';
+import { WorkpaperModule } from './workpaper/workpaper.module';
+import { FindingModule } from './finding/finding.module';
+import { ProcedureTemplateModule } from './procedure-template/procedure-template.module';
 import { ReportsModule } from './reports/reports.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SystemConfigModule } from './config/config.module';
@@ -20,6 +23,7 @@ import { ImportExportModule } from './import-export/import-export.module';
 import { AuditTrailModule } from './audit-trail/audit-trail.module';
 import { SuperAdminModule } from './super-admin/super-admin.module';
 import { EmailModule } from './email/email.module';
+import { LedgerModule } from './ledger/ledger.module';
 
 @Module({
   imports: [
@@ -36,9 +40,13 @@ import { EmailModule } from './email/email.module';
     TenantModule,
     DocumentModule,
     AuditProcedureModule,
+    WorkpaperModule,
+    FindingModule,
+    ProcedureTemplateModule,
     ReportsModule,
     SuperAdminModule,
     EmailModule,
+    LedgerModule,
   ],
 })
 export class AppModule {}
