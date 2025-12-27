@@ -3,7 +3,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../test-helpers.sh"
 
 echo "╔════════════════════════════════════════════════════════════╗"
-MODULE_NAME="config"
+MODULE_NAME="financial-statements"
 echo "║              ${MODULE_NAME^^} TESTS                              ║"
 echo "╚════════════════════════════════════════════════════════════╝"
 

@@ -13,6 +13,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 API_BASE_URL="http://localhost:8000/api"
+HEALTH_URL="http://localhost:8000/api/health"
 MASTER_RESULTS="test-results-master.txt"
 
 echo ""
@@ -31,12 +32,12 @@ echo "" >> "$MASTER_RESULTS"
 
 # Check if API is accessible
 echo -n "Checking API connectivity... "
-if curl -s -f "$API_BASE_URL/health" > /dev/null 2>&1; then
+if curl -s -f "$HEALTH_URL" > /dev/null 2>&1; then
     echo -e "${GREEN}✓ API is accessible${NC}"
     echo "✓ API is accessible" >> "$MASTER_RESULTS"
 else
     echo -e "${RED}✗ API is not accessible${NC}"
-    echo "✗ API is not accessible at $API_BASE_URL" >> "$MASTER_RESULTS"
+    echo "✗ API is not accessible at $HEALTH_URL" >> "$MASTER_RESULTS"
     echo ""
     echo "Please ensure the backend is running:"
     echo "  cd CloudAudit_Pro && docker-compose up -d backend"
@@ -74,11 +75,13 @@ failed_modules=0
 for module in "${modules[@]}"; do
     echo -n "▶ Running tests for $module... "
     
-    # Find test script in module directory
-    test_script="tests/$module/*-tests.sh"
+    # Find test script in module directory (relative to current directory)
+    test_script="$module/*-tests.sh"
     test_file=$(ls $test_script 2>/dev/null | head -1)
     
     if [ -f "$test_file" ]; then
+        echo "" >> "$MASTER_RESULTS"
+        echo "===== $module =====" >> "$MASTER_RESULTS"
         if bash "$test_file" >> "$MASTER_RESULTS" 2>&1; then
             echo -e "${GREEN}✓ PASS${NC}"
             ((passed_modules++))
@@ -87,7 +90,7 @@ for module in "${modules[@]}"; do
             ((failed_modules++))
         fi
     else
-        echo -e "${YELLOW}⊘ SKIP${NC} (test script not found)"
+        echo -e "${YELLOW}⊘ SKIP${NC} (test script not found: $test_script)"
     fi
 done
 
@@ -103,22 +106,22 @@ echo ""
 echo "Full results saved to: $MASTER_RESULTS"
 echo ""
 
-if [ $failed_modules -eq 0 ]; then
+if [ $failed_modules -eq 0 ] && [ $passed_modules -gt 0 ]; then
     echo -e "${GREEN}✓ ALL TESTS PASSED SUCCESSFULLY!${NC}"
     echo ""
     echo "Test Summary:"
+    echo "  - $passed_modules modules tested successfully"
     echo "  - All API endpoints are functional"
     echo "  - All modules integrated correctly"
-    echo "  - Ready for production deployment"
     exit 0
+elif [ $passed_modules -eq 0 ]; then
+    echo -e "${YELLOW}⚠ No tests were executed${NC}"
+    echo ""
+    echo "Please check test script locations"
+    exit 1
 else
     echo -e "${RED}✗ Some test modules failed${NC}"
     echo ""
-    echo "Failed Modules:"
-    for module in "${modules[@]}"; do
-        if ! grep -q "✓ ALL TESTS PASSED" "$MASTER_RESULTS" 2>/dev/null; then
-            echo "  - $module"
-        fi
-    done
+    echo "Check $MASTER_RESULTS for detailed error information"
     exit 1
 fi

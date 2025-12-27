@@ -53,8 +53,23 @@ RUN chown -R nginx-user:nginx-user /usr/share/nginx/html && \
     chown -R nginx-user:nginx-user /etc/nginx/conf.d
 
 # Create pid directory with correct permissions
-RUN mkdir -p /var/run/nginx && \
-    chown -R nginx-user:nginx-user /var/run/nginx
+RUN mkdir -p /tmp/nginx && \
+    chown -R nginx-user:nginx-user /tmp/nginx
+
+# Create a custom nginx.conf that writes PID to /tmp
+RUN echo 'user nginx-user;' > /etc/nginx/nginx.conf && \
+    echo 'worker_processes auto;' >> /etc/nginx/nginx.conf && \
+    echo 'error_log /var/log/nginx/error.log warn;' >> /etc/nginx/nginx.conf && \
+    echo 'pid /tmp/nginx.pid;' >> /etc/nginx/nginx.conf && \
+    echo 'events { worker_connections 1024; }' >> /etc/nginx/nginx.conf && \
+    echo 'http {' >> /etc/nginx/nginx.conf && \
+    echo '  include /etc/nginx/mime.types;' >> /etc/nginx/nginx.conf && \
+    echo '  default_type application/octet-stream;' >> /etc/nginx/nginx.conf && \
+    echo '  access_log /var/log/nginx/access.log;' >> /etc/nginx/nginx.conf && \
+    echo '  sendfile on;' >> /etc/nginx/nginx.conf && \
+    echo '  keepalive_timeout 65;' >> /etc/nginx/nginx.conf && \
+    echo '  include /etc/nginx/conf.d/*.conf;' >> /etc/nginx/nginx.conf && \
+    echo '}' >> /etc/nginx/nginx.conf
 
 # Switch to non-root user
 USER nginx-user
