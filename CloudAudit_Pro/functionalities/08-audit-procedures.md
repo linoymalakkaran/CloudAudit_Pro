@@ -444,6 +444,238 @@ PATCH /api/comments/:commentId
 DELETE /api/comments/:commentId
 ```
 
+### Workflow Action Endpoints
+
+CloudAudit Pro provides specialized endpoints for common workflow actions:
+
+#### Start Procedure
+```typescript
+POST /api/audit-procedures/:id/start
+
+// Marks procedure as IN_PROGRESS and sets start date
+// Automatically fills startDate field
+// Updates procedure status
+// Sends notifications to relevant parties
+
+Response:
+{
+  "id": "proc-123",
+  "status": "IN_PROGRESS",
+  "startDate": "2025-01-15T10:30:00Z",
+  "updatedAt": "2025-01-15T10:30:00Z"
+}
+```
+
+#### Complete Procedure
+```typescript
+POST /api/audit-procedures/:id/complete
+
+// Marks procedure as COMPLETED and sets completion date
+// Automatically fills completedDate field
+// Triggers completion workflow
+// Sends notifications to managers
+
+Response:
+{
+  "id": "proc-123",
+  "status": "COMPLETED",
+  "completedDate": "2025-01-20T16:45:00Z",
+  "updatedAt": "2025-01-20T16:45:00Z"
+}
+```
+
+#### Put Procedure on Hold
+```typescript
+POST /api/audit-procedures/:id/hold
+{
+  "reason": "Waiting for client to provide supporting documentation"
+}
+
+// Changes status to ON_HOLD with reason
+// Logs reason in notes field
+// Notifies manager of hold status
+// Pauses due date tracking
+
+Response:
+{
+  "id": "proc-123",
+  "status": "ON_HOLD",
+  "notes": "Waiting for client to provide supporting documentation",
+  "updatedAt": "2025-01-18T11:20:00Z"
+}
+```
+
+#### Review Procedure
+```typescript
+POST /api/audit-procedures/:id/review
+{
+  "action": "APPROVED",  // or "REJECTED"
+  "reviewNotes": "Work performed is adequate. Good documentation."
+}
+
+// Manager reviews completed procedure
+// Approves or rejects work
+// If approved: Status → COMPLETED
+// If rejected: Status → IN_PROGRESS
+// Notifies assignee of review decision
+
+Response:
+{
+  "id": "proc-123",
+  "reviewStatus": "APPROVED",
+  "reviewNotes": "Work performed is adequate. Good documentation.",
+  "reviewedBy": "user-456",
+  "reviewedAt": "2025-01-21T09:15:00Z"
+}
+```
+
+### Management & Dashboard Endpoints
+
+#### Get Workload Distribution
+```typescript
+GET /api/audit-procedures/company/:companyId/workload
+
+// Returns workload metrics for all team members
+// Shows procedures assigned, hours estimated, completion status
+// Helps managers balance workload
+
+Response:
+{
+  "workload": [
+    {
+      "user": {
+        "id": "user-123",
+        "name": "John Smith",
+        "role": "Senior Auditor"
+      },
+      "totalProcedures": 15,
+      "estimatedHours": 120,
+      "completedProcedures": 8,
+      "overdueProcedures": 2,
+      "utilizationRate": 0.85
+    },
+    {
+      "user": {
+        "id": "user-456",
+        "name": "Jane Doe",
+        "role": "Staff Auditor"
+      },
+      "totalProcedures": 12,
+      "estimatedHours": 96,
+      "completedProcedures": 5,
+      "overdueProcedures": 0,
+      "utilizationRate": 0.72
+    }
+  ],
+  "companyId": "company-789",
+  "lastUpdated": "2025-01-27T14:30:00Z"
+}
+```
+
+**Use Cases**:
+- Identify overburdened team members
+- Balance workload across team
+- Track utilization rates
+- Plan future assignments
+
+#### Get Dashboard Data
+```typescript
+GET /api/audit-procedures/dashboard/:companyId
+
+// Returns comprehensive dashboard data
+// Combines statistics + workload + trends
+// Single endpoint for dashboard page
+
+Response:
+{
+  "statistics": {
+    "total": 150,
+    "byStatus": {
+      "NOT_STARTED": 20,
+      "IN_PROGRESS": 80,
+      "REVIEW_REQUIRED": 15,
+      "COMPLETED": 30,
+      "ON_HOLD": 5
+    },
+    "byPriority": {
+      "URGENT": 5,
+      "HIGH": 40,
+      "MEDIUM": 80,
+      "LOW": 25
+    },
+    "overdue": 12,
+    "completionPercentage": 20
+  },
+  "workload": [
+    // ... workload array as above
+  ],
+  "trends": {
+    "completionTrend": "improving",
+    "averageCompletionDays": 12.5,
+    "onTimeCompletionRate": 0.78
+  },
+  "lastUpdated": "2025-01-27T14:30:00Z"
+}
+```
+
+**Dashboard Display**:
+- Overview statistics cards
+- Workload distribution chart
+- Completion trends graph
+- Overdue items alert
+- Priority breakdown pie chart
+
+#### Get Procedure Templates
+```typescript
+GET /api/audit-procedures/templates
+
+// Returns available procedure templates
+// Templates provide pre-configured procedures
+// Speeds up procedure creation
+
+Response:
+{
+  "templates": [
+    {
+      "id": "template-1",
+      "name": "Revenue Transaction Testing",
+      "description": "Sample and test revenue transactions for accuracy and occurrence",
+      "category": "REVENUE",
+      "riskLevel": "CRITICAL",
+      "estimatedHours": 16,
+      "procedureSteps": [
+        "Select sample of 25 revenue transactions",
+        "Trace to source documents",
+        "Verify pricing and calculations",
+        "Check for proper authorization",
+        "Document results in workpaper"
+      ]
+    },
+    {
+      "id": "template-2",
+      "name": "Bank Reconciliation Review",
+      "description": "Review and verify bank reconciliations",
+      "category": "CASH",
+      "riskLevel": "HIGH",
+      "estimatedHours": 4,
+      "procedureSteps": [
+        "Obtain bank reconciliation",
+        "Verify mathematical accuracy",
+        "Review outstanding items",
+        "Test reconciling items",
+        "Document conclusion"
+      ]
+    }
+  ]
+}
+```
+
+**Template Benefits**:
+- Consistent procedures across engagements
+- Faster procedure creation
+- Built-in best practices
+- Reduced training time
+
 ### @Mentions
 
 **Usage**: `@John Smith` or `@john.smith`
