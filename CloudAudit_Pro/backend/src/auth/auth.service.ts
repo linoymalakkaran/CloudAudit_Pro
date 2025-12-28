@@ -17,33 +17,30 @@ export class AuthService {
   async validateUser(email: string, password: string, tenantId?: string): Promise<any> {
     let user: User | null = null;
 
-    if (tenantId) {
-      // For tenant-specific authentication
-      user = await this.prisma.user.findUnique({
-        where: { email },
-      });
-    } else {
-      // For system-wide authentication (tenant users)
-      const tenantUser = await this.prisma.tenantUser.findFirst({
-        where: { email },
-        include: { tenant: true },
-      });
-      
-      if (tenantUser) {
-        user = {
-          id: tenantUser.id,
-          email: tenantUser.email,
-          passwordHash: tenantUser.passwordHash,
-          firstName: tenantUser.firstName,
-          lastName: tenantUser.lastName,
-          role: tenantUser.role,
-          isActive: tenantUser.isActive,
-          createdAt: tenantUser.createdAt,
-          updatedAt: tenantUser.createdAt,
-        } as any;
-        (user as any).tenantId = tenantUser.tenantId;
-        (user as any).tenant = tenantUser.tenant;
-      }
+    // Always check tenant_users table for tenant-based authentication
+    // The users table is for system/super-admin users only
+    const tenantUser = await this.prisma.tenantUser.findFirst({
+      where: { 
+        email,
+        ...(tenantId && { tenantId })
+      },
+      include: { tenant: true },
+    });
+    
+    if (tenantUser) {
+      user = {
+        id: tenantUser.id,
+        email: tenantUser.email,
+        passwordHash: tenantUser.passwordHash,
+        firstName: tenantUser.firstName,
+        lastName: tenantUser.lastName,
+        role: tenantUser.role,
+        isActive: tenantUser.isActive,
+        createdAt: tenantUser.createdAt,
+        updatedAt: tenantUser.createdAt,
+      } as any;
+      (user as any).tenantId = tenantUser.tenantId;
+      (user as any).tenant = tenantUser.tenant;
     }
 
     if (user && user.isActive && await bcrypt.compare(password, user.passwordHash)) {
@@ -83,24 +80,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Update last login
-    if (tenantId) {
-      await this.prisma.user.update({
-        where: { id: user.id },
-        data: { 
-          lastLoginAt: new Date(),
-          lastActivityAt: new Date(),
-          loginAttempts: 0,
-        },
-      });
-    } else {
-      await this.prisma.tenantUser.update({
-        where: { id: user.id },
-        data: { 
-          lastLoginAt: new Date(),
-        },
-      });
-    }
+    // Update last login - always update tenantUser table since that's where we authenticated
+    await this.prisma.tenantUser.update({
+      where: { id: user.id },
+      data: { 
+        lastLoginAt: new Date(),
+      },
+    });
 
     const tokens = await this.generateTokens(user, tenantId);
 
@@ -162,17 +148,23 @@ export class AuthService {
         throw new BadRequestException('Tenant subdomain already exists. Please choose a different subdomain.');
       }
 
-      // Start transaction to create tenant and tenant user in PENDING status
+      // Check if we should auto-approve for testing
+      const autoApprove = process.env.AUTO_APPROVE_TENANTS === 'true';
+      const tenantStatus = autoApprove ? 'ACTIVE' : 'PENDING';
+      const approvalStatus = autoApprove ? 'APPROVED' : 'PENDING';
+      const userIsActive = autoApprove ? true : false;
+      
+      // Start transaction to create tenant and tenant user
       const result = await this.prisma.$transaction(async (prisma) => {
-        // Create tenant with PENDING status
+        // Create tenant with auto-approval if enabled
         const tenant = await prisma.tenant.create({
           data: {
             name: companyName,
             subdomain: tenantSubdomain,
             databaseName: `tenant_${tenantSubdomain}`,
             subscriptionTier: 'trial',
-            status: 'PENDING',
-            approvalStatus: 'PENDING',
+            status: tenantStatus,
+            approvalStatus: approvalStatus,
             trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days trial
             billingEmail: email,
             contactInfo: {
@@ -180,10 +172,11 @@ export class AuthService {
               firstName,
               lastName,
             },
+            ...(autoApprove && { approvedAt: new Date() }),
           },
         });
 
-        // Create tenant user (organization owner) with PENDING status
+        // Create tenant user (organization owner)
         const tenantUser = await prisma.tenantUser.create({
           data: {
             tenantId: tenant.id,
@@ -192,9 +185,10 @@ export class AuthService {
             firstName,
             lastName,
             role: 'ADMIN', // Organization owner
-            status: 'PENDING',
-            approvalStatus: 'PENDING',
-            isActive: false, // Will be activated upon approval
+            status: tenantStatus,
+            approvalStatus: approvalStatus,
+            isActive: userIsActive,
+            ...(autoApprove && { approvedAt: new Date() }),
           },
         });
 
@@ -203,7 +197,11 @@ export class AuthService {
           data: {
             tenantId: tenant.id,
             requestedBy: tenantUser.id,
-            status: 'PENDING',
+            status: approvalStatus,
+            ...(autoApprove && {
+              reviewedAt: new Date(),
+              reviewNotes: 'Auto-approved for testing environment',
+            }),
           },
         });
 
@@ -212,7 +210,42 @@ export class AuthService {
 
       const { tenant, tenantUser } = result;
 
-      // Return pending status instead of tokens
+      // If auto-approved, generate tokens and return them
+      if (autoApprove) {
+        const payload = {
+          sub: tenantUser.id,
+          email: tenantUser.email,
+          tenantId: tenant.id,
+          role: tenantUser.role,
+        };
+
+        const accessToken = this.jwtService.sign(payload, {
+          secret: this.configService.get('JWT_ACCESS_SECRET'),
+          expiresIn: this.configService.get('JWT_EXPIRES_IN'),
+        });
+
+        return {
+          message: 'Registration successful.',
+          status: 'APPROVED',
+          access_token: accessToken,
+          tenant: {
+            id: tenant.id,
+            name: tenant.name,
+            subdomain: tenant.subdomain,
+            status: tenant.status,
+          },
+          user: {
+            id: tenantUser.id,
+            email: tenantUser.email,
+            firstName: tenantUser.firstName,
+            lastName: tenantUser.lastName,
+            role: tenantUser.role,
+            status: tenantUser.status,
+          },
+        };
+      }
+
+      // Return pending status if manual approval required
       return {
         message: 'Registration submitted successfully. Your application is pending approval.',
         status: 'PENDING_APPROVAL',

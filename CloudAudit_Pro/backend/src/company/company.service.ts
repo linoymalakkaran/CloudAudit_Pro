@@ -48,10 +48,15 @@ export class CompanyService {
   constructor(private prisma: PrismaService) {}
 
   async createCompany(data: CreateCompanyDto) {
+    // Generate a unique code from name + random suffix
+    const namePrefix = data.name.substring(0, 6).toUpperCase().replace(/[^A-Z0-9]/g, '') || 'COMP';
+    const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const uniqueCode = `${namePrefix}${randomSuffix}`;
+    
     return this.prisma.company.create({
       data: {
         name: data.name,
-        code: data.name.substring(0, 10).toUpperCase().replace(/[^A-Z0-9]/g, ''), // Generate code from name
+        code: uniqueCode,
         registrationNumber: data.registrationNumber,
         taxId: data.taxId,
         businessType: data.businessType,

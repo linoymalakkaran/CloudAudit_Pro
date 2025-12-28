@@ -27,7 +27,7 @@ export class PeriodService {
 
   async createPeriod(data: CreatePeriodDto) {
     // Validate that company belongs to tenant
-    const company = await this.prisma.company.findUnique({
+    const company = await this.prisma.company.findFirst({
       where: { 
         id: data.companyId,
         tenantId: data.tenantId,
@@ -75,7 +75,7 @@ export class PeriodService {
 
   async getPeriodsByCompany(companyId: string, tenantId: string) {
     // Verify company belongs to tenant
-    const company = await this.prisma.company.findUnique({
+    const company = await this.prisma.company.findFirst({
       where: { 
         id: companyId,
         tenantId,

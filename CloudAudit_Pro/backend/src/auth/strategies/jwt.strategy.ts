@@ -27,12 +27,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload) {
-    // Verify user still exists and is active
-    const user = await this.prisma.user.findUnique({
+    // Verify user still exists and is active in tenant_users table
+    const tenantUser = await this.prisma.tenantUser.findUnique({
       where: { 
         id: payload.sub,
-        tenantId: payload.tenantId,
-        isActive: true,
       },
       include: {
         tenant: {
@@ -46,19 +44,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       },
     });
 
-    if (!user || !user.tenant || user.tenant.status !== 'ACTIVE') {
+    if (!tenantUser || !tenantUser.isActive || !tenantUser.tenant || tenantUser.tenant.status !== 'ACTIVE') {
       return null; // This will trigger 401 Unauthorized
     }
 
     // Return user object that will be available in request.user
     return {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      role: user.role,
-      tenantId: user.tenantId,
-      tenant: user.tenant,
+      id: tenantUser.id,
+      email: tenantUser.email,
+      firstName: tenantUser.firstName,
+      lastName: tenantUser.lastName,
+      role: tenantUser.role,
+      tenantId: tenantUser.tenantId,
+      tenant: tenantUser.tenant,
     };
   }
 }

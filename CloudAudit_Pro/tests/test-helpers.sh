@@ -60,58 +60,58 @@ test_endpoint() {
     
     TOTAL_TESTS=$((TOTAL_TESTS + 1))
     
-    echo ""
-    echo -e "${BLUE}▶ Test $TOTAL_TESTS: $test_name${NC}"
-    echo "  Method: $method"
-    echo "  Endpoint: $endpoint"
+    echo "" >&2
+    echo -e "${BLUE}▶ Test $TOTAL_TESTS: $test_name${NC}" >&2
+    echo "  Method: $method" >&2
+    echo "  Endpoint: $endpoint" >&2
     
     # Make request
     local response=$(api_request "$method" "$endpoint" "$data" "$auth_token")
     local status=$(echo "$response" | tail -n 1)
     local body=$(echo "$response" | sed '$d')
     
-    echo "  Expected Status: $expected_status"
-    echo "  Actual Status: $status"
+    echo "  Expected Status: $expected_status" >&2
+    echo "  Actual Status: $status" >&2
     
     local test_passed=true
     
     # Validate status code
     if [ "$status" != "$expected_status" ]; then
-        echo -e "  ${RED}✗ Status Code: FAIL${NC}"
+        echo -e "  ${RED}✗ Status Code: FAIL${NC}" >&2
         test_passed=false
     else
-        echo -e "  ${GREEN}✓ Status Code: PASS${NC}"
+        echo -e "  ${GREEN}✓ Status Code: PASS${NC}" >&2
     fi
     
     # Validate JSON
     if validate_json "$body"; then
-        echo -e "  ${GREEN}✓ Valid JSON: PASS${NC}"
+        echo -e "  ${GREEN}✓ Valid JSON: PASS${NC}" >&2
         
         # Run custom validation
         if [ -n "$validator" ] && [ "$test_passed" = "true" ]; then
             if $validator "$body"; then
-                echo -e "  ${GREEN}✓ Schema Validation: PASS${NC}"
+                echo -e "  ${GREEN}✓ Schema Validation: PASS${NC}" >&2
             else
-                echo -e "  ${RED}✗ Schema Validation: FAIL${NC}"
+                echo -e "  ${RED}✗ Schema Validation: FAIL${NC}" >&2
                 test_passed=false
             fi
         fi
     else
-        echo -e "  ${RED}✗ Valid JSON: FAIL${NC}"
-        echo "  Response: $body" | head -c 200
+        echo -e "  ${RED}✗ Valid JSON: FAIL${NC}" >&2
+        echo "  Response: $body" | head -c 200 >&2
         test_passed=false
     fi
     
     # Update counters
     if [ "$test_passed" = "true" ]; then
-        echo -e "  ${GREEN}✓ OVERALL: PASS${NC}"
+        echo -e "  ${GREEN}✓ OVERALL: PASS${NC}" >&2
         PASSED_TESTS=$((PASSED_TESTS + 1))
     else
-        echo -e "  ${RED}✗ OVERALL: FAIL${NC}"
+        echo -e "  ${RED}✗ OVERALL: FAIL${NC}" >&2
         FAILED_TESTS=$((FAILED_TESTS + 1))
     fi
     
-    # Return the body for further processing
+    # Return the body for further processing (to stdout only)
     echo "$body"
 }
 

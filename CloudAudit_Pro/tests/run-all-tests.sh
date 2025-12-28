@@ -13,8 +13,12 @@ NC='\033[0m'
 
 API_BASE_URL="http://localhost:8000/api"
 HEALTH_URL="http://localhost:8000/api/health"
-MASTER_RESULTS="test-results-master.txt"
-DETAILED_RESULTS="test-results-detailed.json"
+
+# Create results directory if it doesn't exist
+mkdir -p results
+
+MASTER_RESULTS="results/test-results-master.txt"
+DETAILED_RESULTS="results/test-results-detailed.json"
 
 echo ""
 echo "╔════════════════════════════════════════════════════════════╗"
@@ -121,7 +125,7 @@ for module in "${modules[@]}"; do
             ((passed_modules++))
             
             # Mark all APIs as passed
-            while IFS= read -line; do
+            while IFS= read -r line; do
                 if [ -n "$line" ]; then
                     api_results["$module:$line"]="PASS"
                 fi
@@ -131,7 +135,7 @@ for module in "${modules[@]}"; do
             ((failed_modules++))
             
             # Parse which APIs failed
-            while IFS= read -line; do
+            while IFS= read -r line; do
                 if [ -n "$line" ]; then
                     # Check if this test passed or failed in output
                     if echo "$test_output" | grep -A 10 "$line" | grep -q "OVERALL: PASS"; then

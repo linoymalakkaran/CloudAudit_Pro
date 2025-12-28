@@ -18,6 +18,8 @@ export class PeriodController {
   async createPeriod(@Body() createPeriodDto: CreatePeriodDto, @Request() req: any) {
     return this.periodService.createPeriod({
       ...createPeriodDto,
+      startDate: new Date(createPeriodDto.startDate),
+      endDate: new Date(createPeriodDto.endDate),
       tenantId: req.user.tenantId,
     });
   }
@@ -72,7 +74,14 @@ export class PeriodController {
     @Body() updatePeriodDto: UpdatePeriodDto,
     @Request() req: any,
   ) {
-    return this.periodService.updatePeriod(id, req.user.tenantId, updatePeriodDto);
+    const updateData: UpdatePeriodDto = { ...updatePeriodDto };
+    if (updatePeriodDto.startDate) {
+      updateData.startDate = new Date(updatePeriodDto.startDate);
+    }
+    if (updatePeriodDto.endDate) {
+      updateData.endDate = new Date(updatePeriodDto.endDate);
+    }
+    return this.periodService.updatePeriod(id, req.user.tenantId, updateData);
   }
 
   @Post(':id/close')

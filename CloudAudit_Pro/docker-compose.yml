@@ -57,6 +57,7 @@ services:
       REDIS_URL: redis://redis:6379
       JWT_SECRET: your-jwt-secret-key-change-in-production
       JWT_REFRESH_SECRET: your-jwt-refresh-secret-key-change-in-production
+      AUTO_APPROVE_TENANTS: "true"
       AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
       AZURE_STORAGE_CONTAINER_NAME: cloudaudit-documents
       SMTP_HOST: ${SMTP_HOST}

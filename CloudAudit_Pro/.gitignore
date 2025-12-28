@@ -25,6 +25,9 @@ Thumbs.db
 logs/
 *.log
 
+# Test results
+tests/results/
+
 # Runtime data
 pids/
 *.pid

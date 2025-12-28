@@ -36,7 +36,7 @@ export class AccountService {
 
   async createAccount(data: CreateAccountDto) {
     // Validate period exists and belongs to tenant
-    const period = await this.prisma.period.findUnique({
+    const period = await this.prisma.period.findFirst({
       where: { 
         id: data.periodId,
         tenantId: data.tenantId,
@@ -48,7 +48,7 @@ export class AccountService {
     }
 
     // Check if account number already exists in this period
-    const existingAccount = await this.prisma.account.findFirst({
+    const existingAccount = await this.prisma.accountHead.findFirst({
       where: {
         accountNumber: data.accountNumber,
         periodId: data.periodId,
@@ -62,7 +62,7 @@ export class AccountService {
 
     // If parent account is specified, validate it
     if (data.parentAccountId) {
-      const parentAccount = await this.prisma.account.findUnique({
+      const parentAccount = await this.prisma.accountHead.findUnique({
         where: {
           id: data.parentAccountId,
           periodId: data.periodId,
@@ -97,7 +97,7 @@ export class AccountService {
 
   async getAccountsByPeriod(periodId: string, tenantId: string) {
     // Verify period belongs to tenant
-    const period = await this.prisma.period.findUnique({
+    const period = await this.prisma.period.findFirst({
       where: { 
         id: periodId,
         tenantId,
@@ -108,7 +108,7 @@ export class AccountService {
       throw new NotFoundException('Period not found');
     }
 
-    return this.prisma.account.findMany({
+    return this.prisma.accountHead.findMany({
       where: {
         periodId,
         tenantId,
@@ -134,7 +134,7 @@ export class AccountService {
   }
 
   async getAccountById(id: string, tenantId: string) {
-    const account = await this.prisma.account.findUnique({
+    const account = await this.prisma.accountHead.findUnique({
       where: {
         id,
         tenantId,
@@ -172,7 +172,7 @@ export class AccountService {
 
     // If updating account number, check for conflicts
     if (data.accountNumber && data.accountNumber !== account.accountNumber) {
-      const existingAccount = await this.prisma.account.findFirst({
+      const existingAccount = await this.prisma.accountHead.findFirst({
         where: {
           accountNumber: data.accountNumber,
           periodId: account.periodId,
@@ -188,7 +188,7 @@ export class AccountService {
 
     // If updating parent account, validate it
     if (data.parentAccountId) {
-      const parentAccount = await this.prisma.account.findUnique({
+      const parentAccount = await this.prisma.accountHead.findUnique({
         where: {
           id: data.parentAccountId,
           periodId: account.periodId,
@@ -206,7 +206,7 @@ export class AccountService {
       }
     }
 
-    return this.prisma.account.update({
+    return this.prisma.accountHead.update({
       where: { id },
       data: {
         accountNumber: data.accountNumber,
@@ -234,7 +234,7 @@ export class AccountService {
       throw new ConflictException('Cannot delete account with journal entries');
     }
 
-    return this.prisma.account.update({
+    return this.prisma.accountHead.update({
       where: { id },
       data: {
         isActive: false,
@@ -277,7 +277,7 @@ export class AccountService {
 
   async getTrialBalance(periodId: string, tenantId: string) {
     // Verify period belongs to tenant
-    const period = await this.prisma.period.findUnique({
+    const period = await this.prisma.period.findFirst({
       where: { 
         id: periodId,
         tenantId,
@@ -288,7 +288,7 @@ export class AccountService {
       throw new NotFoundException('Period not found');
     }
 
-    const accounts = await this.prisma.account.findMany({
+    const accounts = await this.prisma.accountHead.findMany({
       where: {
         periodId,
         tenantId,
@@ -368,7 +368,7 @@ export class AccountService {
 
   async importChartOfAccounts(periodId: string, tenantId: string, accounts: CreateAccountDto[]) {
     // Verify period belongs to tenant
-    const period = await this.prisma.period.findUnique({
+    const period = await this.prisma.period.findFirst({
       where: { 
         id: periodId,
         tenantId,
@@ -411,7 +411,7 @@ export class AccountService {
 
   async getAccountStats(tenantId: string) {
     const [totalAccounts, accountsByType, activeAccounts] = await Promise.all([
-      this.prisma.account.count({
+      this.prisma.accountHead.count({
         where: { tenantId },
       }),
       this.prisma.accountHead.groupBy({
@@ -422,7 +422,7 @@ export class AccountService {
         },
         _count: true,
       }),
-      this.prisma.account.count({
+      this.prisma.accountHead.count({
         where: { 
           tenantId,
           isActive: true,
