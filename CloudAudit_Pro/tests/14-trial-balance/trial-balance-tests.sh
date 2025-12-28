@@ -1,19 +1,30 @@
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../test-helpers.sh"
+source "$SCRIPT_DIR/../auth-helper.sh"
 
 echo "╔════════════════════════════════════════════════════════════╗"
-MODULE_NAME="trial-balance"
-echo "║              ${MODULE_NAME^^} TESTS                              ║"
+echo "║              TRIAL BALANCE TESTS                            ║"
 echo "╚════════════════════════════════════════════════════════════╝"
 
-validate_item() { check_field "$1" '.id'; }
+validate_balance() { check_field "$1" '.debits' && check_field "$1" '.credits'; }
 validate_list() { echo "$1" | jq -e 'type == "array"' >/dev/null 2>&1; }
 
-echo "━━━ Test 1: Health Check ━━━"
-test_endpoint "API Health" "GET" "/health" "" "200" "" "" >/dev/null
+if ! init_auth; then
+    echo "❌ Failed to authenticate"
+    exit 1
+fi
 
-echo "" && echo "━━━ Test 2: API Status ━━━"
-test_endpoint "API Status" "GET" "/health" "" "200" "" "" >/dev/null
+TOKEN="$SHARED_AUTH_TOKEN"
+
+echo ""
+echo "━━━ Test 1: Get Trial Balance ━━━"
+test_endpoint "Get Trial Balance" "GET" "/trial-balance" "" "200" "$TOKEN" "validate_balance" >/dev/null
+
+echo "" && echo "━━━ Test 2: Unauthorized Access ━━━"
+test_endpoint "No Auth" "GET" "/trial-balance" "" "401" "" "" >/dev/null
+
+echo "" && echo "━━━ Test 3: Health Check ━━━"
+test_endpoint "API Health" "GET" "/health" "" "200" "" "" >/dev/null
 
 print_summary
