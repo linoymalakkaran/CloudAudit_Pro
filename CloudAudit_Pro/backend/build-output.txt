@@ -1,0 +1,124 @@
+
+> cloudaudit-pro-backend@0.0.1 build
+> nest build
+
+[96msrc/currency/currency.controller.ts[0m:[93m6[0m:[93m25[0m - [91merror[0m[90m TS2307: [0mCannot find module '../auth/decorators/get-user.decorator' or its corresponding type declarations.
+
+[7m6[0m import { GetUser } from '../auth/decorators/get-user.decorator';
+[7m [0m [91m                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/currency/currency.module.ts[0m:[93m4[0m:[93m30[0m - [91merror[0m[90m TS2307: [0mCannot find module '../prisma/prisma.module' or its corresponding type declarations.
+
+[7m4[0m import { PrismaModule } from '../prisma/prisma.module';
+[7m [0m [91m                             ~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/equity/equity.service.ts[0m:[93m26[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'equity' does not exist on type 'DatabaseService'.
+
+[7m26[0m     return this.db.equity.create({
+[7m  [0m [91m                   ~~~~~~[0m
+[96msrc/equity/equity.service.ts[0m:[93m44[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'equity' does not exist on type 'DatabaseService'.
+
+[7m44[0m     return this.db.equity.findMany({
+[7m  [0m [91m                   ~~~~~~[0m
+[96msrc/equity/equity.service.ts[0m:[93m59[0m:[93m34[0m - [91merror[0m[90m TS2339: [0mProperty 'equity' does not exist on type 'DatabaseService'.
+
+[7m59[0m     const equity = await this.db.equity.findUnique({
+[7m  [0m [91m                                 ~~~~~~[0m
+[96msrc/equity/equity.service.ts[0m:[93m82[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'equity' does not exist on type 'DatabaseService'.
+
+[7m82[0m     return this.db.equity.update({
+[7m  [0m [91m                   ~~~~~~[0m
+[96msrc/equity/equity.service.ts[0m:[93m99[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'equity' does not exist on type 'DatabaseService'.
+
+[7m99[0m     return this.db.equity.delete({ where: { id } });
+[7m  [0m [91m                   ~~~~~~[0m
+[96msrc/equity/equity.service.ts[0m:[93m103[0m:[93m36[0m - [91merror[0m[90m TS2339: [0mProperty 'equity' does not exist on type 'DatabaseService'.
+
+[7m103[0m     const equities = await this.db.equity.findMany({
+[7m   [0m [91m                                   ~~~~~~[0m
+[96msrc/exchange-rate/exchange-rate.controller.ts[0m:[93m6[0m:[93m25[0m - [91merror[0m[90m TS2307: [0mCannot find module '../auth/decorators/get-user.decorator' or its corresponding type declarations.
+
+[7m6[0m import { GetUser } from '../auth/decorators/get-user.decorator';
+[7m [0m [91m                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/exchange-rate/exchange-rate.module.ts[0m:[93m4[0m:[93m30[0m - [91merror[0m[90m TS2307: [0mCannot find module '../prisma/prisma.module' or its corresponding type declarations.
+
+[7m4[0m import { PrismaModule } from '../prisma/prisma.module';
+[7m [0m [91m                             ~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/finding/finding.service.ts[0m:[93m41[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType '{ tenantId: string; identifiedBy: string; procedureId: string; companyId: string; periodId: string; title: string; description: string; severity: Severity; recommendation?: string; }' is not assignable to type '(Without<FindingCreateInput, FindingUncheckedCreateInput> & FindingUncheckedCreateInput) | (Without<...> & FindingCreateInput)'.
+  Type '{ tenantId: string; identifiedBy: string; procedureId: string; companyId: string; periodId: string; title: string; description: string; severity: Severity; recommendation?: string; }' is not assignable to type 'Without<FindingUncheckedCreateInput, FindingCreateInput> & FindingCreateInput'.
+    Type '{ tenantId: string; identifiedBy: string; procedureId: string; companyId: string; periodId: string; title: string; description: string; severity: Severity; recommendation?: string; }' is not assignable to type 'Without<FindingUncheckedCreateInput, FindingCreateInput>'.
+      Types of property 'companyId' are incompatible.
+        Type 'string' is not assignable to type 'never'.
+
+[7m41[0m       data: {
+[7m  [0m [91m      ~~~~[0m
+
+  [96mnode_modules/.prisma/client/index.d.ts[0m:[93m35783[0m:[93m5[0m
+    [7m35783[0m     data: XOR<FindingCreateInput, FindingUncheckedCreateInput>
+    [7m     [0m [96m    ~~~~[0m
+    The expected type comes from property 'data' which is declared here on type '{ select?: FindingSelect<DefaultArgs>; include?: FindingInclude<DefaultArgs>; data: (Without<FindingCreateInput, FindingUncheckedCreateInput> & FindingUncheckedCreateInput) | (Without<...> & FindingCreateInput); }'
+[96msrc/fixed-asset/dto/create-fixed-asset.dto.ts[0m:[93m3[0m:[93m10[0m - [91merror[0m[90m TS2305: [0mModule '"@prisma/client"' has no exported member 'DepreciationMethod'.
+
+[7m3[0m import { DepreciationMethod, AssetStatus } from '@prisma/client';
+[7m [0m [91m         ~~~~~~~~~~~~~~~~~~[0m
+[96msrc/fixed-asset/dto/create-fixed-asset.dto.ts[0m:[93m3[0m:[93m30[0m - [91merror[0m[90m TS2305: [0mModule '"@prisma/client"' has no exported member 'AssetStatus'.
+
+[7m3[0m import { DepreciationMethod, AssetStatus } from '@prisma/client';
+[7m [0m [91m                             ~~~~~~~~~~~[0m
+[96msrc/fixed-asset/fixed-asset.service.ts[0m:[93m5[0m:[93m10[0m - [91merror[0m[90m TS2305: [0mModule '"@prisma/client"' has no exported member 'DepreciationMethod'.
+
+[7m5[0m import { DepreciationMethod } from '@prisma/client';
+[7m [0m [91m         ~~~~~~~~~~~~~~~~~~[0m
+[96msrc/fixed-asset/fixed-asset.service.ts[0m:[93m37[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'fixedAsset' does not exist on type 'DatabaseService'.
+
+[7m37[0m     return this.db.fixedAsset.create({
+[7m  [0m [91m                   ~~~~~~~~~~[0m
+[96msrc/fixed-asset/fixed-asset.service.ts[0m:[93m57[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'fixedAsset' does not exist on type 'DatabaseService'.
+
+[7m57[0m     return this.db.fixedAsset.findMany({
+[7m  [0m [91m                   ~~~~~~~~~~[0m
+[96msrc/fixed-asset/fixed-asset.service.ts[0m:[93m72[0m:[93m33[0m - [91merror[0m[90m TS2339: [0mProperty 'fixedAsset' does not exist on type 'DatabaseService'.
+
+[7m72[0m     const asset = await this.db.fixedAsset.findUnique({
+[7m  [0m [91m                                ~~~~~~~~~~[0m
+[96msrc/fixed-asset/fixed-asset.service.ts[0m:[93m115[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'fixedAsset' does not exist on type 'DatabaseService'.
+
+[7m115[0m     return this.db.fixedAsset.update({
+[7m   [0m [91m                   ~~~~~~~~~~[0m
+[96msrc/fixed-asset/fixed-asset.service.ts[0m:[93m134[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'fixedAsset' does not exist on type 'DatabaseService'.
+
+[7m134[0m     return this.db.fixedAsset.delete({ where: { id } });
+[7m   [0m [91m                   ~~~~~~~~~~[0m
+[96msrc/fixed-asset/fixed-asset.service.ts[0m:[93m138[0m:[93m34[0m - [91merror[0m[90m TS2339: [0mProperty 'fixedAsset' does not exist on type 'DatabaseService'.
+
+[7m138[0m     const assets = await this.db.fixedAsset.findMany({
+[7m   [0m [91m                                 ~~~~~~~~~~[0m
+[96msrc/liability/liability.service.ts[0m:[93m29[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'liability' does not exist on type 'DatabaseService'.
+
+[7m29[0m     return this.db.liability.create({
+[7m  [0m [91m                   ~~~~~~~~~[0m
+[96msrc/liability/liability.service.ts[0m:[93m47[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'liability' does not exist on type 'DatabaseService'.
+
+[7m47[0m     return this.db.liability.findMany({
+[7m  [0m [91m                   ~~~~~~~~~[0m
+[96msrc/liability/liability.service.ts[0m:[93m63[0m:[93m37[0m - [91merror[0m[90m TS2339: [0mProperty 'liability' does not exist on type 'DatabaseService'.
+
+[7m63[0m     const liability = await this.db.liability.findUnique({
+[7m  [0m [91m                                    ~~~~~~~~~[0m
+[96msrc/liability/liability.service.ts[0m:[93m90[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'liability' does not exist on type 'DatabaseService'.
+
+[7m90[0m     return this.db.liability.update({
+[7m  [0m [91m                   ~~~~~~~~~[0m
+[96msrc/liability/liability.service.ts[0m:[93m108[0m:[93m20[0m - [91merror[0m[90m TS2339: [0mProperty 'liability' does not exist on type 'DatabaseService'.
+
+[7m108[0m     return this.db.liability.delete({ where: { id } });
+[7m   [0m [91m                   ~~~~~~~~~[0m
+[96msrc/liability/liability.service.ts[0m:[93m112[0m:[93m39[0m - [91merror[0m[90m TS2339: [0mProperty 'liability' does not exist on type 'DatabaseService'.
+
+[7m112[0m     const liabilities = await this.db.liability.findMany({
+[7m   [0m [91m                                      ~~~~~~~~~[0m
+
+Found 26 error(s).
+
+npm ERR! Lifecycle script `build` failed with error: 
+npm ERR! Error: command failed 
+npm ERR!   in workspace: cloudaudit-pro-backend@0.0.1 
+npm ERR!   at location: C:\ADPorts\eAuditPro\CloudAudit_Pro\backend 

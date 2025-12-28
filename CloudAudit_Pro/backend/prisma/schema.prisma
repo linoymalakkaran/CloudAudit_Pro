@@ -164,6 +164,9 @@ model Tenant {
   workpapers            Workpaper[]
   findings              Finding[]
   procedureComments     ProcedureComment[]
+  samplings             Sampling[]
+  substantiveTests      SubstantiveTest[]
+  internalControls      InternalControl[]
 
   @@map("tenants")
 }
@@ -287,7 +290,8 @@ model Company {
   // Business details
   businessType   String?
   baseCurrency   String?
-  currencyId     Int?
+  currencyId     String?
+  countryId      String?
   industrySector String?
   fiscalYearEnd  DateTime?
   
@@ -327,6 +331,12 @@ model Company {
   ledgerEntries      Ledger[]
   auditProcedures    AuditProcedure[]
   findings           Finding[]
+  currency           Currency? @relation("CompanyCurrency", fields: [currencyId], references: [id])
+  country            Country? @relation("CompanyCountry", fields: [countryId], references: [id])
+  bankAccounts       BankAccount[] @relation("CompanyBankAccounts")
+  samplings          Sampling[]
+  substantiveTests   SubstantiveTest[]
+  internalControls   InternalControl[]
 
   @@unique([code])
   @@map("companies")
@@ -376,9 +386,201 @@ model Period {
   ledgerEntries  Ledger[]
   auditProcedures AuditProcedure[]
   findings       Finding[]
+  samplings      Sampling[]
+  substantiveTests SubstantiveTest[]
+  internalControls InternalControl[]
 
   @@unique([companyId, name])
   @@map("periods")
+}
+
+// =============================================================================
+// MASTER DATA MODELS (Phase 1)
+// =============================================================================
+// Currency, Bank, Country master data
+
+model Currency {
+  id           String   @id @default(cuid())
+  code         String   @unique  // e.g., USD, EUR, GBP
+  name         String               // e.g., US Dollar
+  symbol       String?              // e.g., $, €, £
+  decimalPlaces Int     @default(2)
+  isActive     Boolean  @default(true)
+  isBaseCurrency Boolean @default(false)
+  
+  // Display settings
+  displayOrder  Int?
+  description   String?
+  
+  // Metadata
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  createdBy    String?
+  updatedBy    String?
+  
+  // Relations
+  exchangeRatesFrom ExchangeRate[] @relation("BaseCurrency")
+  exchangeRatesTo   ExchangeRate[] @relation("TargetCurrency")
+  companies         Company[]      @relation("CompanyCurrency")
+  banks             Bank[]
+  
+  @@map("currencies")
+}
+
+model ExchangeRate {
+  id             String   @id @default(cuid())
+  baseCurrencyId String
+  targetCurrencyId String
+  rate           Decimal  @db.Decimal(18, 6)
+  effectiveDate  DateTime
+  expiryDate     DateTime?
+  source         String?   // e.g., "Central Bank", "Manual"
+  isActive       Boolean  @default(true)
+  
+  // Metadata
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy      String?
+  updatedBy      String?
+  
+  // Relations
+  baseCurrency   Currency @relation("BaseCurrency", fields: [baseCurrencyId], references: [id])
+  targetCurrency Currency @relation("TargetCurrency", fields: [targetCurrencyId], references: [id])
+  
+  @@unique([baseCurrencyId, targetCurrencyId, effectiveDate])
+  @@map("exchange_rates")
+}
+
+model Country {
+  id           String   @id @default(cuid())
+  code         String   @unique  // ISO 3166-1 alpha-2 code (e.g., US, GB)
+  name         String               // e.g., United States
+  officialName String?              // e.g., United States of America
+  alpha3Code   String?  @unique    // ISO 3166-1 alpha-3 (e.g., USA)
+  numericCode  String?              // ISO 3166-1 numeric
+  
+  // Regional information
+  region       String?              // e.g., Americas, Europe, Asia
+  subRegion    String?              // e.g., Northern America, Western Europe
+  
+  // Currency and dialing
+  currencyCode String?
+  dialCode     String?              // e.g., +1, +44
+  
+  // Display settings
+  displayOrder Int?
+  isActive     Boolean  @default(true)
+  
+  // Metadata
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  createdBy    String?
+  updatedBy    String?
+  
+  // Relations
+  companies    Company[] @relation("CompanyCountry")
+  banks        Bank[]
+  
+  @@map("countries")
+}
+
+model Bank {
+  id             String   @id @default(cuid())
+  name           String
+  code           String?  @unique
+  swiftCode      String?  @unique
+  routingNumber  String?
+  
+  // Address information
+  addressLine1   String?
+  addressLine2   String?
+  city           String?
+  state          String?
+  postalCode     String?
+  countryId      String?
+  
+  // Contact information
+  phone          String?
+  email          String?
+  website        String?
+  
+  // Currency
+  currencyId     String?
+  
+  // Bank type
+  bankType       BankType? @default(COMMERCIAL)
+  
+  // Display settings
+  displayOrder   Int?
+  isActive       Boolean  @default(true)
+  description    String?
+  
+  // Metadata
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy      String?
+  updatedBy      String?
+  
+  // Relations
+  country        Country? @relation(fields: [countryId], references: [id])
+  currency       Currency? @relation(fields: [currencyId], references: [id])
+  bankAccounts   BankAccount[]
+  
+  @@map("banks")
+}
+
+model BankAccount {
+  id              String   @id @default(cuid())
+  companyId       String
+  bankId          String
+  accountNumber   String
+  accountName     String
+  accountType     BankAccountType @default(CHECKING)
+  
+  // Balance information
+  openingBalance  Decimal? @db.Decimal(15, 2)
+  currentBalance  Decimal? @db.Decimal(15, 2)
+  
+  // Account details
+  branchName      String?
+  branchCode      String?
+  iban            String?
+  
+  // Status
+  isActive        Boolean  @default(true)
+  isPrimary       Boolean  @default(false)
+  
+  // Metadata
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String?
+  updatedBy       String?
+  
+  // Relations
+  company         Company  @relation("CompanyBankAccounts", fields: [companyId], references: [id])
+  bank            Bank     @relation(fields: [bankId], references: [id])
+  
+  @@unique([companyId, accountNumber])
+  @@map("bank_accounts")
+}
+
+enum BankType {
+  COMMERCIAL
+  INVESTMENT
+  CENTRAL
+  COOPERATIVE
+  SAVINGS
+  ISLAMIC
+  OTHER
+}
+
+enum BankAccountType {
+  CHECKING
+  SAVINGS
+  MONEY_MARKET
+  CURRENT
+  DEPOSIT
+  OTHER
 }
 
 // =============================================================================
@@ -442,6 +644,8 @@ model AccountHead {
   documents           Document[]
   trialBalanceAccountHead TrialBalanceEntry[] @relation("TrialBalanceAccountHead")
   ledgerEntries       Ledger[]
+  samplings           Sampling[]
+  substantiveTests    SubstantiveTest[]
 
   @@unique([companyId, code])
   @@map("account_heads")
@@ -723,6 +927,8 @@ model AuditProcedure {
   workpapers        Workpaper[]
   findings          Finding[]
   comments          ProcedureComment[]
+  samplings         Sampling[]
+  substantiveTests  SubstantiveTest[]
 
   @@index([tenantId])
   @@index([companyId])
@@ -1067,6 +1273,59 @@ model ExportJob {
 }
 
 // =============================================================================
+// REVIEW & QUALITY CONTROL MODELS
+// =============================================================================
+// Review points, manager reviews, and audit finalization
+
+model ReviewPoint {
+  id                String @id @default(cuid())
+  companyId         String
+  periodId          String
+  procedureId       String?
+  accountId         String?
+  tenantId          String
+  
+  // Review details
+  reviewNumber      String
+  title             String
+  description       String? @db.Text
+  category          ReviewCategory
+  priority          Priority
+  status            ReviewPointStatus @default(OUTSTANDING)
+  
+  // People
+  raisedBy          String
+  raisedAt          DateTime @default(now())
+  assignedTo        String?
+  assignedAt        DateTime?
+  
+  // Response and Clearance
+  response          String? @db.Text
+  clearanceNotes    String? @db.Text
+  clearedBy         String?
+  clearedAt         DateTime?
+  
+  // Dates
+  dueDate           DateTime?
+  targetDate        DateTime?
+  
+  // Additional details
+  impact            String? @db.Text
+  relatedReviewIds  String[]
+  
+  // Audit fields
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  createdBy         String
+  updatedBy         String
+  
+  @@unique([companyId, periodId, reviewNumber])
+  @@index([companyId, periodId, status])
+  @@index([assignedTo, status])
+  @@map("review_points")
+}
+
+// =============================================================================
 // REPORTING & CONFIGURATION MODELS
 // =============================================================================
 // Reports, templates, system configuration, and audit logging
@@ -1398,11 +1657,89 @@ enum ReportStatus {
   FAILED
 }
 
+enum ProcedureCategory {
+  SUBSTANTIVE_TESTING
+  COMPLIANCE_TESTING
+  ANALYTICAL_PROCEDURES
+  INTERNAL_CONTROLS
+  RISK_ASSESSMENT
+  OTHER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum FindingStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
 enum ReportFormat {
   PDF
   EXCEL
   CSV
   JSON
+}
+
+enum ReviewCategory {
+  AUDIT_FINDING
+  CLIENT_QUERY
+  TECHNICAL_ISSUE
+  DOCUMENTATION
+  COMPLIANCE
+  OTHER
+}
+
+enum ReviewPointStatus {
+  OUTSTANDING
+  IN_PROGRESS
+  PENDING_CLEARANCE
+  CLEARED
+  CARRIED_FORWARD
+}
+
+enum ReviewLevel {
+  MANAGER
+  PARTNER
+  QUALITY_CONTROL
+}
+
+enum ManagerReviewStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  APPROVED
+  REJECTED
+  REQUIRES_CHANGES
+}
+
+enum FinalizationStatus {
+  DRAFT
+  IN_PROGRESS
+  REVIEW
+  APPROVED
+  FINALIZED
+  ISSUED
+}
+
+enum OpinionType {
+  UNQUALIFIED
+  QUALIFIED
+  ADVERSE
+  DISCLAIMER
 }
 
 enum AuditSeverity {
@@ -1415,41 +1752,206 @@ enum AuditSeverity {
   ERROR
 }
 
-enum ProcedureCategory {
-  CASH_AND_BANK
-  ACCOUNTS_RECEIVABLE
-  INVENTORY
-  FIXED_ASSETS
-  ACCOUNTS_PAYABLE
-  REVENUE
-  EXPENSES
-  EQUITY
-  ANALYTICAL_PROCEDURES
-  INTERNAL_CONTROLS
-  COMPLIANCE
-  SUBSTANTIVE_TESTING
-  OTHER
+enum SamplingMethod {
+  RANDOM
+  SYSTEMATIC
+  STRATIFIED
+  MONETARY_UNIT
+  JUDGMENTAL
+  HAPHAZARD
 }
 
-enum Priority {
+enum SamplingStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  REVIEWED
+}
+
+enum TestType {
+  VOUCHING
+  TRACING
+  RECALCULATION
+  CONFIRMATION
+  OBSERVATION
+  INSPECTION
+  ANALYTICAL_PROCEDURE
+  REPERFORMANCE
+}
+
+enum TestStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  REVIEWED
+  EXCEPTION_NOTED
+}
+
+enum ExceptionSeverity {
   LOW
   MEDIUM
   HIGH
-  URGENT
-}
-
-enum Severity {
-  MINOR
-  MODERATE
-  SIGNIFICANT
-  MATERIAL
   CRITICAL
 }
 
-enum FindingStatus {
-  OPEN
-  IN_PROGRESS
-  RESOLVED
-  CLOSED
-  DEFERRED
+enum ControlType {
+  PREVENTIVE
+  DETECTIVE
+  CORRECTIVE
+  DIRECTIVE
+}
+
+enum ControlNature {
+  MANUAL
+  AUTOMATED
+  IT_DEPENDENT_MANUAL
+}
+
+enum ControlFrequency {
+  CONTINUOUS
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+  AD_HOC
+}
+
+enum ControlEffectiveness {
+  EFFECTIVE
+  PARTIALLY_EFFECTIVE
+  INEFFECTIVE
+  NOT_TESTED
+}
+
+model Sampling {
+  id                  String         @id @default(cuid())
+  tenantId            String
+  companyId           String
+  periodId            String
+  procedureId         String?
+  accountId           String?
+  title               String
+  description         String?
+  samplingMethod      SamplingMethod
+  status              SamplingStatus @default(PLANNED)
+  populationSize      Int
+  sampleSize          Int
+  confidenceLevel     Float?
+  tolerableError      Float?
+  expectedError       Float?
+  samplingInterval    Int?
+  randomSeed          Int?
+  selectionCriteria   String?
+  stratificationBasis String?
+  errorsFound         Int?           @default(0)
+  itemsTested         Int?           @default(0)
+  conclusion          String?
+  requiresProjection  Boolean        @default(false)
+  projectedError      Float?
+  createdBy           String
+  updatedBy           String
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  // Relations
+  tenant    Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  company   Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period    Period         @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  procedure AuditProcedure? @relation(fields: [procedureId], references: [id])
+  account   AccountHead?   @relation(fields: [accountId], references: [id])
+
+  substantiveTests SubstantiveTest[]
+
+  @@map("sampling")
+}
+
+model SubstantiveTest {
+  id                     String             @id @default(cuid())
+  tenantId               String
+  companyId              String
+  periodId               String
+  procedureId            String?
+  accountId              String?
+  samplingId             String?
+  title                  String
+  description            String?
+  testType               TestType
+  status                 TestStatus         @default(PLANNED)
+  transactionReference   String?
+  transactionDate        DateTime?
+  transactionAmount      Float?
+  sourceDocument         String?
+  expectedResult         String?
+  actualResult           String?
+  proceduresPerformed    String?
+  hasException           Boolean            @default(false)
+  exceptionDescription   String?
+  exceptionSeverity      ExceptionSeverity?
+  exceptionAmount        Float?
+  managementResponse     String?
+  conclusion             String?
+  performedBy            String?
+  testDate               DateTime?
+  reviewedBy             String?
+  reviewDate             DateTime?
+  createdBy              String
+  updatedBy              String
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  // Relations
+  tenant    Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  company   Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period    Period          @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  procedure AuditProcedure? @relation(fields: [procedureId], references: [id])
+  account   AccountHead?    @relation(fields: [accountId], references: [id])
+  sampling  Sampling?       @relation(fields: [samplingId], references: [id])
+
+  @@map("substantive_tests")
+}
+
+model InternalControl {
+  id                     String                @id @default(cuid())
+  tenantId               String
+  companyId              String
+  periodId               String
+  processArea            String
+  controlId              String
+  title                  String
+  description            String
+  controlObjective       String?
+  controlType            ControlType
+  controlNature          ControlNature
+  controlFrequency       ControlFrequency
+  riskAddressed          String?
+  riskLevel              RiskLevel?
+  controlOwner           String?
+  isKeyControl           Boolean               @default(false)
+  testProcedures         String?
+  testResult             String?
+  controlEffectiveness   ControlEffectiveness  @default(NOT_TESTED)
+  deficiencyIdentified   Boolean               @default(false)
+  deficiencyDescription  String?
+  remediationPlan        String?
+  remediationDeadline    DateTime?
+  managementResponse     String?
+  testPerformedBy        String?
+  testDate               DateTime?
+  reviewedBy             String?
+  reviewDate             DateTime?
+  evidence               String?
+  conclusion             String?
+  createdBy              String
+  updatedBy              String
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+
+  // Relations
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period  Period  @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, periodId, controlId])
+  @@map("internal_controls")
 }

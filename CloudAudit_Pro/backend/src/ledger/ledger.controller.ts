@@ -13,10 +13,11 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { LedgerService } from './ledger.service';
 import { LedgerQueryDto, LedgerExportDto, ExportFormat } from './dto';
 import { Response } from 'express';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Ledger')
 @Controller('ledger')
-// @UseGuards(JwtAuthGuard) // Uncomment when auth is set up
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class LedgerController {
   constructor(private readonly ledgerService: LedgerService) {}

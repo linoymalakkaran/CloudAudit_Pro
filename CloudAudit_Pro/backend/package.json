@@ -22,7 +22,11 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "db:seed": "ts-node prisma/seed.ts"
+    "db:seed": "ts-node prisma/seed.ts",
+    "cleanup:test": "ts-node scripts/cleanup-test-data.ts",
+    "test:prepare": "npm run cleanup:test && npm run db:seed",
+    "db:cleanup": "ts-node prisma/cleanup-test-data.ts",
+    "test:reset": "npm run db:cleanup && npm run db:seed"
   },
   "dependencies": {
     "@azure/identity": "^3.2.4",

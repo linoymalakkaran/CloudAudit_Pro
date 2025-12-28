@@ -24,6 +24,19 @@ import { AuditTrailModule } from './audit-trail/audit-trail.module';
 import { SuperAdminModule } from './super-admin/super-admin.module';
 import { EmailModule } from './email/email.module';
 import { LedgerModule } from './ledger/ledger.module';
+import { CurrencyModule } from './currency/currency.module';
+import { ExchangeRateModule } from './exchange-rate/exchange-rate.module';
+import { BankModule } from './bank/bank.module';
+import { CountryModule } from './country/country.module';
+import { FixedAssetModule } from './fixed-asset/fixed-asset.module';
+import { LiabilityModule } from './liability/liability.module';
+import { EquityModule } from './equity/equity.module';
+import { ReviewPointModule } from './review-point/review-point.module';
+import { ManagerReviewModule } from './manager-review/manager-review.module';
+import { AuditFinalizationModule } from './audit-finalization/audit-finalization.module';
+import { SamplingModule } from './sampling/sampling.module';
+import { SubstantiveTestingModule } from './substantive-testing/substantive-testing.module';
+import { InternalControlsModule } from './internal-controls/internal-controls.module';
 
 @Module({
   imports: [
@@ -48,6 +61,19 @@ import { LedgerModule } from './ledger/ledger.module';
     FinancialStatementModule,
     ProcedureTemplateModule,
     ReportsModule,
+    CurrencyModule,
+    ExchangeRateModule,
+    BankModule,
+    CountryModule,
+    FixedAssetModule,
+    LiabilityModule,
+    EquityModule,
+    ReviewPointModule,
+    ManagerReviewModule,
+    AuditFinalizationModule,
+    SamplingModule,
+    SubstantiveTestingModule,
+    InternalControlsModule,
     DashboardModule,
     SystemConfigModule,
     ImportExportModule,
