@@ -12,6 +12,7 @@ import {
   UploadedFile,
   Res,
   ParseUUIDPipe,
+  Request,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
@@ -148,5 +149,95 @@ export class DocumentController {
   @ApiResponse({ status: 404, description: 'Document not found' })
   async remove(@Param('id', ParseUUIDPipe) id: string, @TenantId() tenantId: string) {
     return this.documentService.remove(id, tenantId);
+  }
+
+  // Version Management
+  @Get(':id/versions')
+  @ApiOperation({ summary: 'Get all versions of a document' })
+  @ApiResponse({ status: 200, description: 'Versions retrieved successfully' })
+  async getVersions(@Param('id', ParseUUIDPipe) id: string, @TenantId() tenantId: string) {
+    return this.documentService.getVersions(id, tenantId);
+  }
+
+  @Post(':id/versions')
+  @ApiOperation({ summary: 'Create a new version of a document' })
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  async createVersion(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body('comment') comment: string,
+    @TenantId() tenantId: string,
+    @Request() req,
+  ) {
+    return this.documentService.createVersion(id, tenantId, req.user.sub, file, comment);
+  }
+
+  // Checkout/Checkin
+  @Post(':id/checkout')
+  @ApiOperation({ summary: 'Checkout document for editing' })
+  @ApiResponse({ status: 200, description: 'Document checked out successfully' })
+  async checkout(@Param('id', ParseUUIDPipe) id: string, @TenantId() tenantId: string, @Request() req) {
+    return this.documentService.checkout(id, tenantId, req.user.sub);
+  }
+
+  @Post(':id/checkin')
+  @ApiOperation({ summary: 'Checkin document after editing' })
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  async checkin(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @TenantId() tenantId: string,
+    @Request() req,
+  ) {
+    return this.documentService.checkin(id, tenantId, req.user.sub, file);
+  }
+
+  @Post(':id/unlock')
+  @ApiOperation({ summary: 'Force unlock a document' })
+  @ApiResponse({ status: 200, description: 'Document unlocked successfully' })
+  async unlock(@Param('id', ParseUUIDPipe) id: string, @TenantId() tenantId: string) {
+    return this.documentService.unlock(id, tenantId);
+  }
+
+  // Advanced Operations
+  @Post(':id/duplicate')
+  @ApiOperation({ summary: 'Duplicate a document' })
+  @ApiResponse({ status: 201, description: 'Document duplicated successfully' })
+  async duplicate(@Param('id', ParseUUIDPipe) id: string, @TenantId() tenantId: string, @Request() req) {
+    return this.documentService.duplicate(id, tenantId, req.user.sub);
+  }
+
+  @Post(':id/archive')
+  @ApiOperation({ summary: 'Archive a document' })
+  @ApiResponse({ status: 200, description: 'Document archived successfully' })
+  async archive(@Param('id', ParseUUIDPipe) id: string, @TenantId() tenantId: string, @Request() req) {
+    return this.documentService.archive(id, tenantId, req.user.sub);
+  }
+
+  @Get('search')
+  @ApiOperation({ summary: 'Advanced search for documents' })
+  @ApiQuery({ name: 'q', required: true, description: 'Search term' })
+  @ApiQuery({ name: 'companyId', required: false })
+  @ApiQuery({ name: 'periodId', required: false })
+  @ApiQuery({ name: 'type', required: false })
+  @ApiQuery({ name: 'status', required: false })
+  async search(
+    @Query('q') searchTerm: string,
+    @Query('companyId') companyId: string,
+    @Query('periodId') periodId: string,
+    @Query('type') type: string,
+    @Query('status') status: string,
+    @TenantId() tenantId: string,
+  ) {
+    return this.documentService.search(tenantId, searchTerm, { companyId, periodId, type, status });
+  }
+
+  @Get('recent')
+  @ApiOperation({ summary: 'Get recent documents' })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  async getRecent(@Query('limit') limit: number, @TenantId() tenantId: string) {
+    return this.documentService.getRecent(tenantId, limit);
   }
 }

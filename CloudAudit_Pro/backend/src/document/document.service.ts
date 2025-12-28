@@ -361,4 +361,176 @@ export class DocumentService {
       recentDocuments,
     };
   }
+
+  // Version Management
+  async getVersions(documentId: string, tenantId: string) {
+    const document = await this.findOne(documentId, tenantId);
+    
+    return this.prisma.documentVersion.findMany({
+      where: { documentId },
+      include: {
+        uploadedByUser: { select: { id: true, email: true, name: true } },
+      },
+      orderBy: { versionNumber: 'desc' },
+    });
+  }
+
+  async createVersion(documentId: string, tenantId: string, userId: string, file: Express.Multer.File, comment?: string) {
+    const document = await this.findOne(documentId, tenantId);
+    
+    // Get latest version number
+    const latestVersion = await this.prisma.documentVersion.findFirst({
+      where: { documentId },
+      orderBy: { versionNumber: 'desc' },
+    });
+
+    const newVersionNumber = latestVersion ? latestVersion.versionNumber + 1 : 1;
+
+    // Save file
+    const fileExtension = path.extname(file.originalname);
+    const fileName = `${uuidv4()}_v${newVersionNumber}${fileExtension}`;
+    const filePath = path.join(this.uploadsDir, fileName);
+    await fs.writeFile(filePath, file.buffer);
+
+    return this.prisma.documentVersion.create({
+      data: {
+        tenantId,
+        documentId,
+        versionNumber: newVersionNumber,
+        fileName: file.originalname,
+        filePath,
+        fileSize: file.size,
+        mimeType: file.mimetype,
+        comment,
+        uploadedBy: userId,
+      },
+      include: {
+        uploadedByUser: { select: { id: true, email: true, name: true } },
+      },
+    });
+  }
+
+  // Checkout/Checkin Management
+  async checkout(documentId: string, tenantId: string, userId: string) {
+    const document = await this.findOne(documentId, tenantId);
+
+    if (document.isLocked && document.checkoutBy !== userId) {
+      throw new BadRequestException('Document is already checked out by another user');
+    }
+
+    return this.prisma.document.update({
+      where: { id: documentId },
+      data: {
+        isLocked: true,
+        checkoutBy: userId,
+        checkoutAt: new Date(),
+      },
+    });
+  }
+
+  async checkin(documentId: string, tenantId: string, userId: string, file?: Express.Multer.File) {
+    const document = await this.findOne(documentId, tenantId);
+
+    if (!document.isLocked) {
+      throw new BadRequestException('Document is not checked out');
+    }
+
+    if (document.checkoutBy !== userId) {
+      throw new BadRequestException('Document is checked out by another user');
+    }
+
+    // If file provided, create new version
+    if (file) {
+      await this.createVersion(documentId, tenantId, userId, file, 'Check-in with updates');
+    }
+
+    return this.prisma.document.update({
+      where: { id: documentId },
+      data: {
+        isLocked: false,
+        checkoutBy: null,
+        checkoutAt: null,
+      },
+    });
+  }
+
+  async unlock(documentId: string, tenantId: string) {
+    await this.findOne(documentId, tenantId);
+
+    return this.prisma.document.update({
+      where: { id: documentId },
+      data: {
+        isLocked: false,
+        checkoutBy: null,
+        checkoutAt: null,
+      },
+    });
+  }
+
+  // Advanced Operations
+  async duplicate(documentId: string, tenantId: string, userId: string) {
+    const document = await this.findOne(documentId, tenantId);
+
+    const { id, createdAt, updatedAt, ...documentData } = document;
+
+    return this.prisma.document.create({
+      data: {
+        ...documentData,
+        name: `${document.name} (Copy)`,
+        createdBy: userId,
+        updatedBy: userId,
+      },
+    });
+  }
+
+  async archive(documentId: string, tenantId: string, userId: string) {
+    await this.findOne(documentId, tenantId);
+
+    return this.prisma.document.update({
+      where: { id: documentId },
+      data: {
+        status: 'ARCHIVED',
+        updatedBy: userId,
+      },
+    });
+  }
+
+  async search(tenantId: string, searchTerm: string, filters?: any) {
+    const where: any = {
+      tenantId,
+      OR: [
+        { name: { contains: searchTerm, mode: 'insensitive' } },
+        { description: { contains: searchTerm, mode: 'insensitive' } },
+        { tags: { has: searchTerm } },
+      ],
+    };
+
+    if (filters?.companyId) where.companyId = filters.companyId;
+    if (filters?.periodId) where.periodId = filters.periodId;
+    if (filters?.type) where.type = filters.type;
+    if (filters?.status) where.status = filters.status;
+
+    return this.prisma.document.findMany({
+      where,
+      include: {
+        company: { select: { name: true } },
+        period: { select: { name: true } },
+        account: { select: { accountNumber: true, accountName: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async getRecent(tenantId: string, limit: number = 20) {
+    return this.prisma.document.findMany({
+      where: { tenantId },
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        company: { select: { name: true } },
+        period: { select: { name: true } },
+        createdByUser: { select: { email: true, name: true } },
+      },
+    });
+  }
 }

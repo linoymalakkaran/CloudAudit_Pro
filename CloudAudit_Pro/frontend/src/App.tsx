@@ -31,14 +31,31 @@ import EquitySchedule from './pages/schedules/EquitySchedule'
 import ReviewPointManagement from './pages/review/ReviewPointManagement'
 import ManagerReviewList from './pages/review/ManagerReviewList'
 import AuditFinalization from './pages/audit/AuditFinalization'
-import SamplingPlan from './pages/testing/SamplingPlan'
-import SubstantiveTesting from './pages/testing/SubstantiveTesting'
-import InternalControls from './pages/testing/InternalControls'
+import SamplingPlan from './pages/SamplingPlan'
+import SubstantiveTesting from './pages/SubstantiveTesting'
+import InternalControls from './pages/InternalControls'
 import { AdminDashboard } from './components/admin/AdminDashboard'
 import { UserManagement } from './components/admin/UserManagement'
 import { InviteUser } from './components/admin/InviteUser'
 import { PendingApprovals } from './components/admin/PendingApprovals'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+
+// Phase 6: Reporting & Analytics Pages
+import ReportsDashboard from './pages/reports/ReportsDashboard'
+import ReportGenerator from './pages/reports/ReportGenerator'
+import ReportViewer from './pages/reports/ReportViewer'
+import ReportTemplates from './pages/reports/ReportTemplates'
+import ReportScheduler from './pages/reports/ReportScheduler'
+import DashboardViewer from './pages/reports/DashboardViewer'
+import DashboardBuilder from './pages/reports/DashboardBuilder'
+import AnalyticsOverview from './pages/reports/AnalyticsOverview'
+
+// Phase 7: System Utilities Pages
+import SystemSettings from './pages/SystemSettings'
+import NotificationsCenter from './pages/NotificationsCenter'
+import UserPreferences from './pages/UserPreferences'
+import DataImportExport from './pages/DataImportExport'
+import IntegrationsManager from './pages/IntegrationsManager'
 
 const theme = createTheme({
   palette: {
@@ -126,6 +143,23 @@ function AppRoutes() {
           
           {/* Common Routes */}
           <Route path="/reports" element={<Reports />} />
+          
+          {/* Phase 6: Reporting & Analytics Routes */}
+          <Route path="/reports/dashboard" element={<ReportsDashboard />} />
+          <Route path="/reports/generate" element={<ReportGenerator />} />
+          <Route path="/reports/:id" element={<ReportViewer />} />
+          <Route path="/report-templates" element={<ReportTemplates />} />
+          <Route path="/report-schedules" element={<ReportScheduler />} />
+          <Route path="/dashboards" element={<DashboardViewer />} />
+          <Route path="/dashboards/builder" element={<DashboardBuilder />} />
+          <Route path="/analytics" element={<AnalyticsOverview />} />
+          
+          {/* Phase 7: System Utilities Routes */}
+          <Route path="/settings/system" element={<SystemSettings />} />
+          <Route path="/notifications" element={<NotificationsCenter />} />
+          <Route path="/settings/preferences" element={<UserPreferences />} />
+          <Route path="/data/import-export" element={<DataImportExport />} />
+          <Route path="/settings/integrations" element={<IntegrationsManager />} />
           
           <Route path="*" element={<Dashboard />} />
         </Layout>
