@@ -9,6 +9,7 @@ echo "╚═══════════════════════�
 
 validate_entry() { check_field "$1" '.id' && check_field "$1" '.reference'; }
 validate_list() { echo "$1" | jq -e 'type == "array"' >/dev/null 2>&1; }
+validate_paginated() { check_field "$1" '.data' && echo "$1" | jq -e '.data | type == "array"' >/dev/null 2>&1; }
 
 if ! init_auth; then
     auth_status=$?
@@ -27,7 +28,7 @@ TOKEN="$SHARED_AUTH_TOKEN"
 
 echo ""
 echo "━━━ Test 1: List Journal Entries ━━━"
-test_endpoint "List Entries" "GET" "/journal-entries" "" "200" "$TOKEN" "validate_list" >/dev/null
+test_endpoint "List Entries" "GET" "/journal-entries" "" "200" "$TOKEN" "validate_paginated" >/dev/null
 
 echo "" && echo "━━━ Test 2: Unauthorized Access ━━━"
 test_endpoint "No Auth" "GET" "/journal-entries" "" "401" "" "" >/dev/null

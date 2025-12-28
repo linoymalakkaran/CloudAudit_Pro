@@ -9,6 +9,7 @@ echo "╚═══════════════════════�
 
 validate_procedure() { check_field "$1" '.id' && check_field "$1" '.title'; }
 validate_list() { echo "$1" | jq -e 'type == "array"' >/dev/null 2>&1; }
+validate_paginated() { check_field "$1" '.data' && echo "$1" | jq -e '.data | type == "array"' >/dev/null 2>&1; }
 
 if ! init_auth; then
     auth_status=$?
@@ -27,7 +28,7 @@ TOKEN="$SHARED_AUTH_TOKEN"
 
 echo ""
 echo "━━━ Test 1: List Procedures ━━━"
-test_endpoint "List Procedures" "GET" "/procedures" "" "200" "$TOKEN" "validate_list" >/dev/null
+test_endpoint "List Procedures" "GET" "/procedures" "" "200" "$TOKEN" "validate_paginated" >/dev/null
 
 echo "" && echo "━━━ Test 2: Get Procedure Statistics ━━━"
 test_endpoint "Procedure Stats" "GET" "/procedures/statistics" "" "200" "$TOKEN" "" >/dev/null

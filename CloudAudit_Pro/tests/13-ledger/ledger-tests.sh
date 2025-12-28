@@ -25,12 +25,17 @@ fi
 
 TOKEN="$SHARED_AUTH_TOKEN"
 
+# Create test data
+COMPANY_ID=$(curl -s -X POST "$API_BASE_URL/companies" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"name":"Test Company","code":"TST001","fiscalYearEnd":"12-31"}' | jq -r '.id')
+PERIOD_ID=$(curl -s -X POST "$API_BASE_URL/periods" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d "{\"companyId\":\"$COMPANY_ID\",\"name\":\"2024\",\"startDate\":\"2024-01-01\",\"endDate\":\"2024-12-31\",\"status\":\"ACTIVE\"}" | jq -r '.id')
+ACCOUNT_ID=$(curl -s -X POST "$API_BASE_URL/accounts" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d "{\"companyId\":\"$COMPANY_ID\",\"periodId\":\"$PERIOD_ID\",\"accountCode\":\"1000\",\"accountName\":\"Cash\",\"accountType\":\"ASSET\",\"isActive\":true}" | jq -r '.id')
+
 echo ""
 echo "━━━ Test 1: Get Ledger ━━━"
-test_endpoint "Get Ledger" "GET" "/ledger" "" "200" "$TOKEN" "validate_list" >/dev/null
+test_endpoint "Get Ledger" "GET" "/ledger?companyId=$COMPANY_ID&periodId=$PERIOD_ID&accountId=$ACCOUNT_ID" "" "200" "$TOKEN" "validate_list" >/dev/null
 
 echo "" && echo "━━━ Test 2: Unauthorized Access ━━━"
-test_endpoint "No Auth" "GET" "/ledger" "" "401" "" "" >/dev/null
+test_endpoint "No Auth" "GET" "/ledger?companyId=$COMPANY_ID&periodId=$PERIOD_ID&accountId=$ACCOUNT_ID" "" "401" "" "" >/dev/null
 
 echo "" && echo "━━━ Test 3: Health Check ━━━"
 test_endpoint "API Health" "GET" "/health" "" "200" "" "" >/dev/null

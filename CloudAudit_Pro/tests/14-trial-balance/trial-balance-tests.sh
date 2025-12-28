@@ -9,6 +9,7 @@ echo "╚═══════════════════════�
 
 validate_balance() { check_field "$1" '.debits' && check_field "$1" '.credits'; }
 validate_list() { echo "$1" | jq -e 'type == "array"' >/dev/null 2>&1; }
+validate_paginated() { check_field "$1" '.data' && echo "$1" | jq -e '.data | type == "array"' >/dev/null 2>&1; }
 
 if ! init_auth; then
     auth_status=$?
@@ -27,7 +28,7 @@ TOKEN="$SHARED_AUTH_TOKEN"
 
 echo ""
 echo "━━━ Test 1: Get Trial Balance ━━━"
-test_endpoint "Get Trial Balance" "GET" "/trial-balance" "" "200" "$TOKEN" "validate_balance" >/dev/null
+test_endpoint "Get Trial Balance" "GET" "/trial-balance" "" "200" "$TOKEN" "validate_paginated" >/dev/null
 
 echo "" && echo "━━━ Test 2: Unauthorized Access ━━━"
 test_endpoint "No Auth" "GET" "/trial-balance" "" "401" "" "" >/dev/null

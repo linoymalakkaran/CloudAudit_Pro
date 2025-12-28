@@ -29,6 +29,13 @@ export class UserController {
     return this.userService.getUsersByTenant(req.user.tenantId);
   }
 
+  @Get('me')
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ status: 200, description: 'User profile retrieved successfully' })
+  async getCurrentUser(@Request() req: any) {
+    return this.userService.getUserById(req.user.id, req.user.tenantId);
+  }
+
   @Get('stats')
   @ApiOperation({ summary: 'Get user statistics' })
   @ApiResponse({ status: 200, description: 'User statistics retrieved' })
