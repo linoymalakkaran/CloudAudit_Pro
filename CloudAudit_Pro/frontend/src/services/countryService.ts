@@ -4,9 +4,7 @@ export interface Country {
   id: number;
   name: string;
   code: string;
-  code3?: string;
-  numericCode?: string;
-  phoneCode?: string;
+  dialCode?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -15,18 +13,14 @@ export interface Country {
 export interface CreateCountryDto {
   name: string;
   code: string;
-  code3?: string;
-  numericCode?: string;
-  phoneCode?: string;
+  dialCode?: string;
   isActive?: boolean;
 }
 
 export interface UpdateCountryDto {
   name?: string;
   code?: string;
-  code3?: string;
-  numericCode?: string;
-  phoneCode?: string;
+  dialCode?: string;
   isActive?: boolean;
 }
 

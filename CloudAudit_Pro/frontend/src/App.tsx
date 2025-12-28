@@ -24,12 +24,16 @@ import KanbanBoard from './pages/KanbanBoard'
 import CalendarView from './pages/CalendarView'
 import CurrencyMaster from './pages/master/CurrencyMaster'
 import BankMaster from './pages/master/BankMaster'
+import CountryMaster from './pages/master/CountryMaster'
 import FixedAssetSchedule from './pages/schedules/FixedAssetSchedule'
 import LiabilitySchedule from './pages/schedules/LiabilitySchedule'
 import EquitySchedule from './pages/schedules/EquitySchedule'
 import ReviewPointManagement from './pages/review/ReviewPointManagement'
 import ManagerReviewList from './pages/review/ManagerReviewList'
 import AuditFinalization from './pages/audit/AuditFinalization'
+import SamplingPlan from './pages/testing/SamplingPlan'
+import SubstantiveTesting from './pages/testing/SubstantiveTesting'
+import InternalControls from './pages/testing/InternalControls'
 import { AdminDashboard } from './components/admin/AdminDashboard'
 import { UserManagement } from './components/admin/UserManagement'
 import { InviteUser } from './components/admin/InviteUser'
@@ -85,6 +89,7 @@ function AppRoutes() {
               <Route path="/admin/companies" element={<Companies />} />
               <Route path="/admin/currency" element={<CurrencyMaster />} />
               <Route path="/admin/banks" element={<BankMaster />} />
+              <Route path="/admin/countries" element={<CountryMaster />} />
               <Route path="/schedules/fixed-assets" element={<FixedAssetSchedule />} />
               <Route path="/schedules/liabilities" element={<LiabilitySchedule />} />
               <Route path="/schedules/equity" element={<EquitySchedule />} />
@@ -108,6 +113,11 @@ function AppRoutes() {
               <Route path="/documents" element={<Documents />} />
               <Route path="/ledger" element={<GeneralLedger />} />
               <Route path="/financial-statements" element={<FinancialStatements />} />
+              
+              {/* Phase 4: Advanced Testing Routes */}
+              <Route path="/testing/sampling" element={<SamplingPlan />} />
+              <Route path="/testing/substantive" element={<SubstantiveTesting />} />
+              <Route path="/testing/controls" element={<InternalControls />} />
             </>
           )}
           
