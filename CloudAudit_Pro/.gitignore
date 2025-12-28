@@ -56,6 +56,13 @@ out/
 tmp/
 temp/
 
+# Uploads and cache
+uploads/
+!uploads/.gitkeep
+backend/uploads/
+!backend/uploads/.gitkeep
+.cache/
+
 # Prisma
 backend/prisma/migrations/dev.db
 
