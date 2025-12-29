@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { DatabaseService } from '../database/database.service';
 import { CreateExchangeRateDto, UpdateExchangeRateDto } from './dto';
 import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ExchangeRateService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: DatabaseService) {}
 
   async create(createExchangeRateDto: CreateExchangeRateDto, userId: string) {
     const { baseCurrencyId, targetCurrencyId, effectiveDate, rate, expiryDate } = createExchangeRateDto;

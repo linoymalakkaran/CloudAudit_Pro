@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@ne
 import { ExchangeRateService } from './exchange-rate.service';
 import { CreateExchangeRateDto, UpdateExchangeRateDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { GetUser } from '../auth/get-user.decorator';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 
 @ApiTags('Exchange Rates')
 @Controller('exchange-rates')

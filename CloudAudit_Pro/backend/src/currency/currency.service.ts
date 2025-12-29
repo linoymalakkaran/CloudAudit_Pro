@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { DatabaseService } from '../database/database.service';
 import { CreateCurrencyDto, UpdateCurrencyDto } from './dto';
 
 @Injectable()
 export class CurrencyService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: DatabaseService) {}
 
   async create(createCurrencyDto: CreateCurrencyDto, userId: string) {
     // Check if currency code already exists

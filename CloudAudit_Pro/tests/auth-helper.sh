@@ -9,6 +9,7 @@ API_BASE_URL="${API_BASE_URL:-http://localhost:8000/api}"
 export SHARED_AUTH_TOKEN=""
 export SHARED_USER_EMAIL=""
 export SHARED_TENANT_SUBDOMAIN=""
+export AUTH_INFO=""
 
 # Get authenticated token (register + auto-approve + login)
 # Returns: Sets SHARED_AUTH_TOKEN, SHARED_USER_EMAIL, SHARED_TENANT_SUBDOMAIN
@@ -44,6 +45,8 @@ get_auth_token() {
     if [ -n "$reg_token" ] && [ "$reg_token" != "null" ]; then
         echo "✅ Registration auto-approved, token received"
         SHARED_AUTH_TOKEN="$reg_token"
+        # Store registration response as AUTH_INFO
+        AUTH_INFO="$reg_response"
         return 0
     fi
     
@@ -71,6 +74,11 @@ get_auth_token() {
     local login_response=$(curl -s -X POST "$API_BASE_URL/auth/login" \
         -H "Content-Type: application/json" \
         -d "$LOGIN_DATA")
+    
+    # Store full auth info for use by tests
+    AUTH_INFO="$login_response"
+    # Debug: Verify AUTH_INFO is set (remove in production)
+    # echo "DEBUG: AUTH_INFO length: ${#AUTH_INFO}" >&2
     
     SHARED_AUTH_TOKEN=$(echo "$login_response" | jq -r '.accessToken' 2>/dev/null)
     
@@ -103,6 +111,9 @@ use_preapproved_account() {
     local login_response=$(curl -s -X POST "$API_BASE_URL/auth/login" \
         -H "Content-Type: application/json" \
         -d "$LOGIN_DATA")
+    
+    # Store full auth info for use by tests
+    AUTH_INFO="$login_response"
     
     SHARED_AUTH_TOKEN=$(echo "$login_response" | jq -r '.accessToken' 2>/dev/null)
     
