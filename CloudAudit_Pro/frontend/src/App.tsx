@@ -14,14 +14,13 @@ import Users from './pages/admin/Users'
 import AuditProcedures from './pages/auditor/AuditProcedures'
 import Reports from './pages/Reports'
 import Documents from './pages/Documents'
-import GeneralLedger from './pages/GeneralLedger'
-import FinancialStatements from './pages/FinancialStatements'
-import AuditProceduresNew from './pages/AuditProcedures'
-import ProcedureDetails from './pages/ProcedureDetails'
+import GeneralLedger from './pages/finance/GeneralLedger'
+import FinancialStatements from './pages/finance/FinancialStatements'
 import TemplateLibrary from './pages/TemplateLibrary'
-import MyWork from './pages/MyWork'
-import KanbanBoard from './pages/KanbanBoard'
-import CalendarView from './pages/CalendarView'
+import MyWork from './pages/audit/MyWork'
+import KanbanBoard from './pages/audit/KanbanBoard'
+import CalendarView from './pages/audit/CalendarView'
+import ProcedureDetails from './pages/audit/ProcedureDetails'
 import CurrencyMaster from './pages/master/CurrencyMaster'
 import BankMaster from './pages/master/BankMaster'
 import CountryMaster from './pages/master/CountryMaster'
@@ -31,9 +30,9 @@ import EquitySchedule from './pages/schedules/EquitySchedule'
 import ReviewPointManagement from './pages/review/ReviewPointManagement'
 import ManagerReviewList from './pages/review/ManagerReviewList'
 import AuditFinalization from './pages/audit/AuditFinalization'
-import SamplingPlan from './pages/SamplingPlan'
-import SubstantiveTesting from './pages/SubstantiveTesting'
-import InternalControls from './pages/InternalControls'
+import SamplingPlan from './pages/testing/SamplingPlan'
+import SubstantiveTesting from './pages/testing/SubstantiveTesting'
+import InternalControls from './pages/testing/InternalControls'
 import { AdminDashboard } from './components/admin/AdminDashboard'
 import { UserManagement } from './components/admin/UserManagement'
 import { InviteUser } from './components/admin/InviteUser'
@@ -51,11 +50,11 @@ import DashboardBuilder from './pages/reports/DashboardBuilder'
 import AnalyticsOverview from './pages/reports/AnalyticsOverview'
 
 // Phase 7: System Utilities Pages
-import SystemSettings from './pages/SystemSettings'
-import NotificationsCenter from './pages/NotificationsCenter'
-import UserPreferences from './pages/UserPreferences'
-import DataImportExport from './pages/DataImportExport'
-import IntegrationsManager from './pages/IntegrationsManager'
+import SystemSettings from './pages/settings/SystemSettings'
+import NotificationsCenter from './pages/utilities/NotificationsCenter'
+import UserPreferences from './pages/settings/UserPreferences'
+import DataImportExport from './pages/utilities/DataImportExport'
+import IntegrationsManager from './pages/settings/IntegrationsManager'
 
 const theme = createTheme({
   palette: {
@@ -123,7 +122,7 @@ function AppRoutes() {
           <>
             <Route path="/auditor" element={<AuditorPortal />} />
             <Route path="/procedures" element={<AuditProcedures />} />
-            <Route path="/audit/procedures" element={<AuditProceduresNew />} />
+            <Route path="/audit/procedures" element={<AuditProcedures />} />
             <Route path="/audit/procedures/:id" element={<ProcedureDetails />} />
             <Route path="/audit/kanban" element={<KanbanBoard />} />
             <Route path="/audit/calendar" element={<CalendarView />} />

@@ -35,7 +35,7 @@ import {
   Warning as WarningIcon,
   Info as InfoIcon,
 } from '@mui/icons-material';
-import notificationsService, { Notification } from '../services/notificationsService';
+import notificationsService, { Notification } from '../../services/notificationsService';
 
 interface TabPanelProps {
   children?: React.ReactNode;

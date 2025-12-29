@@ -47,18 +47,18 @@ interface ReportSchedule {
   companyId: string;
   periodId?: string;
   frequency: string;
-  scheduleTime: string;
+  scheduleTime?: string;
   timezone: string;
   isActive: boolean;
-  lastRunAt?: string;
-  nextRunAt?: string;
+  lastRunAt?: Date | string;
+  nextRunAt?: Date | string;
   parameters?: any;
   filters?: any;
-  recipients: string[];
+  recipients?: string[];
   emailSubject?: string;
   emailBody?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
 
 const ReportScheduler: React.FC = () => {
@@ -101,7 +101,7 @@ const ReportScheduler: React.FC = () => {
 
   const loadUpcoming = async () => {
     try {
-      const data = await reportingService.getUpcomingSchedules(7);
+      const data = await reportingService.getUpcomingSchedules(undefined, 7);
       setUpcomingSchedules(data);
     } catch (error) {
       console.error('Failed to load upcoming schedules:', error);
@@ -141,10 +141,10 @@ const ReportScheduler: React.FC = () => {
       companyId: schedule.companyId,
       periodId: schedule.periodId || '',
       frequency: schedule.frequency,
-      scheduleTime: schedule.scheduleTime,
+      scheduleTime: schedule.scheduleTime || '09:00',
       timezone: schedule.timezone,
       isActive: schedule.isActive,
-      recipients: schedule.recipients.join(', '),
+      recipients: schedule.recipients?.join(', ') || '',
       emailSubject: schedule.emailSubject || '',
       emailBody: schedule.emailBody || '',
     });
@@ -295,7 +295,9 @@ const ReportScheduler: React.FC = () => {
                             ? new Date(schedule.nextRunAt).toLocaleString()
                             : 'N/A'}
                         </TableCell>
-                        <TableCell>{schedule.recipients.length} recipient(s)</TableCell>
+                        <TableCell>
+                          {schedule.recipients?.length || 0} recipient(s)
+                        </TableCell>
                         <TableCell align="right">
                           <IconButton size="small" onClick={() => handleRunNow(schedule.id)}>
                             <PlayArrow fontSize="small" />

@@ -19,7 +19,7 @@ import {
 } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { useNavigate } from 'react-router-dom';
-import apiClient from '../services/api';
+import apiClient from '../../services/api';
 
 interface Procedure {
   id: string;

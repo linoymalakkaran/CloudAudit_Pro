@@ -50,7 +50,7 @@ import integrationsService, {
   IntegrationLog,
   IntegrationStats,
   CreateIntegrationDto,
-} from '../services/integrationsService';
+} from '../../services/integrationsService';
 
 interface TabPanelProps {
   children?: React.ReactNode;

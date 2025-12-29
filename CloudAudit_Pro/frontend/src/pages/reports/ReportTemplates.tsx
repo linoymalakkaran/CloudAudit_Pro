@@ -46,8 +46,8 @@ interface ReportTemplate {
   dataSource?: any;
   formatting?: any;
   parameters?: any;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
 }
 
 const ReportTemplates: React.FC = () => {
@@ -98,8 +98,8 @@ const ReportTemplates: React.FC = () => {
     setFormData({
       name: '',
       description: '',
-      reportType: 'TRIAL_BALANCE',
-      category: 'FINANCIAL',
+      reportType: 'TRIAL_BALANCE' as any,
+      category: 'FINANCIAL' as any,
       isActive: true,
       templateDefinition: '{}',
       dataSource: '{}',

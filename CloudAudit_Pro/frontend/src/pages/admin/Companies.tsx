@@ -90,47 +90,6 @@ function Companies() {
     }
   }
 
-  const dummyCompanies: CompanyType[] = [
-    {
-      id: '1',
-      name: 'Acme Corporation',
-      taxId: '12-3456789',
-      industry: 'Manufacturing',
-      status: 'ACTIVE',
-      contactPerson: {
-        name: 'John Smith',
-        email: 'john@acme.com',
-        phone: '+1-555-0123'
-      },
-      address: {
-        street: '123 Business Ave',
-        city: 'Business City',
-        state: 'BC',
-        country: 'USA',
-        zipCode: '12345'
-      }
-    },
-    {
-      id: '2',
-      name: 'Tech Solutions Ltd',
-      taxId: '98-7654321',
-      industry: 'Technology',
-      status: 'ACTIVE',
-      contactPerson: {
-        name: 'Jane Doe',
-        email: 'jane@techsolutions.com',
-        phone: '+1-555-0456'
-      },
-      address: {
-        street: '456 Tech St',
-        city: 'Silicon Valley',
-        state: 'CA',
-        country: 'USA',
-        zipCode: '94000'
-      }
-    }
-  ])
-
   const [newCompany, setNewCompany] = useState({
     name: '',
     taxId: '',

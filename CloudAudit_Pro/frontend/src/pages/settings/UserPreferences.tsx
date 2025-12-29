@@ -27,7 +27,7 @@ import {
   Upload as UploadIcon,
   Download as DownloadIcon,
 } from '@mui/icons-material';
-import userPreferencesService, { UserPreference } from '../services/userPreferencesService';
+import userPreferencesService, { UserPreference } from '../../services/userPreferencesService';
 
 interface PreferenceCategory {
   name: string;

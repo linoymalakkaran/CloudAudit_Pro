@@ -223,14 +223,14 @@ const ReviewPointManagement: React.FC = () => {
       field: 'raisedAt',
       headerName: 'Raised Date',
       width: 130,
-      valueFormatter: (params) => new Date(params).toLocaleDateString(),
+      valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
     },
     { field: 'assignedTo', headerName: 'Assigned To', width: 130 },
     {
       field: 'dueDate',
       headerName: 'Due Date',
       width: 130,
-      valueFormatter: (params) => params ? new Date(params).toLocaleDateString() : '',
+      valueFormatter: (params) => params.value ? new Date(params.value).toLocaleDateString() : '',
     },
     {
       field: 'actions',

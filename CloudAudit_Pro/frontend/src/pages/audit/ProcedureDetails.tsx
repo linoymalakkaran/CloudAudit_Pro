@@ -34,13 +34,13 @@ import {
   Comment as CommentIcon,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import apiClient from '../services/api';
-import { ProcedureForm } from '../components/forms/ProcedureForm';
-import { AssignmentDialog } from '../components/dialogs/AssignmentDialog';
-import { ReviewDialog } from '../components/dialogs/ReviewDialog';
-import { WorkpaperForm } from '../components/forms/WorkpaperForm';
-import { FindingForm } from '../components/forms/FindingForm';
-import CommentForm from '../components/forms/CommentForm';
+import apiClient from '../../services/api';
+import { ProcedureForm } from '../../components/forms/ProcedureForm';
+import { AssignmentDialog } from '../../components/dialogs/AssignmentDialog';
+import { ReviewDialog } from '../../components/dialogs/ReviewDialog';
+import { WorkpaperForm } from '../../components/forms/WorkpaperForm';
+import { FindingForm } from '../../components/forms/FindingForm';
+import CommentForm from '../../components/forms/CommentForm';
 
 interface ProcedureDetails {
   id: string;

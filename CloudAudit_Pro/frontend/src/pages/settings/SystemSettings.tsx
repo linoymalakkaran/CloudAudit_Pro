@@ -43,7 +43,7 @@ import {
   CloudDownload as DownloadIcon,
   ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
-import systemConfigService, { SystemConfiguration, CreateConfigDto } from '../services/systemConfigService';
+import systemConfigService, { SystemConfiguration, CreateConfigDto } from '../../services/systemConfigService';
 
 interface TabPanelProps {
   children?: React.ReactNode;

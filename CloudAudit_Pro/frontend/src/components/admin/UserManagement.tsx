@@ -119,15 +119,21 @@ export const UserManagement: React.FC<UserManagementProps> = ({ userRole }) => {
     try {
       setLoading(true);
       const data = await userManagementApi.getUsers();
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch users:', error);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
   };
 
   const filterUsers = () => {
+    if (!Array.isArray(users)) {
+      setFilteredUsers([]);
+      return;
+    }
+    
     let filtered = users.filter(user => !user.isDeleted);
 
     if (searchTerm) {

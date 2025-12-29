@@ -82,6 +82,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ userRole }) => {
       setUserStats(stats);
     } catch (error) {
       console.error('Failed to fetch user stats:', error);
+      // Set default stats on error
+      setUserStats({
+        total: 0,
+        active: 0,
+        inactive: 0,
+        pending: 0,
+        roleDistribution: {},
+        recentActivity: { newInvitationsThisWeek: 0 }
+      });
     } finally {
       setLoading(false);
     }
@@ -93,6 +102,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ userRole }) => {
       setPendingCount(stats.pending);
     } catch (error) {
       console.error('Failed to fetch pending count:', error);
+      setPendingCount(0);
     }
   };
 
@@ -234,7 +244,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ userRole }) => {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="New This Week"
-            value={userStats?.recentActivity.newInvitationsThisWeek || 0}
+            value={userStats?.recentActivity?.newInvitationsThisWeek || 0}
             icon={<PersonAddIcon sx={{ fontSize: 40 }} />}
             color="secondary"
           />

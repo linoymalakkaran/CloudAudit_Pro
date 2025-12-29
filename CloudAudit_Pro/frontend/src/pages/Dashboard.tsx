@@ -265,10 +265,8 @@ function Dashboard() {
                     <ListItemText
                       primary={task.task}
                       secondary={
-                        <Box>
-                          <Typography variant="body2" component="span">
-                            {task.company} • Due: {task.dueDate}
-                          </Typography>
+                        <React.Fragment>
+                          {task.company} • Due: {task.dueDate}
                           <Box sx={{ mt: 1 }}>
                             <Chip
                               label={task.priority}
@@ -276,8 +274,9 @@ function Dashboard() {
                               color={getPriorityColor(task.priority) as any}
                             />
                           </Box>
-                        </Box>
+                        </React.Fragment>
                       }
+                      secondaryTypographyProps={{ component: 'div' }}
                     />
                   </ListItem>
                 ))}

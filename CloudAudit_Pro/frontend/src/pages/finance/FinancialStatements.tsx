@@ -30,7 +30,7 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import apiClient from '../services/api';
+import apiClient from '../../services/api';
 
 interface StatementLineItem {
   id: string;

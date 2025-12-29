@@ -33,8 +33,8 @@ import {
   CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import apiClient from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import apiClient from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface MyWorkStats {
   assigned: number;
