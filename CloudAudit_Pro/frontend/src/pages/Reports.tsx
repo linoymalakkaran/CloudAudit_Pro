@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Box,
   Typography,
@@ -23,7 +23,9 @@ import {
   Select,
   FormControl,
   InputLabel,
-  MenuItem
+  MenuItem,
+  CircularProgress,
+  Alert
 } from '@mui/material'
 import {
   Add as AddIcon,
@@ -32,58 +34,86 @@ import {
   Visibility as ViewIcon,
   Email as EmailIcon
 } from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom'
+import reportsService from '../services/reports.service'
+import { companyApi } from '../services/api'
 
 interface Report {
   id: string
   name: string
-  type: string
-  company: string
-  status: 'DRAFT' | 'GENERATED' | 'REVIEWED' | 'FINAL'
-  createdBy: string
-  createdDate: string
-  period: string
+  reportType: string
+  company?: { id: string; name: string }
+  status: 'QUEUED' | 'GENERATING' | 'COMPLETED' | 'FAILED'
+  generatedBy?: { firstName: string; lastName: string }
+  createdAt: string
+  period?: { name: string }
 }
 
 function Reports() {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const [reports] = useState<Report[]>([
-    {
-      id: '1',
-      name: 'Annual Audit Report',
-      type: 'Audit Report',
-      company: 'Acme Corporation',
-      status: 'FINAL',
-      createdBy: 'Sarah Wilson',
-      createdDate: '2024-11-20',
-      period: '2024'
-    },
-    {
-      id: '2',
-      name: 'Management Letter',
-      type: 'Management Letter',
-      company: 'Tech Solutions',
-      status: 'REVIEWED',
-      createdBy: 'John Doe',
-      createdDate: '2024-11-18',
-      period: 'Q3 2024'
-    },
-    {
-      id: '3',
-      name: 'Internal Control Assessment',
-      type: 'Control Assessment',
-      company: 'Manufacturing Co',
-      status: 'DRAFT',
-      createdBy: 'Mike Johnson',
-      createdDate: '2024-11-15',
-      period: '2024'
+  const [reports, setReports] = useState<Report[]>([])
+  const [companies, setCompanies] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [stats, setStats] = useState({ total: 0, completed: 0, generating: 0, failed: 0 })
+
+  useEffect(() => {
+    loadReports()
+    loadCompanies()
+  }, [])
+
+  const loadReports = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await reportsService.getReports()
+      setReports(data)
+      
+      // Calculate stats
+      setStats({
+        total: data.length,
+        completed: data.filter(r => r.status === 'COMPLETED').length,
+        generating: data.filter(r => r.status === 'GENERATING' || r.status === 'QUEUED').length,
+        failed: data.filter(r => r.status === 'FAILED').length
+      })
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to load reports')
+    } finally {
+      setLoading(false)
     }
-  ])
+  }
+
+  const loadCompanies = async () => {
+    try {
+      const data = await companyApi.getCompanies()
+      setCompanies(data)
+    } catch (err) {
+      console.error('Failed to load companies:', err)
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'QUEUED':
+        return 'default'
+      case 'GENERATING':
+        return 'info'
+      case 'COMPLETED':
+        return 'success'
+      case 'FAILED':
+        return 'error'
+      default:
+        return 'default'
+    }
+  }
 
   const [newReport, setNewReport] = useState({
     name: '',
-    type: '',
-    company: '',
-    period: ''
+    reportType: 'TRIAL_BALANCE',
+    companyId: '',
+    periodId: '',
+    category: 'FINANCIAL'
   })
 
   const getStatusColor = (status: string) => {
@@ -105,24 +135,42 @@ function Reports() {
     'Compliance Report'
   ]
 
-  const handleViewReport = (reportId: string, reportName: string) => {
-    console.log('Viewing report:', reportId)
-    alert(`Opening "${reportName}"...\nReport viewer will be implemented`)
+  const handleViewReport = (reportId: string) => {
+    navigate(`/reports/${reportId}`)
   }
 
-  const handleDownloadReport = (reportId: string, reportName: string) => {
-    console.log('Downloading report:', reportId)
-    alert(`Downloading "${reportName}"...\nFile download will be implemented`)
+  const handleDownloadReport = async (reportId: string, reportName: string) => {
+    try {
+      // Implementation would download the file
+      alert(`Download functionality for "${reportName}" will be implemented with backend endpoint`)
+    } catch (err) {
+      console.error('Download failed:', err)
+    }
   }
 
-  const handleEmailReport = (reportId: string, reportName: string) => {
-    console.log('Emailing report:', reportId)
-    alert(`Email dialog for "${reportName}"...\nEmail functionality will be implemented`)
+  const handleEmailReport = async (reportId: string, reportName: string) => {
+    alert(`Email functionality for "${reportName}" will be implemented`)
   }
 
-  const handleTemplateClick = (template: string) => {
-    console.log('Generating report from template:', template)
-    alert(`Creating new ${template}...\nReport generation will be implemented`)
+  const handleGenerateReport = async () => {
+    try {
+      if (!newReport.name || !newReport.companyId) {
+        alert('Please fill in required fields')
+        return
+      }
+      await reportsService.createReport(newReport)
+      setOpen(false)
+      setNewReport({
+        name: '',
+        reportType: 'TRIAL_BALANCE',
+        companyId: '',
+        periodId: '',
+        category: 'FINANCIAL'
+      })
+      loadReports()
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to generate report')
+    }
   }
 
   return (
@@ -164,13 +212,19 @@ function Reports() {
         </CardContent>
       </Card>
 
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+
       {/* Statistics */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} md={3}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <ReportIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-              <Typography variant="h4">24</Typography>
+              <Typography variant="h4">{stats.total}</Typography>
               <Typography variant="body2">Total Reports</Typography>
             </CardContent>
           </Card>
@@ -179,8 +233,8 @@ function Reports() {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <ReportIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
-              <Typography variant="h4">18</Typography>
-              <Typography variant="body2">Final Reports</Typography>
+              <Typography variant="h4">{stats.completed}</Typography>
+              <Typography variant="body2">Completed</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -188,75 +242,103 @@ function Reports() {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <ReportIcon sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />
-              <Typography variant="h4">4</Typography>
-              <Typography variant="body2">Under Review</Typography>
+              <Typography variant="h4">{stats.generating}</Typography>
+              <Typography variant="body2">Generating</Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} md={3}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
-              <ReportIcon sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
-              <Typography variant="h4">2</Typography>
-              <Typography variant="body2">In Progress</Typography>
+              <ReportIcon sx={{ fontSize: 40, color: 'error.main', mb: 1 }} />
+              <Typography variant="h4">{stats.failed}</Typography>
+              <Typography variant="body2">Failed</Typography>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
 
       {/* Reports Table */}
-      <Card>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Report Name</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Company</TableCell>
-                <TableCell>Period</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Created By</TableCell>
-                <TableCell>Created Date</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {reports.map((report) => (
-                <TableRow key={report.id}>
-                  <TableCell>
-                    <Typography variant="subtitle2">
-                      {report.name}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>{report.type}</TableCell>
-                  <TableCell>{report.company}</TableCell>
-                  <TableCell>{report.period}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={report.status}
-                      color={getStatusColor(report.status) as any}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>{report.createdBy}</TableCell>
-                  <TableCell>{report.createdDate}</TableCell>
-                  <TableCell>
-                    <IconButton color="primary" onClick={() => handleViewReport(report.id, report.name)}>
-                      <ViewIcon />
-                    </IconButton>
-                    <IconButton color="success" onClick={() => handleDownloadReport(report.id, report.name)}>
-                      <DownloadIcon />
-                    </IconButton>
-                    <IconButton color="info" onClick={() => handleEmailReport(report.id, report.name)}>
-                      <EmailIcon />
-                    </IconButton>
-                  </TableCell>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Card>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Report Name</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Company</TableCell>
+                  <TableCell>Period</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Created By</TableCell>
+                  <TableCell>Created Date</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+              </TableHead>
+              <TableBody>
+                {reports.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      <Typography variant="body2" color="text.secondary" sx={{ py: 3 }}>
+                        No reports found. Generate your first report to get started.
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  reports.map((report) => (
+                    <TableRow key={report.id}>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {report.name}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>{report.reportType}</TableCell>
+                      <TableCell>{report.company?.name || '-'}</TableCell>
+                      <TableCell>{report.period?.name || '-'}</TableCell>
+                      <TableCell>
+                        <Chip
+                          label={report.status}
+                          color={getStatusColor(report.status) as any}
+                          size="small"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {report.generatedBy 
+                          ? `${report.generatedBy.firstName} ${report.generatedBy.lastName}`
+                          : '-'}
+                      </TableCell>
+                      <TableCell>{new Date(report.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <IconButton color="primary" onClick={() => handleViewReport(report.id)}>
+                          <ViewIcon />
+                        </IconButton>
+                        <IconButton 
+                          color="success" 
+                          onClick={() => handleDownloadReport(report.id, report.name)}
+                          disabled={report.status !== 'COMPLETED'}
+                        >
+                          <DownloadIcon />
+                        </IconButton>
+                        <IconButton 
+                          color="info" 
+                          onClick={() => handleEmailReport(report.id, report.name)}
+                          disabled={report.status !== 'COMPLETED'}
+                        >
+                          <EmailIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
+      )}
 
       {/* Generate Report Dialog */}
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
@@ -275,13 +357,30 @@ function Reports() {
               <FormControl fullWidth>
                 <InputLabel>Report Type</InputLabel>
                 <Select
-                  value={newReport.type}
+                  value={newReport.reportType}
                   label="Report Type"
-                  onChange={(e) => setNewReport({ ...newReport, type: e.target.value })}
+                  onChange={(e) => setNewReport({ ...newReport, reportType: e.target.value })}
                 >
-                  {reportTemplates.map((template, index) => (
-                    <MenuItem key={index} value={template}>{template}</MenuItem>
-                  ))}
+                  <MenuItem value="TRIAL_BALANCE">Trial Balance</MenuItem>
+                  <MenuItem value="GENERAL_LEDGER">General Ledger</MenuItem>
+                  <MenuItem value="FINANCIAL_STATEMENT">Financial Statement</MenuItem>
+                  <MenuItem value="AUDIT_REPORT">Audit Report</MenuItem>
+                  <MenuItem value="CUSTOM">Custom Report</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Category</InputLabel>
+                <Select
+                  value={newReport.category}
+                  label="Category"
+                  onChange={(e) => setNewReport({ ...newReport, category: e.target.value })}
+                >
+                  <MenuItem value="FINANCIAL">Financial</MenuItem>
+                  <MenuItem value="OPERATIONAL">Operational</MenuItem>
+                  <MenuItem value="COMPLIANCE">Compliance</MenuItem>
+                  <MenuItem value="MANAGEMENT">Management</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -289,30 +388,32 @@ function Reports() {
               <FormControl fullWidth>
                 <InputLabel>Company</InputLabel>
                 <Select
-                  value={newReport.company}
+                  value={newReport.companyId}
                   label="Company"
-                  onChange={(e) => setNewReport({ ...newReport, company: e.target.value })}
+                  onChange={(e) => setNewReport({ ...newReport, companyId: e.target.value })}
                 >
-                  <MenuItem value="Acme Corporation">Acme Corporation</MenuItem>
-                  <MenuItem value="Tech Solutions">Tech Solutions</MenuItem>
-                  <MenuItem value="Manufacturing Co">Manufacturing Co</MenuItem>
+                  {companies.map((company) => (
+                    <MenuItem key={company.id} value={company.id}>
+                      {company.name}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Period"
+                label="Period ID"
                 fullWidth
-                placeholder="e.g., 2024, Q3 2024, Jan-Dec 2024"
-                value={newReport.period}
-                onChange={(e) => setNewReport({ ...newReport, period: e.target.value })}
+                placeholder="Enter period ID"
+                value={newReport.periodId}
+                onChange={(e) => setNewReport({ ...newReport, periodId: e.target.value })}
               />
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={() => setOpen(false)} variant="contained">Generate Report</Button>
+          <Button onClick={handleGenerateReport} variant="contained">Generate Report</Button>
         </DialogActions>
       </Dialog>
     </Box>

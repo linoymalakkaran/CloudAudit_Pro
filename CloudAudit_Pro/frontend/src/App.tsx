@@ -6,8 +6,11 @@ import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ClientRegister from './pages/ClientRegister'
 import AdminPortal from './pages/admin/AdminPortal'
 import ClientPortal from './pages/client/ClientPortal'
+import ClientDocuments from './pages/client/ClientDocuments'
+import Messages from './pages/Messages'
 import AuditorPortal from './pages/auditor/AuditorPortal'
 import Companies from './pages/admin/Companies'
 import Users from './pages/admin/Users'
@@ -36,6 +39,7 @@ import InternalControls from './pages/testing/InternalControls'
 import { AdminDashboard } from './components/admin/AdminDashboard'
 import { UserManagement } from './components/admin/UserManagement'
 import { InviteUser } from './components/admin/InviteUser'
+import InviteManagement from './pages/admin/InviteManagement'
 import { PendingApprovals } from './components/admin/PendingApprovals'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 
@@ -103,6 +107,7 @@ function AppRoutes() {
             <Route path="/admin/dashboard" element={<AdminDashboard userRole={user.role} />} />
             <Route path="/admin/users" element={<UserManagement userRole={user.role} />} />
             <Route path="/admin/users/invite" element={<InviteUser userRole={user.role} />} />
+            <Route path="/admin/invitations" element={<InviteManagement />} />
             <Route path="/admin/users/pending" element={<PendingApprovals userRole={user.role} />} />
             <Route path="/admin/companies" element={<Companies />} />
             <Route path="/admin/currency" element={<CurrencyMaster />} />
@@ -141,9 +146,16 @@ function AppRoutes() {
         
         {/* Client Routes */}
         <Route path="/client" element={<ClientPortal />} />
+        <Route path="/client/documents" element={<ClientDocuments />} />
+        
+        {/* Communication Routes */}
+        <Route path="/messages" element={<Messages />} />
         
         {/* Common Routes */}
         <Route path="/reports" element={<Reports />} />
+        
+        {/* Authentication Routes */}
+        <Route path="/register/client" element={<ClientRegister />} />
         
         {/* Phase 6: Reporting & Analytics Routes */}
         <Route path="/reports/dashboard" element={<ReportsDashboard />} />

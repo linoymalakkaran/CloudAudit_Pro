@@ -62,7 +62,7 @@ const KanbanBoard: React.FC = () => {
     try {
       setLoading(true);
       const response = await apiClient.get('/procedures');
-      const procedures: Procedure[] = response.data;
+      const procedures: Procedure[] = Array.isArray(response.data) ? response.data : response.data.data || [];
 
       // Organize procedures into columns
       const organizedColumns = statusColumns.map((col) => ({

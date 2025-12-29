@@ -306,7 +306,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ userRole }) => {
             Team Composition
           </Typography>
           <Grid container spacing={2} sx={{ mb: 3 }}>
-            {userStats && Object.entries(userStats.roleDistribution).map(([role, count]) => (
+            {userStats && userStats.roleDistribution && Object.entries(userStats.roleDistribution).map(([role, count]) => (
               <Grid item xs={12} sm={6} md={4} key={role}>
                 <Box sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                   <Typography variant="h4" color="primary.main">
@@ -327,7 +327,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ userRole }) => {
             Recent Activity
           </Typography>
           <Alert severity="info" sx={{ mb: 2 }}>
-            {userStats?.recentActivity.newInvitationsThisWeek || 0} new user{(userStats?.recentActivity.newInvitationsThisWeek || 0) !== 1 ? 's' : ''} invited this week
+            {userStats?.recentActivity?.newInvitationsThisWeek || 0} new user{(userStats?.recentActivity?.newInvitationsThisWeek || 0) !== 1 ? 's' : ''} invited this week
           </Alert>
         </TabPanel>
 

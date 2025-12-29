@@ -79,7 +79,7 @@ const MyWork: React.FC = () => {
       const myProcsRes = await apiClient.get('/procedures', {
         params: { assignedTo: user.id },
       });
-      const myProcs = myProcsRes.data;
+      const myProcs = Array.isArray(myProcsRes.data) ? myProcsRes.data : myProcsRes.data.data || [];
       setMyProcedures(myProcs);
 
       // Calculate statistics
@@ -107,7 +107,8 @@ const MyWork: React.FC = () => {
         const reviewRes = await apiClient.get('/procedures', {
           params: { status: 'COMPLETED' },
         });
-        setReviewQueue(reviewRes.data.slice(0, 5)); // Show top 5
+        const reviewData = Array.isArray(reviewRes.data) ? reviewRes.data : reviewRes.data.data || [];
+        setReviewQueue(reviewData.slice(0, 5)); // Show top 5
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load work items');

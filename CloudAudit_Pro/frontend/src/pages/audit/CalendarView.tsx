@@ -65,7 +65,7 @@ const CalendarView: React.FC = () => {
     try {
       setLoading(true);
       const response = await apiClient.get('/procedures');
-      const proceduresData = response.data;
+      const proceduresData = Array.isArray(response.data) ? response.data : response.data.data || [];
       setProcedures(proceduresData);
 
       // Convert procedures to calendar events

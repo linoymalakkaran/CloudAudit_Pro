@@ -62,7 +62,8 @@ function Documents() {
     try {
       setLoading(true)
       setError(null)
-      const data = await documentApi.getDocuments()
+      const response = await documentApi.getDocuments()
+      const data = Array.isArray(response) ? response : response.data || []
       setDocuments(data)
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load documents')
