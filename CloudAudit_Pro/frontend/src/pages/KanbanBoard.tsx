@@ -61,7 +61,7 @@ const KanbanBoard: React.FC = () => {
   const loadProcedures = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get('/audit-procedures');
+      const response = await apiClient.get('/procedures');
       const procedures: Procedure[] = response.data;
 
       // Organize procedures into columns
@@ -121,7 +121,7 @@ const KanbanBoard: React.FC = () => {
         setColumns(newColumns);
 
         // API call to update status
-        await apiClient.put(`/audit-procedures/${procedure.id}`, {
+        await apiClient.put(`/procedures/${procedure.id}`, {
           status: destColumn.status,
         });
       } catch (err: any) {

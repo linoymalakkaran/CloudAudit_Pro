@@ -166,7 +166,7 @@ const AuditProcedures: React.FC = () => {
       if (category) params.append('category', category);
       if (assignedToId) params.append('assignedToId', assignedToId);
 
-      const response = await apiClient.get(`/audit-procedures?${params}`);
+      const response = await apiClient.get(`/procedures?${params}`);
       setProcedures(response.data);
       setError(null);
     } catch (err: any) {
@@ -183,7 +183,7 @@ const AuditProcedures: React.FC = () => {
       if (companyId) params.append('companyId', companyId);
       if (periodId) params.append('periodId', periodId);
 
-      const response = await apiClient.get(`/audit-procedures/statistics?${params}`);
+      const response = await apiClient.get(`/procedures/statistics?${params}`);
       setStatistics(response.data);
     } catch (err: any) {
       console.error('Failed to load statistics:', err);
@@ -202,7 +202,7 @@ const AuditProcedures: React.FC = () => {
     if (!window.confirm('Are you sure you want to delete this procedure?')) return;
 
     try {
-      await apiClient.delete(`/audit-procedures/${id}`);
+      await apiClient.delete(`/procedures/${id}`);
       loadProcedures();
       loadStatistics();
     } catch (err: any) {
@@ -232,7 +232,7 @@ const AuditProcedures: React.FC = () => {
 
   const handleBulkAssign = async (assignedTo: string, dueDate?: string) => {
     try {
-      await apiClient.post('/audit-procedures/bulk-assign', {
+      await apiClient.post('/procedures/bulk-assign', {
         procedureIds: selectedIds,
         assignedTo,
         dueDate,
@@ -249,7 +249,7 @@ const AuditProcedures: React.FC = () => {
     try {
       await Promise.all(
         selectedIds.map(id => 
-          apiClient.put(`/audit-procedures/${id}`, { status: newStatus })
+          apiClient.put(`/procedures/${id}`, { status: newStatus })
         )
       );
       setSelectedIds([]);
@@ -266,7 +266,7 @@ const AuditProcedures: React.FC = () => {
     }
     try {
       await Promise.all(
-        selectedIds.map(id => apiClient.delete(`/audit-procedures/${id}`))
+        selectedIds.map(id => apiClient.delete(`/procedures/${id}`))
       );
       setSelectedIds([]);
       setBulkActionOpen(false);

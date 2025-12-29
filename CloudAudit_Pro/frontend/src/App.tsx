@@ -82,89 +82,90 @@ const theme = createTheme({
 function AppRoutes() {
   const { user, isAuthenticated } = useAuth()
 
+  if (!isAuthenticated) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<Login />} />
+      </Routes>
+    )
+  }
+
   return (
-    <Routes>
-      {/* Regular Application Routes */}
-      {!isAuthenticated ? (
-        <>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="*" element={<Login />} />
-        </>
-      ) : (
-        <Layout>
-          <Route path="/" element={<Dashboard />} />
-          
-          {/* Admin Routes */}
-          {(user?.role === 'ADMIN' || user?.role === 'MANAGER') && (
-            <>
-              <Route path="/admin" element={<AdminDashboard userRole={user.role} />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard userRole={user.role} />} />
-              <Route path="/admin/users" element={<UserManagement userRole={user.role} />} />
-              <Route path="/admin/users/invite" element={<InviteUser userRole={user.role} />} />
-              <Route path="/admin/users/pending" element={<PendingApprovals userRole={user.role} />} />
-              <Route path="/admin/companies" element={<Companies />} />
-              <Route path="/admin/currency" element={<CurrencyMaster />} />
-              <Route path="/admin/banks" element={<BankMaster />} />
-              <Route path="/admin/countries" element={<CountryMaster />} />
-              <Route path="/schedules/fixed-assets" element={<FixedAssetSchedule />} />
-              <Route path="/schedules/liabilities" element={<LiabilitySchedule />} />
-              <Route path="/schedules/equity" element={<EquitySchedule />} />
-              <Route path="/review/points" element={<ReviewPointManagement />} />
-              <Route path="/review/manager" element={<ManagerReviewList />} />
-              <Route path="/audit/finalize" element={<AuditFinalization />} />
-            </>
-          )}
-          
-          {/* Auditor Routes */}
-          {(user?.role === 'ADMIN' || user?.role === 'MANAGER' || user?.role === 'SENIOR_AUDITOR' || user?.role === 'AUDITOR') && (
-            <>
-              <Route path="/auditor" element={<AuditorPortal />} />
-              <Route path="/procedures" element={<AuditProcedures />} />
-              <Route path="/audit/procedures" element={<AuditProceduresNew />} />
-              <Route path="/audit/procedures/:id" element={<ProcedureDetails />} />
-              <Route path="/audit/kanban" element={<KanbanBoard />} />
-              <Route path="/audit/calendar" element={<CalendarView />} />
-              <Route path="/audit/templates" element={<TemplateLibrary />} />
-              <Route path="/audit/my-work" element={<MyWork />} />
-              <Route path="/documents" element={<Documents />} />
-              <Route path="/ledger" element={<GeneralLedger />} />
-              <Route path="/financial-statements" element={<FinancialStatements />} />
-              
-              {/* Phase 4: Advanced Testing Routes */}
-              <Route path="/testing/sampling" element={<SamplingPlan />} />
-              <Route path="/testing/substantive" element={<SubstantiveTesting />} />
-              <Route path="/testing/controls" element={<InternalControls />} />
-            </>
-          )}
-          
-          {/* Client Routes */}
-          <Route path="/client" element={<ClientPortal />} />
-          
-          {/* Common Routes */}
-          <Route path="/reports" element={<Reports />} />
-          
-          {/* Phase 6: Reporting & Analytics Routes */}
-          <Route path="/reports/dashboard" element={<ReportsDashboard />} />
-          <Route path="/reports/generate" element={<ReportGenerator />} />
-          <Route path="/reports/:id" element={<ReportViewer />} />
-          <Route path="/report-templates" element={<ReportTemplates />} />
-          <Route path="/report-schedules" element={<ReportScheduler />} />
-          <Route path="/dashboards" element={<DashboardViewer />} />
-          <Route path="/dashboards/builder" element={<DashboardBuilder />} />
-          <Route path="/analytics" element={<AnalyticsOverview />} />
-          
-          {/* Phase 7: System Utilities Routes */}
-          <Route path="/settings/system" element={<SystemSettings />} />
-          <Route path="/notifications" element={<NotificationsCenter />} />
-          <Route path="/settings/preferences" element={<UserPreferences />} />
-          <Route path="/data/import-export" element={<DataImportExport />} />
-          <Route path="/settings/integrations" element={<IntegrationsManager />} />
-          
-          <Route path="*" element={<Dashboard />} />
-        </Layout>
-      )}
-    </Routes>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        
+        {/* Admin Routes */}
+        {(user?.role === 'ADMIN' || user?.role === 'MANAGER') && (
+          <>
+            <Route path="/admin" element={<AdminDashboard userRole={user.role} />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard userRole={user.role} />} />
+            <Route path="/admin/users" element={<UserManagement userRole={user.role} />} />
+            <Route path="/admin/users/invite" element={<InviteUser userRole={user.role} />} />
+            <Route path="/admin/users/pending" element={<PendingApprovals userRole={user.role} />} />
+            <Route path="/admin/companies" element={<Companies />} />
+            <Route path="/admin/currency" element={<CurrencyMaster />} />
+            <Route path="/admin/banks" element={<BankMaster />} />
+            <Route path="/admin/countries" element={<CountryMaster />} />
+            <Route path="/schedules/fixed-assets" element={<FixedAssetSchedule />} />
+            <Route path="/schedules/liabilities" element={<LiabilitySchedule />} />
+            <Route path="/schedules/equity" element={<EquitySchedule />} />
+            <Route path="/review/points" element={<ReviewPointManagement />} />
+            <Route path="/review/manager" element={<ManagerReviewList />} />
+            <Route path="/audit/finalize" element={<AuditFinalization />} />
+          </>
+        )}
+        
+        {/* Auditor Routes */}
+        {(user?.role === 'ADMIN' || user?.role === 'MANAGER' || user?.role === 'SENIOR_AUDITOR' || user?.role === 'AUDITOR') && (
+          <>
+            <Route path="/auditor" element={<AuditorPortal />} />
+            <Route path="/procedures" element={<AuditProcedures />} />
+            <Route path="/audit/procedures" element={<AuditProceduresNew />} />
+            <Route path="/audit/procedures/:id" element={<ProcedureDetails />} />
+            <Route path="/audit/kanban" element={<KanbanBoard />} />
+            <Route path="/audit/calendar" element={<CalendarView />} />
+            <Route path="/audit/templates" element={<TemplateLibrary />} />
+            <Route path="/audit/my-work" element={<MyWork />} />
+            <Route path="/documents" element={<Documents />} />
+            <Route path="/ledger" element={<GeneralLedger />} />
+            <Route path="/financial-statements" element={<FinancialStatements />} />
+            
+            {/* Phase 4: Advanced Testing Routes */}
+            <Route path="/testing/sampling" element={<SamplingPlan />} />
+            <Route path="/testing/substantive" element={<SubstantiveTesting />} />
+            <Route path="/testing/controls" element={<InternalControls />} />
+          </>
+        )}
+        
+        {/* Client Routes */}
+        <Route path="/client" element={<ClientPortal />} />
+        
+        {/* Common Routes */}
+        <Route path="/reports" element={<Reports />} />
+        
+        {/* Phase 6: Reporting & Analytics Routes */}
+        <Route path="/reports/dashboard" element={<ReportsDashboard />} />
+        <Route path="/reports/generate" element={<ReportGenerator />} />
+        <Route path="/reports/:id" element={<ReportViewer />} />
+        <Route path="/report-templates" element={<ReportTemplates />} />
+        <Route path="/report-schedules" element={<ReportScheduler />} />
+        <Route path="/dashboards" element={<DashboardViewer />} />
+        <Route path="/dashboards/builder" element={<DashboardBuilder />} />
+        <Route path="/analytics" element={<AnalyticsOverview />} />
+        
+        {/* Phase 7: System Utilities Routes */}
+        <Route path="/settings/system" element={<SystemSettings />} />
+        <Route path="/notifications" element={<NotificationsCenter />} />
+        <Route path="/settings/preferences" element={<UserPreferences />} />
+        <Route path="/data/import-export" element={<DataImportExport />} />
+        <Route path="/settings/integrations" element={<IntegrationsManager />} />
+        
+        <Route path="*" element={<Dashboard />} />
+      </Routes>
+    </Layout>
   )
 }
 

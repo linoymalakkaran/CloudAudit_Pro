@@ -76,7 +76,7 @@ const MyWork: React.FC = () => {
       setError(null);
 
       // Get my assigned procedures
-      const myProcsRes = await apiClient.get('/audit-procedures', {
+      const myProcsRes = await apiClient.get('/procedures', {
         params: { assignedTo: user.id },
       });
       const myProcs = myProcsRes.data;
@@ -104,7 +104,7 @@ const MyWork: React.FC = () => {
 
       // Get review queue (if manager/admin)
       if (user.role === 'ADMIN' || user.role === 'MANAGER' || user.role === 'SENIOR_AUDITOR') {
-        const reviewRes = await apiClient.get('/audit-procedures', {
+        const reviewRes = await apiClient.get('/procedures', {
           params: { status: 'COMPLETED' },
         });
         setReviewQueue(reviewRes.data.slice(0, 5)); // Show top 5

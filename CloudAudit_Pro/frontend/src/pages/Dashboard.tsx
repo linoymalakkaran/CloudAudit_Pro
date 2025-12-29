@@ -24,9 +24,11 @@ import {
   Warning as WarningIcon
 } from '@mui/icons-material'
 import { useAuth } from '../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 function Dashboard() {
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   // Mock data for dashboard
   const stats = {
@@ -134,6 +136,30 @@ function Dashboard() {
         return 'info'
       default:
         return 'default'
+    }
+  }
+
+  const handleAddCompany = () => {
+    if (user?.role === 'ADMIN' || user?.role === 'MANAGER') {
+      navigate('/admin/companies')
+    } else {
+      alert('Only administrators can add companies')
+    }
+  }
+
+  const handleCreateProcedure = () => {
+    navigate('/audit/procedures')
+  }
+
+  const handleGenerateReport = () => {
+    navigate('/reports')
+  }
+
+  const handleAddTeamMember = () => {
+    if (user?.role === 'ADMIN' || user?.role === 'MANAGER') {
+      navigate('/admin/users')
+    } else {
+      alert('Only administrators can add team members')
     }
   }
 
@@ -302,6 +328,7 @@ function Dashboard() {
                     fullWidth
                     startIcon={<BusinessIcon />}
                     sx={{ height: '60px' }}
+                    onClick={handleAddCompany}
                   >
                     Add New Company
                   </Button>
@@ -312,6 +339,7 @@ function Dashboard() {
                     fullWidth
                     startIcon={<AssignmentIcon />}
                     sx={{ height: '60px' }}
+                    onClick={handleCreateProcedure}
                   >
                     Create Procedure
                   </Button>
@@ -322,6 +350,7 @@ function Dashboard() {
                     fullWidth
                     startIcon={<AssessmentIcon />}
                     sx={{ height: '60px' }}
+                    onClick={handleGenerateReport}
                   >
                     Generate Report
                   </Button>
@@ -332,6 +361,7 @@ function Dashboard() {
                     fullWidth
                     startIcon={<PersonIcon />}
                     sx={{ height: '60px' }}
+                    onClick={handleAddTeamMember}
                   >
                     Add Team Member
                   </Button>

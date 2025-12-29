@@ -541,7 +541,7 @@ export const InviteUser: React.FC<InviteUserProps> = ({ userRole }) => {
               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
                 <Button
                   variant="contained"
-                  onClick={() => navigate('/admin/users')}
+                  onClick={() => navigate('/admin/users', { state: { refresh: true } })}
                 >
                   View Users
                 </Button>

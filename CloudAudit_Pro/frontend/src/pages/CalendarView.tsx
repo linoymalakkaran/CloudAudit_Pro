@@ -64,7 +64,7 @@ const CalendarView: React.FC = () => {
   const loadProcedures = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get('/api/procedures');
+      const response = await apiClient.get('/procedures');
       const proceduresData = response.data;
       setProcedures(proceduresData);
 

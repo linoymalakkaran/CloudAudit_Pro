@@ -52,7 +52,7 @@ import {
   GetApp as GetAppIcon,
   VpnKey as VpnKeyIcon
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface UserManagementProps {
   userRole: 'ADMIN' | 'MANAGER' | 'SENIOR_AUDITOR' | 'AUDITOR' | 'INTERN';
@@ -84,11 +84,31 @@ export const UserManagement: React.FC<UserManagementProps> = ({ userRole }) => {
   });
 
   const navigate = useNavigate();
+  const location = useLocation();
   const isAdmin = userRole === 'ADMIN';
   const isManagerOrAdmin = ['ADMIN', 'MANAGER'].includes(userRole);
 
   useEffect(() => {
     fetchUsers();
+  }, []);
+
+  // Check if navigation state indicates we should refresh
+  useEffect(() => {
+    if (location.state && (location.state as any).refresh) {
+      fetchUsers();
+      // Clear the state to prevent repeated refreshes
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    // Refresh users when window regains focus (e.g., navigating back from invite page)
+    const handleFocus = () => {
+      fetchUsers();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   useEffect(() => {

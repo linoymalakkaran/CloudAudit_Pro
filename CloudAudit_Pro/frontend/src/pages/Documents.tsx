@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Box,
   Typography,
@@ -23,7 +23,10 @@ import {
   Select,
   FormControl,
   InputLabel,
-  MenuItem
+  MenuItem,
+  CircularProgress,
+  Alert,
+  Input
 } from '@mui/material'
 import {
   CloudUpload as UploadIcon,
@@ -31,75 +34,156 @@ import {
   Download as DownloadIcon,
   Delete as DeleteIcon
 } from '@mui/icons-material'
-
-interface Document {
-  id: string
-  name: string
-  type: string
-  size: string
-  uploadedBy: string
-  uploadDate: string
-  company: string
-  category: string
-}
+import { documentApi, Document as DocumentType, companyApi } from '../services/api'
 
 function Documents() {
   const [open, setOpen] = useState(false)
-  const [documents] = useState<Document[]>([
-    {
-      id: '1',
-      name: 'Bank Statement - Oct 2024.pdf',
-      type: 'PDF',
-      size: '2.1 MB',
-      uploadedBy: 'John Doe',
-      uploadDate: '2024-11-20',
-      company: 'Acme Corporation',
-      category: 'Bank Documents'
-    },
-    {
-      id: '2',
-      name: 'Trial Balance - Q3 2024.xlsx',
-      type: 'Excel',
-      size: '856 KB',
-      uploadedBy: 'Sarah Wilson',
-      uploadDate: '2024-11-18',
-      company: 'Tech Solutions',
-      category: 'Financial Statements'
-    },
-    {
-      id: '3',
-      name: 'Inventory List - Nov 2024.csv',
-      type: 'CSV',
-      size: '124 KB',
-      uploadedBy: 'Mike Johnson',
-      uploadDate: '2024-11-15',
-      company: 'Manufacturing Co',
-      category: 'Inventory'
-    }
-  ])
+  const [documents, setDocuments] = useState<DocumentType[]>([])
+  const [companies, setCompanies] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [stats, setStats] = useState<any>(null)
 
   const [newDocument, setNewDocument] = useState({
     name: '',
-    company: '',
-    category: '',
+    companyId: '',
+    type: 'OTHER',
     description: ''
   })
+
+  useEffect(() => {
+    loadDocuments()
+    loadCompanies()
+    loadStats()
+  }, [])
+
+  const loadDocuments = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await documentApi.getDocuments()
+      setDocuments(data)
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to load documents')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadCompanies = async () => {
+    try {
+      const data = await companyApi.getCompanies()
+      setCompanies(data)
+    } catch (err: any) {
+      console.error('Failed to load companies:', err)
+    }
+  }
+
+  const loadStats = async () => {
+    try {
+      const data = await documentApi.getDocumentStats()
+      setStats(data)
+    } catch (err: any) {
+      console.error('Failed to load stats:', err)
+    }
+  }
 
   const getFileIcon = (type: string) => {
     return <DocumentIcon color="primary" />
   }
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Bank Documents': return 'primary'
-      case 'Financial Statements': return 'success'
-      case 'Inventory': return 'warning'
+  const getCategoryColor = (type: string) => {
+    switch (type) {
+      case 'BANK_STATEMENT': return 'primary'
+      case 'FINANCIAL_STATEMENT': return 'success'
+      case 'INVOICE': return 'warning'
+      case 'TRIAL_BALANCE': return 'info'
       default: return 'default'
     }
   }
 
+  const handleDownload = async (documentId: string, documentName: string) => {
+    try {
+      const blob = await documentApi.downloadDocument(documentId)
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = documentName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to download document')
+    }
+  }
+
+  const handleDelete = async (documentId: string, documentName: string) => {
+    const confirmed = window.confirm(`Are you sure you want to delete "${documentName}"?`)
+    if (confirmed) {
+      try {
+        await documentApi.deleteDocument(documentId)
+        alert(`Document "${documentName}" deleted successfully`)
+        loadDocuments()
+        loadStats()
+      } catch (err: any) {
+        alert(err.response?.data?.message || 'Failed to delete document')
+      }
+    }
+  }
+
+  const handleUploadDocument = async () => {
+    if (!newDocument.name || !newDocument.companyId) {
+      alert('Please provide document name and select a company')
+      return
+    }
+
+    try {
+      await documentApi.createDocument(newDocument, uploadFile || undefined)
+      alert('Document uploaded successfully')
+      setOpen(false)
+      setNewDocument({
+        name: '',
+        companyId: '',
+        type: 'OTHER',
+        description: ''
+      })
+      setUploadFile(null)
+      loadDocuments()
+      loadStats()
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to upload document')
+    }
+  }
+
+  const formatFileSize = (bytes?: number) => {
+    if (!bytes) return 'N/A'
+    if (bytes < 1024) return bytes + ' B'
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB'
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB'
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString()
+  }
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+      </Box>
+    )
+  }
+
   return (
     <Box>
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
+
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4">
           Document Management
@@ -119,7 +203,7 @@ function Documents() {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <DocumentIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-              <Typography variant="h4">156</Typography>
+              <Typography variant="h4">{stats?.total || documents.length}</Typography>
               <Typography variant="body2">Total Documents</Typography>
             </CardContent>
           </Card>
@@ -128,7 +212,7 @@ function Documents() {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <DocumentIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
-              <Typography variant="h4">12</Typography>
+              <Typography variant="h4">{stats?.thisWeek || 0}</Typography>
               <Typography variant="body2">This Week</Typography>
             </CardContent>
           </Card>
@@ -137,7 +221,7 @@ function Documents() {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <DocumentIcon sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />
-              <Typography variant="h4">2.8 GB</Typography>
+              <Typography variant="h4">{stats?.totalSize || '0 MB'}</Typography>
               <Typography variant="body2">Total Size</Typography>
             </CardContent>
           </Card>
@@ -146,7 +230,7 @@ function Documents() {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <DocumentIcon sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
-              <Typography variant="h4">8</Typography>
+              <Typography variant="h4">{stats?.categories || 8}</Typography>
               <Typography variant="body2">Categories</Typography>
             </CardContent>
           </Card>
@@ -161,47 +245,66 @@ function Documents() {
               <TableRow>
                 <TableCell>Document Name</TableCell>
                 <TableCell>Type</TableCell>
-                <TableCell>Company</TableCell>
-                <TableCell>Category</TableCell>
+                <TableCell>Status</TableCell>
                 <TableCell>Size</TableCell>
-                <TableCell>Uploaded By</TableCell>
                 <TableCell>Upload Date</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {documents.map((document) => (
-                <TableRow key={document.id}>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      {getFileIcon(document.type)}
-                      <Typography variant="subtitle2" sx={{ ml: 1 }}>
-                        {document.name}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>{document.type}</TableCell>
-                  <TableCell>{document.company}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={document.category}
-                      color={getCategoryColor(document.category) as any}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>{document.size}</TableCell>
-                  <TableCell>{document.uploadedBy}</TableCell>
-                  <TableCell>{document.uploadDate}</TableCell>
-                  <TableCell>
-                    <IconButton color="primary">
-                      <DownloadIcon />
-                    </IconButton>
-                    <IconButton color="error">
-                      <DeleteIcon />
-                    </IconButton>
+              {documents.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    <Typography variant="body2" color="text.secondary">
+                      No documents found. Upload your first document to get started.
+                    </Typography>
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                documents.map((document) => (
+                  <TableRow key={document.id}>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        {getFileIcon(document.type)}
+                        <Typography variant="subtitle2" sx={{ ml: 1 }}>
+                          {document.name}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={document.type.replace('_', ' ')}
+                        color={getCategoryColor(document.type) as any}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={document.status}
+                        color={document.status === 'APPROVED' ? 'success' : 'default'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>{formatFileSize(document.fileSize)}</TableCell>
+                    <TableCell>{formatDate(document.createdAt)}</TableCell>
+                    <TableCell>
+                      <IconButton 
+                        color="primary" 
+                        onClick={() => handleDownload(document.id, document.fileName || document.name)}
+                        disabled={!document.fileUrl}
+                      >
+                        <DownloadIcon />
+                      </IconButton>
+                      <IconButton 
+                        color="error" 
+                        onClick={() => handleDelete(document.id, document.name)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -218,35 +321,44 @@ function Documents() {
                 fullWidth
                 value={newDocument.name}
                 onChange={(e) => setNewDocument({ ...newDocument, name: e.target.value })}
+                required
               />
             </Grid>
             <Grid item xs={12}>
-              <FormControl fullWidth>
+              <FormControl fullWidth required>
                 <InputLabel>Company</InputLabel>
                 <Select
-                  value={newDocument.company}
+                  value={newDocument.companyId}
                   label="Company"
-                  onChange={(e) => setNewDocument({ ...newDocument, company: e.target.value })}
+                  onChange={(e) => setNewDocument({ ...newDocument, companyId: e.target.value })}
                 >
-                  <MenuItem value="Acme Corporation">Acme Corporation</MenuItem>
-                  <MenuItem value="Tech Solutions">Tech Solutions</MenuItem>
-                  <MenuItem value="Manufacturing Co">Manufacturing Co</MenuItem>
+                  {companies.map((company) => (
+                    <MenuItem key={company.id} value={company.id}>
+                      {company.name}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel>Category</InputLabel>
+                <InputLabel>Document Type</InputLabel>
                 <Select
-                  value={newDocument.category}
-                  label="Category"
-                  onChange={(e) => setNewDocument({ ...newDocument, category: e.target.value })}
+                  value={newDocument.type}
+                  label="Document Type"
+                  onChange={(e) => setNewDocument({ ...newDocument, type: e.target.value })}
                 >
-                  <MenuItem value="Bank Documents">Bank Documents</MenuItem>
-                  <MenuItem value="Financial Statements">Financial Statements</MenuItem>
-                  <MenuItem value="Inventory">Inventory</MenuItem>
-                  <MenuItem value="Legal Documents">Legal Documents</MenuItem>
-                  <MenuItem value="Tax Documents">Tax Documents</MenuItem>
+                  <MenuItem value="FINANCIAL_STATEMENT">Financial Statement</MenuItem>
+                  <MenuItem value="TRIAL_BALANCE">Trial Balance</MenuItem>
+                  <MenuItem value="GENERAL_LEDGER">General Ledger</MenuItem>
+                  <MenuItem value="BANK_STATEMENT">Bank Statement</MenuItem>
+                  <MenuItem value="INVOICE">Invoice</MenuItem>
+                  <MenuItem value="RECEIPT">Receipt</MenuItem>
+                  <MenuItem value="CONTRACT">Contract</MenuItem>
+                  <MenuItem value="CORRESPONDENCE">Correspondence</MenuItem>
+                  <MenuItem value="WORKING_PAPER">Working Paper</MenuItem>
+                  <MenuItem value="MANAGEMENT_LETTER">Management Letter</MenuItem>
+                  <MenuItem value="OTHER">Other</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -263,20 +375,25 @@ function Documents() {
             <Grid item xs={12}>
               <Button
                 variant="outlined"
-                fullWidth
                 component="label"
+                fullWidth
                 startIcon={<UploadIcon />}
-                sx={{ height: 60 }}
               >
-                Choose File to Upload
-                <input type="file" hidden />
+                {uploadFile ? uploadFile.name : 'Choose File'}
+                <Input
+                  type="file"
+                  hidden
+                  onChange={(e: any) => setUploadFile(e.target.files?.[0] || null)}
+                />
               </Button>
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={() => setOpen(false)} variant="contained">Upload Document</Button>
+          <Button onClick={handleUploadDocument} variant="contained">
+            Upload
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

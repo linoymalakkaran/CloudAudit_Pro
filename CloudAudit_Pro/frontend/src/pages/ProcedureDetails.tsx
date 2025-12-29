@@ -106,7 +106,7 @@ const ProcedureDetails: React.FC = () => {
   const loadProcedure = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get(`/audit-procedures/${id}`);
+      const response = await apiClient.get(`/procedures/${id}`);
       setProcedure(response.data);
       setError(null);
     } catch (err: any) {
@@ -117,14 +117,14 @@ const ProcedureDetails: React.FC = () => {
   };
 
   const handleAddComment = async (comment: string) => {
-    await apiClient.post(`/audit-procedures/${id}/comments`, { comment });
+    await apiClient.post(`/procedures/${id}/comments`, { comment });
     // Reload procedure to get updated comments
     loadProcedure();
   };
 
   const handleStatusUpdate = async (status: string) => {
     try {
-      await apiClient.put(`/audit-procedures/${id}`, { status });
+      await apiClient.put(`/procedures/${id}`, { status });
       loadProcedure();
     } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to update status');

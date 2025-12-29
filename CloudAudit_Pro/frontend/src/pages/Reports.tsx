@@ -105,6 +105,26 @@ function Reports() {
     'Compliance Report'
   ]
 
+  const handleViewReport = (reportId: string, reportName: string) => {
+    console.log('Viewing report:', reportId)
+    alert(`Opening "${reportName}"...\nReport viewer will be implemented`)
+  }
+
+  const handleDownloadReport = (reportId: string, reportName: string) => {
+    console.log('Downloading report:', reportId)
+    alert(`Downloading "${reportName}"...\nFile download will be implemented`)
+  }
+
+  const handleEmailReport = (reportId: string, reportName: string) => {
+    console.log('Emailing report:', reportId)
+    alert(`Email dialog for "${reportName}"...\nEmail functionality will be implemented`)
+  }
+
+  const handleTemplateClick = (template: string) => {
+    console.log('Generating report from template:', template)
+    alert(`Creating new ${template}...\nReport generation will be implemented`)
+  }
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
@@ -134,6 +154,7 @@ function Reports() {
                   fullWidth
                   startIcon={<ReportIcon />}
                   sx={{ justifyContent: 'flex-start', p: 2 }}
+                  onClick={() => handleTemplateClick(template)}
                 >
                   {template}
                 </Button>
@@ -220,13 +241,13 @@ function Reports() {
                   <TableCell>{report.createdBy}</TableCell>
                   <TableCell>{report.createdDate}</TableCell>
                   <TableCell>
-                    <IconButton color="primary">
+                    <IconButton color="primary" onClick={() => handleViewReport(report.id, report.name)}>
                       <ViewIcon />
                     </IconButton>
-                    <IconButton color="success">
+                    <IconButton color="success" onClick={() => handleDownloadReport(report.id, report.name)}>
                       <DownloadIcon />
                     </IconButton>
-                    <IconButton color="info">
+                    <IconButton color="info" onClick={() => handleEmailReport(report.id, report.name)}>
                       <EmailIcon />
                     </IconButton>
                   </TableCell>

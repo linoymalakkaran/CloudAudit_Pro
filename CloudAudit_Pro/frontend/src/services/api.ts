@@ -250,4 +250,201 @@ export const authApi = {
   },
 };
 
+// Company API
+export interface Company {
+  id: string;
+  name: string;
+  taxId?: string;
+  industry?: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  contactPerson?: {
+    name: string;
+    email: string;
+    phone?: string;
+  };
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    zipCode?: string;
+  };
+  tenantId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCompanyDto {
+  name: string;
+  taxId?: string;
+  industry?: string;
+  contactPersonName?: string;
+  contactPersonEmail?: string;
+  contactPersonPhone?: string;
+  addressStreet?: string;
+  addressCity?: string;
+  addressState?: string;
+  addressCountry?: string;
+  addressZipCode?: string;
+}
+
+export interface UpdateCompanyDto {
+  name?: string;
+  taxId?: string;
+  industry?: string;
+  status?: 'ACTIVE' | 'INACTIVE';
+  contactPersonName?: string;
+  contactPersonEmail?: string;
+  contactPersonPhone?: string;
+  addressStreet?: string;
+  addressCity?: string;
+  addressState?: string;
+  addressCountry?: string;
+  addressZipCode?: string;
+}
+
+export const companyApi = {
+  // Get all companies
+  getCompanies: async (): Promise<Company[]> => {
+    const response = await apiClient.get('/companies');
+    return response.data;
+  },
+
+  // Get company by ID
+  getCompany: async (id: string): Promise<Company> => {
+    const response = await apiClient.get(`/companies/${id}`);
+    return response.data;
+  },
+
+  // Create company
+  createCompany: async (data: CreateCompanyDto): Promise<Company> => {
+    const response = await apiClient.post('/companies', data);
+    return response.data;
+  },
+
+  // Update company
+  updateCompany: async (id: string, data: UpdateCompanyDto): Promise<Company> => {
+    const response = await apiClient.patch(`/companies/${id}`, data);
+    return response.data;
+  },
+
+  // Delete company
+  deleteCompany: async (id: string): Promise<void> => {
+    await apiClient.delete(`/companies/${id}`);
+  },
+
+  // Get company stats
+  getCompanyStats: async (): Promise<any> => {
+    const response = await apiClient.get('/companies/stats');
+    return response.data;
+  },
+
+  // Search companies
+  searchCompanies: async (query: string): Promise<Company[]> => {
+    const response = await apiClient.get(`/companies/search?query=${query}`);
+    return response.data;
+  },
+};
+
+// Document API
+export interface Document {
+  id: string;
+  name: string;
+  description?: string;
+  type: string;
+  fileUrl?: string;
+  fileName?: string;
+  fileSize?: number;
+  mimeType?: string;
+  status: 'PENDING' | 'REVIEWED' | 'APPROVED' | 'REJECTED';
+  companyId: string;
+  periodId?: string;
+  accountId?: string;
+  tags?: string[];
+  uploadedById: string;
+  tenantId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateDocumentDto {
+  name: string;
+  description?: string;
+  type: string;
+  companyId: string;
+  periodId?: string;
+  accountId?: string;
+  tags?: string[];
+}
+
+export interface UpdateDocumentDto {
+  name?: string;
+  description?: string;
+  type?: string;
+  status?: 'PENDING' | 'REVIEWED' | 'APPROVED' | 'REJECTED';
+  tags?: string[];
+}
+
+export const documentApi = {
+  // Get all documents
+  getDocuments: async (filters?: any): Promise<Document[]> => {
+    const params = new URLSearchParams(filters).toString();
+    const response = await apiClient.get(`/documents?${params}`);
+    return response.data;
+  },
+
+  // Get document by ID
+  getDocument: async (id: string): Promise<Document> => {
+    const response = await apiClient.get(`/documents/${id}`);
+    return response.data;
+  },
+
+  // Create document
+  createDocument: async (data: CreateDocumentDto, file?: File): Promise<Document> => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (Array.isArray(value)) {
+          value.forEach(v => formData.append(key, v));
+        } else {
+          formData.append(key, value.toString());
+        }
+      }
+    });
+    if (file) {
+      formData.append('file', file);
+    }
+    const response = await apiClient.post('/documents', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  // Update document
+  updateDocument: async (id: string, data: UpdateDocumentDto): Promise<Document> => {
+    const response = await apiClient.patch(`/documents/${id}`, data);
+    return response.data;
+  },
+
+  // Delete document
+  deleteDocument: async (id: string): Promise<void> => {
+    await apiClient.delete(`/documents/${id}`);
+  },
+
+  // Download document
+  downloadDocument: async (id: string): Promise<Blob> => {
+    const response = await apiClient.get(`/documents/${id}/download`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  // Get document statistics
+  getDocumentStats: async (companyId?: string): Promise<any> => {
+    const params = companyId ? `?companyId=${companyId}` : '';
+    const response = await apiClient.get(`/documents/statistics${params}`);
+    return response.data;
+  },
+};
+
 export default apiClient;
