@@ -34,7 +34,7 @@ import {
 } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { clientPortalService, type ClientAuditOverview } from '../../services/clientPortal.service'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../contexts/AuthContext'
 
 function ClientPortal() {
   const { user } = useAuth()

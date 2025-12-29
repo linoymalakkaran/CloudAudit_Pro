@@ -123,6 +123,162 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 ```
 
+#### Frontend Services Layer
+```typescript
+// Client Portal Services (NEW - Implemented)
+import axios from 'axios';
+
+// Invitation Service
+export const invitationService = {
+  async create(invitation: CreateInvitationDto) {
+    const response = await axios.post('/api/invitations', invitation);
+    return response.data;
+  },
+  
+  async validate(token: string) {
+    const response = await axios.get(`/api/invitations/validate/${token}`);
+    return response.data;
+  },
+  
+  async accept(token: string, userData: AcceptInvitationDto) {
+    const response = await axios.post(`/api/invitations/accept/${token}`, userData);
+    return response.data;
+  },
+  
+  async list(filters?: InvitationFilters) {
+    const response = await axios.get('/api/invitations', { params: filters });
+    return response.data;
+  },
+  
+  async resend(id: string) {
+    const response = await axios.post(`/api/invitations/${id}/resend`);
+    return response.data;
+  },
+  
+  async cancel(id: string) {
+    await axios.delete(`/api/invitations/${id}`);
+  }
+};
+
+// Messaging Service with Threading
+export const messagingService = {
+  async sendMessage(message: CreateMessageDto) {
+    const response = await axios.post('/api/messages', message);
+    return response.data;
+  },
+  
+  async getThreads(companyId?: string) {
+    const response = await axios.get('/api/messages/threads', {
+      params: { companyId }
+    });
+    return response.data;
+  },
+  
+  async getMessages(threadId: string) {
+    const response = await axios.get(`/api/messages/threads/${threadId}`);
+    return response.data;
+  },
+  
+  async markAsRead(messageId: string) {
+    await axios.patch(`/api/messages/${messageId}/read`);
+  },
+  
+  async markThreadAsRead(threadId: string) {
+    await axios.patch(`/api/messages/threads/${threadId}/read`);
+  },
+  
+  async getUnreadCount(companyId?: string) {
+    const response = await axios.get('/api/messages/unread-count', {
+      params: { companyId }
+    });
+    return response.data;
+  }
+};
+
+// Notification Service
+export const notificationService = {
+  async getNotifications(filters?: NotificationFilters) {
+    const response = await axios.get('/api/notifications', { params: filters });
+    return response.data;
+  },
+  
+  async markAsRead(notificationId: string) {
+    await axios.patch(`/api/notifications/${notificationId}/read`);
+  },
+  
+  async markAllAsRead() {
+    await axios.patch('/api/notifications/mark-all-read');
+  },
+  
+  async getUnreadCount() {
+    const response = await axios.get('/api/notifications/unread-count');
+    return response.data;
+  },
+  
+  async deleteNotification(notificationId: string) {
+    await axios.delete(`/api/notifications/${notificationId}`);
+  }
+};
+
+// Client Portal Dashboard Service
+export const clientPortalService = {
+  async getAuditOverview(companyId: string, timeframe?: string) {
+    const response = await axios.get(`/api/dashboard/company/${companyId}/audit`, {
+      params: { timeframe }
+    });
+    return response.data;
+  },
+  
+  async getDocumentRequests(companyId: string) {
+    const response = await axios.get('/api/documents', {
+      params: { companyId, type: 'REQUEST' }
+    });
+    return response.data;
+  },
+  
+  async uploadDocument(formData: FormData) {
+    const response = await axios.post('/api/documents/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  }
+};
+```
+
+#### New React Components (Client Portal & Communication)
+```typescript
+// NotificationBell Component
+import React, { useEffect, useState } from 'react';
+import { Badge, IconButton, Menu, MenuItem } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { notificationService } from '../services/notification.service';
+
+const NotificationBell: React.FC = () => {
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  
+  useEffect(() => {
+    // Poll for notifications every 30 seconds
+    const fetchUnreadCount = async () => {
+      const { count } = await notificationService.getUnreadCount();
+      setUnreadCount(count);
+    };
+    
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  return (
+    <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+      <Badge badgeContent={unreadCount} color="error">
+        <NotificationsIcon />
+      </Badge>
+    </IconButton>
+  );
+};
+```
+
 #### Progressive Web App (PWA) Features
 ```typescript
 // Service Worker Configuration

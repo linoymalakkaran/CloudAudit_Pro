@@ -174,4 +174,24 @@ export const documentService = {
     const response = await axios.get(`${API_URL}/documents/statistics`, { params });
     return response.data;
   },
+
+  // Client Portal Methods
+  async getDocuments(params: { companyId: string; type?: string }) {
+    const response = await axios.get(`${API_URL}/documents`, { params });
+    return response.data;
+  },
+
+  async uploadDocument(formData: FormData) {
+    const response = await axios.post(`${API_URL}/documents/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  async downloadDocument(documentId: string) {
+    const response = await axios.get(`${API_URL}/documents/${documentId}/download`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
 };

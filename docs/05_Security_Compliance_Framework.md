@@ -368,6 +368,271 @@ class AuthenticationService {
 }
 ```
 
+### Invitation Token Security (NEW - Implemented)
+
+```typescript
+// Secure token generation for user invitations
+class InvitationSecurityService {
+  private readonly TOKEN_LENGTH = 64;
+  private readonly TOKEN_EXPIRY_DAYS = 7;
+  private readonly MAX_FAILED_VALIDATIONS = 5;
+
+  async generateInvitationToken(): Promise<string> {
+    // Generate cryptographically secure random token
+    const tokenBytes = crypto.randomBytes(this.TOKEN_LENGTH / 2);
+    const token = tokenBytes.toString('hex');
+    
+    // Additional entropy with timestamp
+    const timestamp = Date.now().toString(36);
+    const entropy = crypto.randomBytes(8).toString('hex');
+    
+    return `${token}.${timestamp}.${entropy}`;
+  }
+
+  async validateInvitationToken(
+    token: string,
+    ipAddress: string
+  ): Promise<InvitationValidationResult> {
+    try {
+      // Check rate limiting to prevent brute force
+      await this.checkRateLimit(ipAddress);
+
+      // Find invitation by token
+      const invitation = await this.invitationRepository.findByToken(token);
+      
+      if (!invitation) {
+        await this.logFailedValidation(token, ipAddress, 'TOKEN_NOT_FOUND');
+        throw new SecurityError('Invalid invitation token', 'INVALID_TOKEN');
+      }
+
+      // Check expiration
+      if (new Date() > invitation.expiresAt) {
+        await this.logFailedValidation(token, ipAddress, 'TOKEN_EXPIRED');
+        await this.invitationRepository.updateStatus(invitation.id, 'EXPIRED');
+        throw new SecurityError('Invitation token has expired', 'TOKEN_EXPIRED');
+      }
+
+      // Check if already accepted
+      if (invitation.status === 'ACCEPTED') {
+        await this.logFailedValidation(token, ipAddress, 'ALREADY_ACCEPTED');
+        throw new SecurityError('Invitation already accepted', 'ALREADY_ACCEPTED');
+      }
+
+      // Check if cancelled
+      if (invitation.status === 'CANCELLED') {
+        await this.logFailedValidation(token, ipAddress, 'TOKEN_CANCELLED');
+        throw new SecurityError('Invitation has been cancelled', 'TOKEN_CANCELLED');
+      }
+
+      // Validate tenant is still active
+      const tenant = await this.tenantService.getTenant(invitation.tenantId);
+      if (!tenant || tenant.status !== 'active') {
+        await this.logFailedValidation(token, ipAddress, 'TENANT_INACTIVE');
+        throw new SecurityError('Organization is no longer active', 'TENANT_INACTIVE');
+      }
+
+      // Log successful validation
+      await this.auditLogger.logSecurityEvent({
+        type: 'INVITATION_TOKEN_VALIDATED',
+        invitationId: invitation.id,
+        tenantId: invitation.tenantId,
+        email: invitation.email,
+        ipAddress: ipAddress
+      });
+
+      return {
+        valid: true,
+        invitation: {
+          id: invitation.id,
+          email: invitation.email,
+          firstName: invitation.firstName,
+          lastName: invitation.lastName,
+          role: invitation.role,
+          companyId: invitation.companyId,
+          tenantId: invitation.tenantId
+        }
+      };
+    } catch (error) {
+      await this.incrementFailedValidations(ipAddress);
+      throw error;
+    }
+  }
+
+  async acceptInvitation(
+    token: string,
+    userData: AcceptInvitationDto,
+    ipAddress: string
+  ): Promise<User> {
+    // Validate token first
+    const validation = await this.validateInvitationToken(token, ipAddress);
+    
+    if (!validation.valid) {
+      throw new SecurityError('Invalid invitation');
+    }
+
+    // Check if user already exists with this email
+    const existingUser = await this.userRepository.findByEmail(
+      validation.invitation.email,
+      validation.invitation.tenantId
+    );
+    
+    if (existingUser) {
+      await this.auditLogger.logSecurityEvent({
+        type: 'DUPLICATE_INVITATION_ACCEPTANCE_ATTEMPT',
+        email: validation.invitation.email,
+        tenantId: validation.invitation.tenantId,
+        ipAddress: ipAddress
+      });
+      throw new SecurityError('User already exists', 'USER_EXISTS');
+    }
+
+    // Create new user with strong password requirements
+    await this.validatePasswordStrength(userData.password);
+    const hashedPassword = await bcrypt.hash(userData.password, 12);
+
+    const user = await this.userRepository.create({
+      email: validation.invitation.email,
+      firstName: userData.firstName || validation.invitation.firstName,
+      lastName: userData.lastName || validation.invitation.lastName,
+      role: validation.invitation.role,
+      companyId: validation.invitation.companyId,
+      tenantId: validation.invitation.tenantId,
+      passwordHash: hashedPassword,
+      status: 'ACTIVE',
+      emailVerified: true, // Email verified via invitation
+      createdViaInvitation: true
+    });
+
+    // Mark invitation as accepted
+    await this.invitationRepository.markAsAccepted(validation.invitation.id, user.id);
+
+    // Send welcome notification
+    await this.notificationService.createNotification({
+      userId: user.id,
+      title: 'Welcome to CloudAudit Pro',
+      message: 'Your account has been successfully created',
+      type: 'SYSTEM'
+    });
+
+    // Log successful acceptance
+    await this.auditLogger.logSecurityEvent({
+      type: 'INVITATION_ACCEPTED',
+      invitationId: validation.invitation.id,
+      userId: user.id,
+      tenantId: user.tenantId,
+      ipAddress: ipAddress
+    });
+
+    return user;
+  }
+
+  private async validatePasswordStrength(password: string): Promise<void> {
+    // Minimum 8 characters
+    if (password.length < 8) {
+      throw new SecurityError('Password must be at least 8 characters');
+    }
+
+    // Must contain uppercase, lowercase, number, and special character
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?\":{}|<>]/.test(password);
+
+    if (!hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecial) {
+      throw new SecurityError(
+        'Password must contain uppercase, lowercase, number, and special character'
+      );
+    }
+
+    // Check against common passwords
+    const isCommon = await this.checkCommonPasswords(password);
+    if (isCommon) {
+      throw new SecurityError('Password is too common. Please choose a stronger password');
+    }
+  }
+
+  private async checkRateLimit(ipAddress: string): Promise<void> {
+    const key = `invitation_validation:${ipAddress}`;
+    const attempts = await this.redis.get(key);
+    
+    if (attempts && parseInt(attempts) >= this.MAX_FAILED_VALIDATIONS) {
+      throw new SecurityError(
+        'Too many validation attempts. Please try again later',
+        'RATE_LIMIT_EXCEEDED'
+      );
+    }
+  }
+
+  private async incrementFailedValidations(ipAddress: string): Promise<void> {
+    const key = `invitation_validation:${ipAddress}`;
+    await this.redis.incr(key);
+    await this.redis.expire(key, 3600); // 1 hour expiry
+  }
+
+  private async logFailedValidation(
+    token: string,
+    ipAddress: string,
+    reason: string
+  ): Promise<void> {
+    await this.auditLogger.logSecurityEvent({
+      type: 'INVITATION_VALIDATION_FAILED',
+      token: token.substring(0, 10) + '...', // Log only first 10 chars
+      ipAddress: ipAddress,
+      reason: reason
+    });
+  }
+
+  private async checkCommonPasswords(password: string): Promise<boolean> {
+    // In production, check against a database of common passwords
+    const commonPasswords = [
+      'password', 'password123', '12345678', 'qwerty', 'abc123',
+      'monkey', '1234567', 'letmein', 'trustno1', 'dragon'
+    ];
+    return commonPasswords.includes(password.toLowerCase());
+  }
+}
+
+// Messaging Privacy & Encryption
+class MessagingSecurityService {
+  /**
+   * Ensure messages are only accessible to authorized parties
+   */
+  async validateMessageAccess(
+    messageId: string,
+    userId: string
+  ): Promise<boolean> {
+    const message = await this.messageRepository.findById(messageId);
+    
+    if (!message) {
+      return false;
+    }
+
+    // Check if user is sender
+    if (message.senderId === userId) {
+      return true;
+    }
+
+    // Check if user is participant in the thread
+    const thread = await this.threadRepository.findById(message.threadId);
+    const participants = await this.threadRepository.getParticipants(thread.id);
+    
+    return participants.some(p => p.id === userId);
+  }
+
+  /**
+   * Audit trail for all message access
+   */
+  async logMessageAccess(messageId: string, userId: string): Promise<void> {
+    await this.auditLogger.logSecurityEvent({
+      type: 'MESSAGE_ACCESSED',
+      messageId: messageId,
+      userId: userId,
+      timestamp: new Date()
+    });
+  }
+}
+```
+
 ### Role-Based Access Control (RBAC)
 
 ```typescript

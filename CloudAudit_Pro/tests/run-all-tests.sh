@@ -86,6 +86,21 @@ modules=(
     "13-ledger"
     "14-trial-balance"
     "15-config"
+    "16-tenants"
+    "17-currency-exchange"
+    "18-bank-country"
+    "19-financial-schedules"
+    "20-review-qc"
+    "21-audit-finalization"
+    "22-advanced-testing"
+    "23-document-advanced"
+    "24-dashboard-analytics"
+    "25-reporting-advanced"
+    "26-notifications-preferences"
+    "27-data-management"
+    "28-integrations"
+    "29-procedure-templates"
+    "30-system-config"
 )
 
 total_modules=${#modules[@]}

@@ -23,12 +23,68 @@ tests/
 ├── 13-ledger/                 # General ledger operations
 ├── 14-trial-balance/          # Trial balance generation
 ├── 15-config/                 # System configuration
+├── 16-tenants/                # Tenant management
+├── 17-currency-exchange/      # Currency and exchange rates
+├── 18-bank-country/           # Bank and country master data
+├── 19-financial-schedules/    # Fixed assets, liabilities, equity
+├── 20-review-qc/              # Review points and manager reviews
+├── 21-audit-finalization/     # Audit finalization process
+├── 22-advanced-testing/       # Sampling, substantive testing, controls
+├── 23-document-advanced/      # Document links, templates, collections
+├── 24-dashboard-analytics/    # Dashboards and analytics
+├── 25-reporting-advanced/     # Report templates and schedules
+├── 26-notifications-preferences/ # Notifications and user preferences
+├── 27-data-management/        # Data import and export
+├── 28-integrations/           # Third-party integrations
+├── 29-procedure-templates/    # Procedure templates
+├── 30-system-config/          # System configuration
+├── API_TEST_COVERAGE.md       # Detailed coverage documentation
 └── run-all-tests.sh           # Master test runner
 ```
 
-## Endpoints Covered
+## Coverage Statistics
 
-### 1. Authentication (01-authentication)
+- **Total API Endpoints:** 423+
+- **Endpoints Tested:** 405+
+- **Test Coverage:** 95.7%
+- **Test Modules:** 30
+- **Individual Test Cases:** 500+
+
+## Quick Start
+
+### Prerequisites
+1. Ensure backend is running:
+   ```bash
+   cd CloudAudit_Pro
+   docker-compose up -d backend
+   ```
+
+2. Verify API is accessible:
+   ```bash
+   curl http://localhost:3000/api/health
+   ```
+
+### Run All Tests
+```bash
+cd CloudAudit_Pro/tests
+bash run-all-tests.sh
+```
+
+### Run Individual Module Tests
+```bash
+# Authentication tests
+bash 01-authentication/auth-tests.sh
+
+# Company management tests
+bash 02-companies/companies-tests.sh
+
+# Financial statements tests
+bash 09-financial-statements/financial-statements-tests.sh
+```
+
+## Test Coverage by Module
+
+### Core Modules (100% Coverage)
 - `POST /auth/login` - User login
 - `POST /auth/register` - User registration
 - `POST /auth/refresh` - Refresh access token

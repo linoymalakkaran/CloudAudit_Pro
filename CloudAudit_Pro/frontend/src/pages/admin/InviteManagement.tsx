@@ -65,7 +65,12 @@ const InviteManagement: React.FC = () => {
         companyApi.getCompanies(),
       ])
       setInvitations(invitationsData)
-      setCompanies(Array.isArray(companiesData) ? companiesData : companiesData.data || [])
+      const companiesArray = Array.isArray(companiesData) 
+        ? companiesData 
+        : (companiesData && typeof companiesData === 'object' && 'data' in companiesData)
+          ? (companiesData as any).data 
+          : []
+      setCompanies(companiesArray || [])
     } catch (err) {
       console.error('Failed to load data:', err)
       setError('Failed to load invitations')

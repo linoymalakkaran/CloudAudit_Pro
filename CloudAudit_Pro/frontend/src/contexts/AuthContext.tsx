@@ -5,8 +5,10 @@ interface User {
   email: string
   firstName: string
   lastName: string
-  role: 'ADMIN' | 'MANAGER' | 'SENIOR_AUDITOR' | 'AUDITOR' | 'INTERN'
+  role: 'ADMIN' | 'MANAGER' | 'SENIOR_AUDITOR' | 'AUDITOR' | 'INTERN' | 'CLIENT'
   tenantId: string
+  companyId?: string
+  companyName?: string
   jobTitle?: string
   department?: string
 }

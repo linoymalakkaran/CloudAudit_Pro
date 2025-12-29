@@ -35,19 +35,11 @@ import {
   Email as EmailIcon
 } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
-import reportsService from '../services/reports.service'
+import reportsService, { Report as ServiceReport, CreateReportDto } from '../services/reports.service'
 import { companyApi } from '../services/api'
+import { ReportType, ReportCategory } from '../types/report.types'
 
-interface Report {
-  id: string
-  name: string
-  reportType: string
-  company?: { id: string; name: string }
-  status: 'QUEUED' | 'GENERATING' | 'COMPLETED' | 'FAILED'
-  generatedBy?: { firstName: string; lastName: string }
-  createdAt: string
-  period?: { name: string }
-}
+type Report = ServiceReport;
 
 function Reports() {
   const navigate = useNavigate()
@@ -93,6 +85,19 @@ function Reports() {
     }
   }
 
+  const [newReport, setNewReport] = useState<Partial<CreateReportDto>>({
+    name: '',
+    reportType: 'TRIAL_BALANCE' as ReportType,
+    companyId: '',
+    periodId: '',
+    category: 'FINANCIAL' as ReportCategory
+  })
+
+  const handleTemplateClick = (template: string) => {
+    setNewReport(prev => ({ ...prev, name: template }))
+    setOpen(true)
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'QUEUED':
@@ -105,24 +110,6 @@ function Reports() {
         return 'error'
       default:
         return 'default'
-    }
-  }
-
-  const [newReport, setNewReport] = useState({
-    name: '',
-    reportType: 'TRIAL_BALANCE',
-    companyId: '',
-    periodId: '',
-    category: 'FINANCIAL'
-  })
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'DRAFT': return 'default'
-      case 'GENERATED': return 'info'
-      case 'REVIEWED': return 'warning'
-      case 'FINAL': return 'success'
-      default: return 'default'
     }
   }
 
@@ -158,14 +145,14 @@ function Reports() {
         alert('Please fill in required fields')
         return
       }
-      await reportsService.createReport(newReport)
+      await reportsService.createReport(newReport as CreateReportDto)
       setOpen(false)
       setNewReport({
         name: '',
-        reportType: 'TRIAL_BALANCE',
+        reportType: 'TRIAL_BALANCE' as ReportType,
         companyId: '',
         periodId: '',
-        category: 'FINANCIAL'
+        category: 'FINANCIAL' as ReportCategory
       })
       loadReports()
     } catch (err: any) {
@@ -307,8 +294,8 @@ function Reports() {
                         />
                       </TableCell>
                       <TableCell>
-                        {report.generatedBy 
-                          ? `${report.generatedBy.firstName} ${report.generatedBy.lastName}`
+                        {report.createdByUser 
+                          ? `${report.createdByUser.firstName} ${report.createdByUser.lastName}`
                           : '-'}
                       </TableCell>
                       <TableCell>{new Date(report.createdAt).toLocaleDateString()}</TableCell>
@@ -359,7 +346,7 @@ function Reports() {
                 <Select
                   value={newReport.reportType}
                   label="Report Type"
-                  onChange={(e) => setNewReport({ ...newReport, reportType: e.target.value })}
+                  onChange={(e) => setNewReport({ ...newReport, reportType: e.target.value as ReportType })}
                 >
                   <MenuItem value="TRIAL_BALANCE">Trial Balance</MenuItem>
                   <MenuItem value="GENERAL_LEDGER">General Ledger</MenuItem>
@@ -375,7 +362,7 @@ function Reports() {
                 <Select
                   value={newReport.category}
                   label="Category"
-                  onChange={(e) => setNewReport({ ...newReport, category: e.target.value })}
+                  onChange={(e) => setNewReport({ ...newReport, category: e.target.value as ReportCategory })}
                 >
                   <MenuItem value="FINANCIAL">Financial</MenuItem>
                   <MenuItem value="OPERATIONAL">Operational</MenuItem>

@@ -111,6 +111,28 @@ eAuditPro (AuditMate) is a comprehensive desktop audit management application de
    - Backup data
    - Create audit summary reports
 
+7. **Client Portal & Communication Phase** (NEW - Implemented)
+   - **Client Onboarding**:
+     - Audit firm creates invitation with client details
+     - System generates secure token (valid 7 days)
+     - Email sent to client with registration link
+     - Client completes registration via token
+   - **Document Collaboration**:
+     - Clients view document requests from auditors
+     - Upload requested documents with metadata
+     - Track document submission status
+     - Receive notifications on new requests
+   - **Communication Workflow**:
+     - Threaded messaging between auditors and clients
+     - Subject-based conversation organization
+     - Read/unread status tracking
+     - Email notifications for new messages
+   - **Audit Progress Tracking**:
+     - Clients view real-time audit status
+     - See completed vs pending procedures
+     - Access recent findings (if permitted)
+     - Quick actions for common tasks
+
 ## Technical Architecture Overview
 
 ### Current Technology Stack
@@ -198,6 +220,12 @@ eAuditPro (AuditMate) is a comprehensive desktop audit management application de
 2. **Audit Managers**: Day-to-day management of audit engagements
 3. **Audit Staff**: Execution of audit procedures and documentation
 4. **IT Administrators**: System maintenance and technical support
+5. **Client Users** (NEW - Implemented): Client organization representatives who:
+   - Access audit portal via invitation-based registration
+   - Upload requested documents and financial information
+   - Communicate with audit team through secure messaging
+   - Track audit progress and view status updates
+   - Respond to information requests and queries
 
 ### Secondary Stakeholders
 1. **Clients**: Companies being audited

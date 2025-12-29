@@ -214,6 +214,92 @@ CREATE TABLE audit_logs (
     timestamp TIMESTAMP DEFAULT NOW(),
     ip_address INET
 );
+
+-- Client Portal & Communication Tables (NEW - Implemented)
+
+-- Invitations for user onboarding
+CREATE TABLE invitations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    role VARCHAR(50) NOT NULL,
+    company_id UUID,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    status VARCHAR(20) DEFAULT 'PENDING',
+    message TEXT,
+    expires_at TIMESTAMP NOT NULL,
+    created_by UUID NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    accepted_at TIMESTAMP,
+    CONSTRAINT valid_status CHECK (status IN ('PENDING', 'ACCEPTED', 'EXPIRED', 'CANCELLED'))
+);
+
+-- Message threads for organized communication
+CREATE TABLE message_threads (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    company_id UUID NOT NULL,
+    created_by UUID NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    last_message_at TIMESTAMP
+);
+
+-- Messages within threads
+CREATE TABLE messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID NOT NULL,
+    thread_id UUID NOT NULL REFERENCES message_threads(id) ON DELETE CASCADE,
+    sender_id UUID NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Notifications for real-time alerts
+CREATE TABLE notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID NOT NULL,
+    user_id UUID NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    link VARCHAR(500),
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    read_at TIMESTAMP,
+    CONSTRAINT valid_type CHECK (type IN ('MESSAGE', 'DOCUMENT_REQUEST', 'DOCUMENT_UPLOAD', 
+                                           'PROCEDURE_UPDATE', 'SYSTEM'))
+);
+
+-- Document requests for client submissions
+CREATE TABLE document_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID NOT NULL,
+    company_id UUID NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    due_date DATE,
+    priority VARCHAR(20) DEFAULT 'MEDIUM',
+    status VARCHAR(20) DEFAULT 'PENDING',
+    requested_by UUID NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    completed_at TIMESTAMP,
+    CONSTRAINT valid_priority CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH', 'URGENT')),
+    CONSTRAINT valid_status CHECK (status IN ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'))
+);
+
+-- Indexes for Client Portal tables
+CREATE INDEX idx_invitations_token ON invitations(token);
+CREATE INDEX idx_invitations_email ON invitations(email);
+CREATE INDEX idx_invitations_tenant ON invitations(tenant_id, status);
+CREATE INDEX idx_message_threads_company ON message_threads(company_id, last_message_at DESC);
+CREATE INDEX idx_messages_thread ON messages(thread_id, created_at DESC);
+CREATE INDEX idx_messages_sender ON messages(sender_id);
+CREATE INDEX idx_notifications_user_unread ON notifications(user_id, is_read, created_at DESC);
+CREATE INDEX idx_document_requests_company ON document_requests(company_id, status);
 ```
 
 ### Data Migration Strategy

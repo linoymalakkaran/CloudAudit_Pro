@@ -218,6 +218,7 @@ export interface User {
   lastName: string;
   role: string;
   tenantId: string;
+  companyId?: string;
   status: string;
 }
 
