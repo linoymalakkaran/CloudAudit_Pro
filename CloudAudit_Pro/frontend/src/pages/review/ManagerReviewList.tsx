@@ -34,7 +34,7 @@ import managerReviewService, {
   ManagerReviewStatus,
   CreateManagerReviewDto,
   UpdateManagerReviewDto,
-} from '../services/managerReviewService';
+} from '../../services/managerReviewService';
 
 const ManagerReviewList: React.FC = () => {
   const [reviews, setReviews] = useState<ManagerReview[]>([]);

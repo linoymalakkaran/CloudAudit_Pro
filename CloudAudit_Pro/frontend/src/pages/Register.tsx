@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import {
   Container,
   Paper,
@@ -24,6 +24,7 @@ function Register() {
   const [activeStep, setActiveStep] = useState(0)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const isNavigatingRef = useRef(false)
   const [formData, setFormData] = useState({
     // Personal Info
     firstName: '',
@@ -46,6 +47,13 @@ function Register() {
       ...prev,
       [name]: value
     }))
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Prevent Enter key from submitting form on steps 0 and 1
+    if (e.key === 'Enter' && activeStep < 2) {
+      e.preventDefault()
+    }
   }
 
   const handleNext = () => {
@@ -74,15 +82,32 @@ function Register() {
     }
     
     setError('')
+    isNavigatingRef.current = true
     setActiveStep(prev => prev + 1)
+    // Reset flag after state update
+    setTimeout(() => {
+      isNavigatingRef.current = false
+    }, 100)
   }
 
   const handleBack = () => {
     setActiveStep(prev => prev - 1)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Don't submit if we just navigated
+    if (isNavigatingRef.current) {
+      return
+    }
+    
+    // Only submit on final step
+    if (activeStep !== 2) {
+      return
+    }
+    
+    // Final step - actually submit
     setError('')
     setLoading(true)
 
@@ -267,13 +292,14 @@ function Register() {
           </Alert>
         )}
 
-        <form onSubmit={activeStep === 2 ? handleSubmit : (e) => e.preventDefault()}>
+        <form onSubmit={handleFormSubmit} onKeyDown={handleKeyDown}>
           {activeStep === 0 && renderPersonalInfo()}
           {activeStep === 1 && renderCompanyInfo()}
           {activeStep === 2 && renderReview()}
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
             <Button
+              type="button"
               onClick={handleBack}
               disabled={activeStep === 0}
             >
@@ -283,6 +309,7 @@ function Register() {
             <Box>
               {activeStep < 2 ? (
                 <Button
+                  type="button"
                   variant="contained"
                   onClick={handleNext}
                 >

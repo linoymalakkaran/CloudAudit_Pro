@@ -34,7 +34,7 @@ import reviewPointService, {
   ReviewPointStatus,
   CreateReviewPointDto,
   UpdateReviewPointDto,
-} from '../services/reviewPointService';
+} from '../../services/reviewPointService';
 
 const ReviewPointManagement: React.FC = () => {
   const [reviewPoints, setReviewPoints] = useState<ReviewPoint[]>([]);

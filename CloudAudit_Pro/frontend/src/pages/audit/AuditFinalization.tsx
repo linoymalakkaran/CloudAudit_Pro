@@ -33,7 +33,7 @@ import auditFinalizationService, {
   AuditSummary,
   CreateAuditFinalizationDto,
   UpdateAuditFinalizationDto,
-} from '../services/auditFinalizationService';
+} from '../../services/auditFinalizationService';
 
 const AuditFinalizationPage: React.FC = () => {
   const [finalization, setFinalization] = useState<AuditFinalization | null>(null);
