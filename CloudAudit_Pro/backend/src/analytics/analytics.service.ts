@@ -64,37 +64,37 @@ export class AnalyticsService {
     const [assets, liabilities, equity, revenue, expenses] = await Promise.all([
       this.prisma.accountHead.aggregate({
         where: { ...where, accountType: 'ASSET' },
-        _sum: { balance: true },
+        _sum: { currentBalance: true },
       }),
       this.prisma.liability.aggregate({
         where,
-        _sum: { currentAmount: true },
+        _sum: { amount: true },
       }),
       this.prisma.equity.aggregate({
         where,
-        _sum: { amount: true },
+        _sum: { closingBalance: true },
       }),
       this.prisma.ledger.aggregate({
         where: {
           ...where,
           account: { accountType: 'REVENUE' },
         },
-        _sum: { credit: true },
+        _sum: { creditAmount: true },
       }),
       this.prisma.ledger.aggregate({
         where: {
           ...where,
           account: { accountType: 'EXPENSE' },
         },
-        _sum: { debit: true },
+        _sum: { debitAmount: true },
       }),
     ]);
 
-    const totalAssets = Number(assets._sum.balance || 0);
-    const totalLiabilities = Number(liabilities._sum.currentAmount || 0);
-    const totalEquity = Number(equity._sum.amount || 0);
-    const totalRevenue = Number(revenue._sum.credit || 0);
-    const totalExpenses = Number(expenses._sum.debit || 0);
+    const totalAssets = Number(assets._sum.currentBalance || 0);
+    const totalLiabilities = Number(liabilities._sum.amount || 0);
+    const totalEquity = Number(equity._sum.closingBalance || 0);
+    const totalRevenue = Number(revenue._sum.creditAmount || 0);
+    const totalExpenses = Number(expenses._sum.debitAmount || 0);
 
     const netIncome = totalRevenue - totalExpenses;
     
@@ -216,11 +216,11 @@ export class AnalyticsService {
     const currentDate = new Date();
     
     const liabilities = await this.prisma.liability.findMany({
-      where: { tenantId, companyId },
+      where: { companyId },
       select: {
         id: true,
         description: true,
-        currentAmount: true,
+        amount: true,
         dueDate: true,
       },
     });
@@ -234,7 +234,7 @@ export class AnalyticsService {
 
     liabilities.forEach(liability => {
       if (!liability.dueDate) {
-        aging.current += Number(liability.currentAmount);
+        aging.current += Number(liability.amount);
         return;
       }
 
@@ -243,13 +243,13 @@ export class AnalyticsService {
       );
 
       if (daysOverdue <= 30) {
-        aging.current += Number(liability.currentAmount);
+        aging.current += Number(liability.amount);
       } else if (daysOverdue <= 60) {
-        aging.days30to60 += Number(liability.currentAmount);
+        aging.days30to60 += Number(liability.amount);
       } else if (daysOverdue <= 90) {
-        aging.days60to90 += Number(liability.currentAmount);
+        aging.days60to90 += Number(liability.amount);
       } else {
-        aging.over90 += Number(liability.currentAmount);
+        aging.over90 += Number(liability.amount);
       }
     });
 
@@ -267,19 +267,19 @@ export class AnalyticsService {
     const [assets, revenue] = await Promise.all([
       this.prisma.accountHead.aggregate({
         where: { ...where, accountType: 'ASSET' },
-        _sum: { balance: true },
+        _sum: { currentBalance: true },
       }),
       this.prisma.ledger.aggregate({
         where: {
           ...where,
           account: { accountType: 'REVENUE' },
         },
-        _sum: { credit: true },
+        _sum: { creditAmount: true },
       }),
     ]);
 
-    const totalAssets = Number(assets._sum.balance || 0);
-    const totalRevenue = Number(revenue._sum.credit || 0);
+    const totalAssets = Number(assets._sum.currentBalance || 0);
+    const totalRevenue = Number(revenue._sum.creditAmount || 0);
 
     // Common materiality benchmarks
     const performanceMateriality = totalAssets * 0.01; // 1% of total assets
@@ -358,16 +358,16 @@ export class AnalyticsService {
       case AnalyticsMetric.REVENUE:
         const revenue = await this.prisma.ledger.aggregate({
           where: { ...where, account: { accountType: 'REVENUE' } },
-          _sum: { credit: true },
+          _sum: { creditAmount: true },
         });
-        return Number(revenue._sum.credit || 0);
+        return Number(revenue._sum.creditAmount || 0);
 
       case AnalyticsMetric.EXPENSES:
         const expenses = await this.prisma.ledger.aggregate({
           where: { ...where, account: { accountType: 'EXPENSE' } },
-          _sum: { debit: true },
+          _sum: { debitAmount: true },
         });
-        return Number(expenses._sum.debit || 0);
+        return Number(expenses._sum.debitAmount || 0);
 
       case AnalyticsMetric.DOCUMENT_COUNT:
         return await this.prisma.document.count({ where });
@@ -390,16 +390,16 @@ export class AnalyticsService {
     const [revenue, expenses] = await Promise.all([
       this.prisma.ledger.aggregate({
         where: { ...where, account: { accountType: 'REVENUE' } },
-        _sum: { credit: true },
+        _sum: { creditAmount: true },
       }),
       this.prisma.ledger.aggregate({
         where: { ...where, account: { accountType: 'EXPENSE' } },
-        _sum: { debit: true },
+        _sum: { debitAmount: true },
       }),
     ]);
 
-    const totalRevenue = Number(revenue._sum.credit || 0);
-    const totalExpenses = Number(expenses._sum.debit || 0);
+    const totalRevenue = Number(revenue._sum.creditAmount || 0);
+    const totalExpenses = Number(expenses._sum.debitAmount || 0);
 
     return {
       totalRevenue,
@@ -414,8 +414,8 @@ export class AnalyticsService {
     if (periodId) where.periodId = periodId;
 
     const [total, completed] = await Promise.all([
-      this.prisma.auditChecklistItem.count({ where }),
-      this.prisma.auditChecklistItem.count({ where: { ...where, status: 'COMPLETED' } }),
+      this.prisma.auditProcedure.count({ where }),
+      this.prisma.auditProcedure.count({ where: { ...where, status: 'COMPLETED' } }),
     ]);
 
     return {

@@ -209,3 +209,5 @@ export const samplingStatusColors: Record<SamplingStatus, string> = {
   [SamplingStatus.COMPLETED]: 'success',
   [SamplingStatus.REVIEWED]: 'primary',
 };
+
+export default samplingService;

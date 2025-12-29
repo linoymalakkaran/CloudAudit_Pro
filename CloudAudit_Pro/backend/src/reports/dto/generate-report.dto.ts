@@ -1,6 +1,12 @@
 import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { ExportFormat } from '@prisma/client';
+
+export enum ExportFormat {
+  PDF = 'PDF',
+  EXCEL = 'EXCEL',
+  CSV = 'CSV',
+  JSON = 'JSON',
+}
 
 export class GenerateReportDto {
   @ApiProperty({ description: 'Company ID' })

@@ -186,6 +186,7 @@ model Tenant {
   dataExports           DataExport[]
   systemBackups         SystemBackup[]
   integrations          Integration[]
+  managerReviews        ManagerReview[]
 
   @@map("tenants")
 }
@@ -357,11 +358,14 @@ model Company {
   substantiveTests    SubstantiveTest[]
   internalControls    InternalControl[]
   documentCollections DocumentCollection[]
-  reportRecords       Report[]
   reportSchedules     ReportSchedule[]
   dashboards          Dashboard[]
   financialStatements FinancialStatement[]
   analyticsSnapshots  AnalyticsSnapshot[]
+  liabilities         Liability[]
+  equities            Equity[]
+  fixedAssets         FixedAsset[]
+  managerReviews      ManagerReview[]
   
   // Phase 7: System Utilities Relations
   dataImports DataImport[]
@@ -419,11 +423,14 @@ model Period {
   substantiveTests    SubstantiveTest[]
   internalControls    InternalControl[]
   documentCollections DocumentCollection[]
-  periodReports       Report[]
   reportSchedules     ReportSchedule[]
   dashboards          Dashboard[]
   financialStatements FinancialStatement[]
   analyticsSnapshots  AnalyticsSnapshot[]
+  liabilities         Liability[]
+  equities            Equity[]
+  fixedAssets         FixedAsset[]
+  managerReviews      ManagerReview[]
 
   @@unique([companyId, name])
   @@map("periods")
@@ -964,6 +971,7 @@ model AuditProcedure {
   comments         ProcedureComment[]
   samplings        Sampling[]
   substantiveTests SubstantiveTest[]
+  managerReviews   ManagerReview[]
 
   @@index([tenantId])
   @@index([companyId])
@@ -1349,6 +1357,8 @@ model User {
   backupsCreated               SystemBackup[]              @relation("BackupCreatedBy")
   integrationsCreated          Integration[]               @relation("IntegrationCreatedBy")
   integrationsUpdated          Integration[]               @relation("IntegrationUpdatedBy")
+  reviewerReviews              ManagerReview[]             @relation("ReviewerReviews")
+  signedOffReviews             ManagerReview[]             @relation("SignedOffReviews")
 
   @@map("users")
 }
@@ -1515,36 +1525,7 @@ model ReviewPoint {
 // REPORTING & CONFIGURATION MODELS
 // =============================================================================
 // Reports, templates, system configuration, and audit logging
-
-model Report {
-  id            String       @id @default(cuid())
-  companyId     String
-  periodId      String?
-  name          String
-  description   String?
-  reportType    ReportType
-  templateId    String?
-  parameters    Json         @default("{}")
-  filters       Json?
-  configuration Json?
-  recipients    Json?
-  format        String?
-  schedule      Json? // Add schedule field
-  generatedAt   DateTime?
-  status        ReportStatus @default(DRAFT)
-  fileUrl       String?
-  isActive      Boolean      @default(true) // Add isActive field
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  createdBy     String
-  updatedBy     String? // Add updatedBy field
-
-  company Company @relation(fields: [companyId], references: [id])
-  period  Period? @relation(fields: [periodId], references: [id])
-  creator User    @relation("ReportCreator", fields: [createdBy], references: [id])
-
-  @@map("reports")
-}
+// Note: Main Report model is defined in Phase 6 section below
 
 model Configuration {
   id          String   @id @default(cuid())
@@ -2074,6 +2055,14 @@ enum ControlEffectiveness {
   NOT_TESTED
 }
 
+enum DepreciationMethod {
+  STRAIGHT_LINE
+  DECLINING_BALANCE
+  DOUBLE_DECLINING_BALANCE
+  UNITS_OF_PRODUCTION
+  SUM_OF_YEARS_DIGITS
+}
+
 // =============================================================================
 // PHASE 6: REPORTING & ANALYTICS ENUMS
 // =============================================================================
@@ -2133,6 +2122,7 @@ enum ExportFormat {
 // PHASE 6: SAMPLING & TESTING MODELS
 // =============================================================================
 
+model Sampling {
   id                  String         @id @default(cuid())
   tenantId            String
   companyId           String
@@ -2265,6 +2255,132 @@ model InternalControl {
 }
 
 // =============================================================================
+// FINANCIAL STATEMENT DETAIL MODELS
+// =============================================================================
+
+model Liability {
+  id                    String   @id @default(cuid())
+  companyId             String
+  periodId              String
+  creditorName          String
+  type                  String
+  description           String?
+  amount                Float
+  openingBalance        Float
+  closingBalance        Float
+  dueDate               DateTime
+  daysOverdue           Int      @default(0)
+  agingCategory         String?
+  isCurrent             Boolean  @default(true)
+  reference             String?
+  notes                 String?
+  createdBy             String
+  updatedBy             String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relations
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period  Period  @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  @@map("liabilities")
+}
+
+model Equity {
+  id              String    @id @default(cuid())
+  companyId       String
+  periodId        String
+  type            String
+  description     String?
+  openingBalance  Float
+  additions       Float     @default(0)
+  reductions      Float     @default(0)
+  movement        Float     @default(0)
+  closingBalance  Float
+  transactionDate DateTime?
+  reference       String?
+  notes           String?
+  createdBy       String
+  updatedBy       String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period  Period  @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  @@map("equities")
+}
+
+model FixedAsset {
+  id                      String             @id @default(cuid())
+  companyId               String
+  periodId                String
+  assetName               String
+  category                String
+  description             String?
+  assetCode               String?
+  location                String?
+  purchaseDate            DateTime
+  originalCost            Float
+  accumulatedDepreciation Float              @default(0)
+  depreciationExpense     Float              @default(0)
+  netBookValue            Float
+  salvageValue            Float              @default(0)
+  usefulLife              Int
+  depreciationMethod      DepreciationMethod
+  disposalDate            DateTime?
+  disposalProceeds        Float?
+  disposalGainLoss        Float?
+  reference               String?
+  notes                   String?
+  createdBy               String
+  updatedBy               String
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
+
+  // Relations
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period  Period  @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  @@map("fixed_assets")
+}
+
+model ManagerReview {
+  id             String              @id @default(cuid())
+  tenantId       String
+  companyId      String
+  periodId       String
+  procedureId    String?
+  reviewerId     String
+  reviewLevel    String
+  status         ManagerReviewStatus @default(NOT_STARTED)
+  title          String
+  description    String?
+  comments       String?
+  isSignedOff    Boolean             @default(false)
+  signOffNotes   String?
+  signedOffBy    String?
+  signedOffAt    DateTime?
+  dueDate        DateTime?
+  completedAt    DateTime?
+  createdBy      String
+  updatedBy      String
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  // Relations
+  tenant    Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  company   Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period    Period          @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  procedure AuditProcedure? @relation(fields: [procedureId], references: [id])
+  reviewer  User            @relation("ReviewerReviews", fields: [reviewerId], references: [id])
+  signedBy  User?           @relation("SignedOffReviews", fields: [signedOffBy], references: [id])
+
+  @@map("manager_reviews")
+}
+
+// =============================================================================
 // PHASE 6: REPORTING & ANALYTICS MODELS
 // =============================================================================
 
@@ -2280,7 +2396,7 @@ model Report {
   templateId          String?
   parameters          Json?
   filters             Json?
-  status              ReportStatus @default(QUEUED)
+  status              ReportStatus @default(DRAFT)
   generatedBy         String
   generatedAt         DateTime?
   filePath            String?
@@ -2303,7 +2419,7 @@ model Report {
   company          Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   period           Period?         @relation(fields: [periodId], references: [id])
   template         ReportTemplate? @relation(fields: [templateId], references: [id])
-  createdByUser    User            @relation("ReportCreatedBy", fields: [createdBy], references: [id])
+  createdByUser    User            @relation("ReportCreator", fields: [createdBy], references: [id])
   updatedByUser    User            @relation("ReportUpdatedBy", fields: [updatedBy], references: [id])
   generatedByUser  User            @relation("ReportGeneratedBy", fields: [generatedBy], references: [id])
   schedules        ReportSchedule[]

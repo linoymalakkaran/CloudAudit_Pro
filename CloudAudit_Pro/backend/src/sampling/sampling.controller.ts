@@ -38,7 +38,7 @@ export class SamplingController {
     @Query('status') status?: SamplingStatus,
     @Query('samplingMethod') samplingMethod?: string,
   ) {
-    return this.samplingService.findAll(companyId, periodId, status, samplingMethod);
+    return this.samplingService.findAll(companyId, periodId, status, samplingMethod as any);
   }
 
   @Get('summary')

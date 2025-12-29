@@ -39,7 +39,7 @@ export class ReviewPointController {
     @Query('category') category?: string,
     @Query('assignedTo') assignedTo?: string,
   ) {
-    return this.reviewPointService.findAll(companyId, periodId, status, category, assignedTo);
+    return this.reviewPointService.findAll(companyId, periodId, status, category as any, assignedTo);
   }
 
   @Get('summary')

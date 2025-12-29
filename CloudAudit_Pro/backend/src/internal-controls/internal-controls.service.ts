@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateInternalControlDto, UpdateInternalControlDto, ControlEffectiveness } from './dto';
+import { ControlType } from '@prisma/client';
 
 @Injectable()
 export class InternalControlsService {
@@ -55,7 +56,7 @@ export class InternalControlsService {
     companyId?: string,
     periodId?: string,
     processArea?: string,
-    controlType?: string,
+    controlType?: ControlType,
     controlEffectiveness?: ControlEffectiveness,
     isKeyControl?: boolean,
     deficiencyIdentified?: boolean,

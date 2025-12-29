@@ -369,7 +369,7 @@ export class DocumentService {
     return this.prisma.documentVersion.findMany({
       where: { documentId },
       include: {
-        uploadedByUser: { select: { id: true, email: true, name: true } },
+        uploader: { select: { id: true, email: true, firstName: true, lastName: true } },
       },
       orderBy: { versionNumber: 'desc' },
     });
@@ -400,12 +400,11 @@ export class DocumentService {
         fileName: file.originalname,
         filePath,
         fileSize: file.size,
-        mimeType: file.mimetype,
         comment,
         uploadedBy: userId,
       },
       include: {
-        uploadedByUser: { select: { id: true, email: true, name: true } },
+        uploader: { select: { id: true, email: true, firstName: true, lastName: true } },
       },
     });
   }

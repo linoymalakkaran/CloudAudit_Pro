@@ -45,7 +45,7 @@ export class InternalControlsController {
       companyId,
       periodId,
       processArea,
-      controlType,
+      controlType as any,
       controlEffectiveness,
       isKeyControl === 'true',
       deficiencyIdentified === 'true',

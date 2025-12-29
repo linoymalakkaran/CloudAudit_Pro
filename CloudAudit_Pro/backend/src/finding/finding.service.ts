@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { CreateFindingDto, UpdateFindingDto, QueryFindingDto, FindingStatus } from './dto';
+import { Severity } from '@prisma/client';
 
 @Injectable()
 export class FindingService {
@@ -39,8 +40,14 @@ export class FindingService {
 
     return this.prisma.finding.create({
       data: {
-        ...createDto,
         tenantId,
+        procedureId: createDto.procedureId,
+        companyId: createDto.companyId,
+        periodId: createDto.periodId,
+        title: createDto.title,
+        description: createDto.description,
+        severity: createDto.severity as Severity,
+        recommendation: createDto.recommendation,
         identifiedBy: userId,
       },
       include: {

@@ -28,11 +28,20 @@ export class LiabilityService {
 
     return this.db.liability.create({
       data: {
-        ...data,
+        companyId: data.companyId,
+        periodId: data.periodId,
+        creditorName: data.creditorName,
+        type: data.type,
+        description: data.description,
+        amount: data.outstandingBalance,
+        openingBalance: data.originalAmount,
+        closingBalance: data.outstandingBalance,
         dueDate,
         daysOverdue,
         agingCategory,
         isCurrent: data.isCurrent ?? true,
+        reference: data.referenceNumber,
+        notes: data.notes,
         createdBy: userId,
         updatedBy: userId,
       },
@@ -82,8 +91,9 @@ export class LiabilityService {
     let daysOverdue = liability.daysOverdue;
     let agingCategory = liability.agingCategory;
     if (data.dueDate) {
+      const period = await this.db.period.findUnique({ where: { id: liability.periodId } });
       const dueDate = new Date(data.dueDate);
-      daysOverdue = this.calculateDaysOverdue(dueDate, liability.period.endDate);
+      daysOverdue = this.calculateDaysOverdue(dueDate, period.endDate);
       agingCategory = this.getAgingCategory(daysOverdue);
     }
 
@@ -123,7 +133,7 @@ export class LiabilityService {
     };
 
     liabilities.forEach((liability) => {
-      const amount = Number(liability.outstandingBalance);
+      const amount = Number(liability.amount);
       summary.total += amount;
 
       if (liability.daysOverdue <= 0) {

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateReviewPointDto, UpdateReviewPointDto, ReviewPointStatus } from './dto';
+import { ReviewCategory } from '@prisma/client';
 
 @Injectable()
 export class ReviewPointService {
@@ -70,7 +71,7 @@ export class ReviewPointService {
     companyId?: string,
     periodId?: string,
     status?: ReviewPointStatus,
-    category?: string,
+    category?: ReviewCategory,
     assignedTo?: string,
   ) {
     return this.db.reviewPoint.findMany({
@@ -107,14 +108,6 @@ export class ReviewPointService {
         updatedBy: userId,
         ...(data.assignedTo && { assignedAt: new Date() }),
       },
-      include: {
-        company: { select: { name: true } },
-        period: { select: { name: true } },
-        procedure: { select: { name: true, code: true } },
-        account: { select: { name: true, code: true } },
-        raisedByUser: { select: { firstName: true, lastName: true } },
-        assignedToUser: { select: { firstName: true, lastName: true } },
-      },
     });
   }
 
@@ -130,16 +123,16 @@ export class ReviewPointService {
         clearedAt: new Date(),
         updatedBy: userId,
       },
-      include: {
-        company: { select: { name: true } },
-        period: { select: { name: true } },
-        raisedByUser: { select: { firstName: true, lastName: true } },
-        clearedByUser: { select: { firstName: true, lastName: true } },
-      },
     });
   }
 
-  as  select: {
+  async getSummary(companyId: string, periodId?: string) {
+    const reviews = await this.db.reviewPoint.findMany({
+      where: {
+        companyId,
+        ...(periodId && { periodId }),
+      },
+      select: {
         status: true,
         priority: true,
       },
@@ -162,5 +155,14 @@ export class ReviewPointService {
     });
 
     return summary;
+  }
+
+  async getSummaryByStatus(companyId: string, periodId?: string) {
+    return this.getSummary(companyId, periodId);
+  }
+
+  async delete(id: string) {
+    await this.findById(id);
+    return this.db.reviewPoint.delete({ where: { id } });
   }
 }

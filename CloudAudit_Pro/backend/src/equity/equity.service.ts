@@ -25,11 +25,18 @@ export class EquityService {
 
     return this.db.equity.create({
       data: {
-        ...data,
-        transactionDate: data.transactionDate ? new Date(data.transactionDate) : null,
+        companyId: data.companyId,
+        periodId: data.periodId,
+        type: data.type,
+        description: data.description,
+        openingBalance: data.openingBalance,
         additions: data.additions || 0,
         reductions: data.reductions || 0,
         movement,
+        closingBalance: data.closingBalance,
+        transactionDate: data.transactionDate ? new Date(data.transactionDate) : null,
+        reference: data.referenceNumber,
+        notes: data.notes,
         createdBy: userId,
         updatedBy: userId,
       },

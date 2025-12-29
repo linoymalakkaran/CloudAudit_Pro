@@ -234,3 +234,5 @@ export const exceptionSeverityColors: Record<ExceptionSeverity, string> = {
   [ExceptionSeverity.HIGH]: 'error',
   [ExceptionSeverity.CRITICAL]: 'error',
 };
+
+export default substantiveTestingService;

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateSamplingDto, UpdateSamplingDto, SamplingStatus } from './dto';
+import { SamplingMethod } from '@prisma/client';
 
 @Injectable()
 export class SamplingService {
@@ -63,7 +64,7 @@ export class SamplingService {
     companyId?: string,
     periodId?: string,
     status?: SamplingStatus,
-    samplingMethod?: string,
+    samplingMethod?: SamplingMethod,
   ) {
     return this.db.sampling.findMany({
       where: {

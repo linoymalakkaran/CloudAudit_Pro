@@ -11,8 +11,17 @@ export class ReportTemplatesService {
   async create(createTemplateDto: CreateTemplateDto, tenantId: string, userId: string) {
     return this.prisma.reportTemplate.create({
       data: {
-        ...createTemplateDto,
         tenantId,
+        name: createTemplateDto.name,
+        description: createTemplateDto.description,
+        reportType: createTemplateDto.reportType,
+        category: createTemplateDto.category,
+        isStandard: createTemplateDto.isStandard ?? false,
+        isActive: createTemplateDto.isActive ?? true,
+        templateDefinition: createTemplateDto.templateDefinition || {},
+        dataSource: createTemplateDto.dataSource || {},
+        formatting: createTemplateDto.formatting,
+        parameters: createTemplateDto.parameters,
         createdBy: userId,
         updatedBy: userId,
       },
@@ -82,13 +91,20 @@ export class ReportTemplatesService {
 
   async duplicate(id: string, tenantId: string, userId: string) {
     const template = await this.findOne(id, tenantId);
-    const { id: _, createdAt, updatedAt, ...templateData } = template;
 
     return this.prisma.reportTemplate.create({
       data: {
-        ...templateData,
+        tenantId: template.tenantId,
         name: `${template.name} (Copy)`,
+        description: template.description,
+        reportType: template.reportType,
+        category: template.category,
         isStandard: false,
+        isActive: template.isActive,
+        templateDefinition: template.templateDefinition,
+        dataSource: template.dataSource,
+        formatting: template.formatting,
+        parameters: template.parameters,
         createdBy: userId,
         updatedBy: userId,
       },

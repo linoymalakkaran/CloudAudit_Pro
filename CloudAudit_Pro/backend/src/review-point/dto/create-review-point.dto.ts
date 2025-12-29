@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString, IsOptional, IsEnum, IsDateString, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { ReviewPointStatus } from '@prisma/client';
 
 export enum ReviewCategory {
   AUDIT_FINDING = 'AUDIT_FINDING',

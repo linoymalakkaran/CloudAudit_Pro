@@ -43,7 +43,7 @@ export class SubstantiveTestingController {
       companyId,
       periodId,
       status,
-      testType,
+      testType as any,
       hasException === 'true',
     );
   }

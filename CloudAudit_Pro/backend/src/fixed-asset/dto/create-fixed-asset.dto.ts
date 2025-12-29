@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsNumber, IsDateString, IsOptional, IsEnum, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { DepreciationMethod, AssetStatus } from '@prisma/client';
+import { DepreciationMethod } from '@prisma/client';
 
 export class CreateFixedAssetDto {
   @ApiProperty({ description: 'Company ID' })
@@ -67,11 +67,6 @@ export class CreateFixedAssetDto {
   @IsOptional()
   @IsString()
   notes?: string;
-
-  @ApiProperty({ description: 'Asset status', enum: AssetStatus })
-  @IsOptional()
-  @IsEnum(AssetStatus)
-  status?: AssetStatus;
 
   @ApiProperty({ description: 'Disposal date', required: false })
   @IsOptional()

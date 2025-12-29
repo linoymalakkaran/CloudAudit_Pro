@@ -21,8 +21,20 @@ export class ReportSchedulesService {
 
     return this.prisma.reportSchedule.create({
       data: {
-        ...createScheduleDto,
         tenantId,
+        reportId: createScheduleDto.reportId,
+        reportTemplateId: createScheduleDto.reportTemplateId,
+        companyId: createScheduleDto.companyId,
+        periodId: createScheduleDto.periodId,
+        frequency: createScheduleDto.frequency,
+        scheduleTime: createScheduleDto.scheduleTime || '00:00',
+        timezone: createScheduleDto.timezone || 'UTC',
+        isActive: createScheduleDto.isActive ?? true,
+        parameters: createScheduleDto.parameters,
+        filters: createScheduleDto.filters,
+        recipients: createScheduleDto.recipients || [],
+        emailSubject: createScheduleDto.emailSubject,
+        emailBody: createScheduleDto.emailBody,
         nextRunAt,
         createdBy: userId,
         updatedBy: userId,

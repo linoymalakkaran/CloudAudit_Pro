@@ -11,8 +11,16 @@ export class FinancialStatementsService {
   async create(createStatementDto: CreateStatementDto, tenantId: string, userId: string) {
     return this.prisma.financialStatement.create({
       data: {
-        ...createStatementDto,
         tenantId,
+        companyId: createStatementDto.companyId,
+        periodId: createStatementDto.periodId,
+        statementType: createStatementDto.statementType,
+        statementDate: createStatementDto.statementDate,
+        statementPeriod: createStatementDto.statementPeriod,
+        currency: createStatementDto.currency,
+        conversionRate: createStatementDto.conversionRate,
+        data: createStatementDto.data,
+        notes: createStatementDto.notes,
         status: StatementStatus.DRAFT,
         createdBy: userId,
         updatedBy: userId,
@@ -219,9 +227,9 @@ export class FinancialStatementsService {
       where: { tenantId, companyId },
     });
 
-    const assets = accounts.filter(a => a.accountType === 'ASSET');
-    const liabilities = accounts.filter(a => a.accountType === 'LIABILITY');
-    const equity = accounts.filter(a => a.accountType === 'EQUITY');
+    const assets = accounts.filter(a => a.accountTypeString === 'ASSET');
+    const liabilities = accounts.filter(a => a.accountTypeString === 'LIABILITY');
+    const equity = accounts.filter(a => a.accountTypeString === 'EQUITY');
 
     return {
       assets: {
@@ -246,7 +254,7 @@ export class FinancialStatementsService {
           tenantId,
           companyId,
           periodId,
-          account: { accountType: 'REVENUE' },
+          account: { accountTypeString: 'REVENUE' },
         },
         _sum: { creditAmount: true },
       }),
@@ -255,7 +263,7 @@ export class FinancialStatementsService {
           tenantId,
           companyId,
           periodId,
-          account: { accountType: 'EXPENSE' },
+          account: { accountTypeString: 'EXPENSE' },
         },
         _sum: { debitAmount: true },
       }),
@@ -277,7 +285,7 @@ export class FinancialStatementsService {
       where: {
         tenantId,
         companyId,
-        accountType: 'ASSET',
+        accountTypeString: 'ASSET',
         accountName: { contains: 'cash', mode: 'insensitive' },
       },
     });
@@ -294,7 +302,7 @@ export class FinancialStatementsService {
 
   private async generateEquityChanges(companyId: string, periodId: string, tenantId: string) {
     const equityAccounts = await this.prisma.accountHead.findMany({
-      where: { tenantId, companyId, accountType: 'EQUITY' },
+      where: { tenantId, companyId, accountTypeString: 'EQUITY' },
     });
 
     return {

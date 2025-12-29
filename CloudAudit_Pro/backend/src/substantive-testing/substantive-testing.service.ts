@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateSubstantiveTestDto, UpdateSubstantiveTestDto, TestStatus } from './dto';
+import { TestType } from '@prisma/client';
 
 @Injectable()
 export class SubstantiveTestingService {
@@ -69,7 +70,7 @@ export class SubstantiveTestingService {
     companyId?: string,
     periodId?: string,
     status?: TestStatus,
-    testType?: string,
+    testType?: TestType,
     hasException?: boolean,
   ) {
     return this.db.substantiveTest.findMany({

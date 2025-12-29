@@ -11,7 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DocumentCollectionsService } from './document-collections.service';
 import { CreateDocumentCollectionDto } from './dto/create-document-collection.dto';
 import { UpdateDocumentCollectionDto } from './dto/update-document-collection.dto';

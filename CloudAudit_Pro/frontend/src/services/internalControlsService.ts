@@ -279,3 +279,5 @@ export const riskLevelColors: Record<RiskLevel, string> = {
   [RiskLevel.HIGH]: 'warning',
   [RiskLevel.CRITICAL]: 'error',
 };
+
+export default internalControlsService;

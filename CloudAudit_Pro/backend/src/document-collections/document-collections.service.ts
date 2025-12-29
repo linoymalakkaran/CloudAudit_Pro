@@ -18,15 +18,13 @@ export class DocumentCollectionsService {
       data: {
         ...createDocumentCollectionDto,
         tenantId,
-        status: CollectionStatus.DRAFT,
+        status: CollectionStatus.PENDING,
         createdBy: userId,
-        updatedBy: userId,
       },
       include: {
         company: true,
         period: true,
-        creator: { select: { id: true, email: true, name: true } },
-        assignedToUser: { select: { id: true, email: true, name: true } },
+        creator: { select: { id: true, email: true, firstName: true, lastName: true } },
       },
     });
   }
@@ -50,13 +48,8 @@ export class DocumentCollectionsService {
       include: {
         company: true,
         period: true,
-        creator: { select: { id: true, email: true, name: true } },
-        assignedToUser: { select: { id: true, email: true, name: true } },
-        items: {
-          include: {
-            document: true,
-          },
-        },
+        creator: { select: { id: true, email: true, firstName: true, lastName: true } },
+        items: true,
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -68,16 +61,8 @@ export class DocumentCollectionsService {
       include: {
         company: true,
         period: true,
-        creator: { select: { id: true, email: true, name: true } },
-        updater: { select: { id: true, email: true, name: true } },
-        assignedToUser: { select: { id: true, email: true, name: true } },
-        items: {
-          include: {
-            document: true,
-            uploadedByUser: { select: { id: true, email: true, name: true } },
-          },
-          orderBy: { createdAt: 'asc' },
-        },
+        creator: { select: { id: true, email: true, firstName: true, lastName: true } },
+        items: true,
       },
     });
 
@@ -100,14 +85,11 @@ export class DocumentCollectionsService {
       where: { id },
       data: {
         ...updateDocumentCollectionDto,
-        updatedBy: userId,
       },
       include: {
         company: true,
         period: true,
-        creator: { select: { id: true, email: true, name: true } },
-        updater: { select: { id: true, email: true, name: true } },
-        assignedToUser: { select: { id: true, email: true, name: true } },
+        creator: { select: { id: true, email: true, firstName: true, lastName: true } },
       },
     });
   }
@@ -133,7 +115,7 @@ export class DocumentCollectionsService {
       updatedBy: userId,
     };
 
-    if (status === CollectionStatus.SENT) {
+    if (status === CollectionStatus.IN_PROGRESS) {
       updateData.sentDate = new Date();
     } else if (status === CollectionStatus.COMPLETED) {
       updateData.completedDate = new Date();
@@ -145,7 +127,7 @@ export class DocumentCollectionsService {
       include: {
         company: true,
         period: true,
-        items: { include: { document: true } },
+        items: true,
       },
     });
   }
@@ -163,13 +145,7 @@ export class DocumentCollectionsService {
       data: {
         collectionId,
         ...createCollectionItemDto,
-        status: DocumentItemStatus.PENDING,
-        tenantId,
-        createdBy: userId,
-        updatedBy: userId,
-      },
-      include: {
-        document: true,
+        status: DocumentItemStatus.NOT_UPLOADED,
       },
     });
   }
@@ -181,7 +157,7 @@ export class DocumentCollectionsService {
     userId: string,
   ) {
     const item = await this.prisma.documentCollectionItem.findFirst({
-      where: { id: itemId, tenantId },
+      where: { id: itemId },
     });
 
     if (!item) {
@@ -192,17 +168,13 @@ export class DocumentCollectionsService {
       where: { id: itemId },
       data: {
         ...data,
-        updatedBy: userId,
-      },
-      include: {
-        document: true,
       },
     });
   }
 
   async removeItem(itemId: string, tenantId: string) {
     const item = await this.prisma.documentCollectionItem.findFirst({
-      where: { id: itemId, tenantId },
+      where: { id: itemId },
     });
 
     if (!item) {
@@ -221,7 +193,7 @@ export class DocumentCollectionsService {
     userId: string,
   ) {
     const item = await this.prisma.documentCollectionItem.findFirst({
-      where: { id: itemId, tenantId },
+      where: { id: itemId },
     });
 
     if (!item) {
@@ -231,21 +203,23 @@ export class DocumentCollectionsService {
     return this.prisma.documentCollectionItem.update({
       where: { id: itemId },
       data: {
-        documentId,
+        uploadedDocumentId: documentId,
         uploadedBy: userId,
         uploadedAt: new Date(),
         status: DocumentItemStatus.UPLOADED,
-        updatedBy: userId,
-      },
-      include: {
-        document: true,
-        uploadedByUser: { select: { id: true, email: true, name: true } },
       },
     });
   }
 
   async getCollectionProgress(id: string, tenantId: string) {
-    const collection = await this.findOne(id, tenantId);
+    const collection = await this.prisma.documentCollection.findFirst({
+      where: { id, tenantId },
+      include: { items: true },
+    });
+    
+    if (!collection) {
+      throw new NotFoundException(`Collection with ID ${id} not found`);
+    }
     
     const totalItems = collection.items.length;
     const uploadedItems = collection.items.filter(

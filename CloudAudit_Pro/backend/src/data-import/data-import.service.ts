@@ -191,7 +191,7 @@ export class DataImportService {
 
   async downloadErrorsReport(id: string, tenantId: string) {
     const dataImport = await this.findOne(id, tenantId);
-    const errors = dataImport.errors || [];
+    const errors = Array.isArray(dataImport.errors) ? dataImport.errors : [];
 
     // Generate CSV report
     const csvContent = this.generateErrorCSV(errors);

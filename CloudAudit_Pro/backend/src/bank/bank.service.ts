@@ -45,11 +45,6 @@ export class BankService {
       include: {
         country: true,
         currency: true,
-        accounts: {
-          include: {
-            company: { select: { name: true } },
-          },
-        },
       },
     });
 
