@@ -246,6 +246,13 @@ model TenantUser {
   resolvedFindings     Finding[]           @relation("ResolvedFindings")
   procedureComments    ProcedureComment[]  @relation("ProcedureComments")
 
+  // Notification and preference relations
+  notifications                Notification[]         @relation("NotificationUser")
+  createdNotifications         Notification[]         @relation("NotificationCreatedBy")
+  preferences                  UserPreference[]       @relation("UserPreferences")
+  createdNotificationTemplates NotificationTemplate[] @relation("NotificationTemplateCreatedBy")
+  updatedNotificationTemplates NotificationTemplate[] @relation("NotificationTemplateUpdatedBy")
+
   @@unique([tenantId, email])
   @@map("tenant_users")
 }
@@ -1345,12 +1352,7 @@ model User {
   auditLogs               AuditLog[]               @relation("AuditLogUser")
   alerts                  Alert[] // Add alerts relation
   
-  // Phase 7: System Utilities Relations
-  preferences                  UserPreference[]            @relation("UserPreferences")
-  notifications                Notification[]              @relation("NotificationUser")
-  notificationsCreated         Notification[]              @relation("NotificationCreatedBy")
-  notificationTemplatesCreated NotificationTemplate[]      @relation("NotificationTemplateCreatedBy")
-  notificationTemplatesUpdated NotificationTemplate[]      @relation("NotificationTemplateUpdatedBy")
+  // Phase 7: System Utilities Relations (removed notification/preferences - now in TenantUser)
   configsUpdated               SystemConfiguration[]       @relation("ConfigUpdatedBy")
   dataImports                  DataImport[]                @relation("DataImportUser")
   dataExports                  DataExport[]                @relation("DataExportUser")
@@ -2605,7 +2607,7 @@ model UserPreference {
   updatedAt       DateTime @updatedAt
 
   // Relations
-  user User @relation("UserPreferences", fields: [userId], references: [id], onDelete: Cascade)
+  user TenantUser @relation("UserPreferences", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, preferenceKey])
   @@map("user_preferences")
@@ -2631,9 +2633,9 @@ model Notification {
   createdAt         DateTime           @default(now())
 
   // Relations
-  tenant        Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user          User   @relation("NotificationUser", fields: [userId], references: [id], onDelete: Cascade)
-  createdByUser User   @relation("NotificationCreatedBy", fields: [createdBy], references: [id])
+  tenant        Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user          TenantUser @relation("NotificationUser", fields: [userId], references: [id], onDelete: Cascade)
+  createdByUser TenantUser @relation("NotificationCreatedBy", fields: [createdBy], references: [id])
 
   @@map("notifications")
 }
@@ -2655,9 +2657,9 @@ model NotificationTemplate {
   updatedAt        DateTime         @updatedAt
 
   // Relations
-  tenant        Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  createdByUser User   @relation("NotificationTemplateCreatedBy", fields: [createdBy], references: [id])
-  updatedByUser User   @relation("NotificationTemplateUpdatedBy", fields: [updatedBy], references: [id])
+  tenant        Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdByUser TenantUser @relation("NotificationTemplateCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser TenantUser @relation("NotificationTemplateUpdatedBy", fields: [updatedBy], references: [id])
 
   @@map("notification_templates")
 }

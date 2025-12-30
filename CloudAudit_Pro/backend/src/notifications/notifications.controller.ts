@@ -29,7 +29,25 @@ export class NotificationsController {
   @ApiResponse({ status: 201, description: 'Notification created successfully' })
   create(@Request() req, @Body() createNotificationDto: CreateNotificationDto) {
     const tenantId = req.user.tenantId;
-    const userId = req.user.userId;
+    const userId = req.user.id;
+    
+    // Make DTO flexible: use authenticated user if userId not provided
+    if (!createNotificationDto.userId) {
+      createNotificationDto.userId = userId;
+    }
+    // Use message as title if title not provided
+    if (!createNotificationDto.title) {
+      createNotificationDto.title = createNotificationDto.message.substring(0, 100);
+    }
+    // Allow 'type' as alias for 'notificationType'
+    if (createNotificationDto['type'] && !createNotificationDto.notificationType) {
+      createNotificationDto.notificationType = createNotificationDto['type'];
+    }
+    // Map NORMAL priority to MEDIUM
+    if (createNotificationDto.priority === 'NORMAL' as any) {
+      createNotificationDto.priority = 'MEDIUM' as any;
+    }
+    
     return this.notificationsService.create(tenantId, userId, createNotificationDto);
   }
 
@@ -43,7 +61,7 @@ export class NotificationsController {
     @Query('status') status?: NotificationStatus,
     @Query('type') type?: NotificationType,
   ) {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     return this.notificationsService.findAllForUser(userId, status, type);
   }
 
@@ -51,7 +69,7 @@ export class NotificationsController {
   @ApiOperation({ summary: 'Get unread notifications count' })
   @ApiResponse({ status: 200, description: 'Returns unread count' })
   getUnreadCount(@Request() req) {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     return this.notificationsService.getUnreadCount(userId);
   }
 
@@ -59,7 +77,7 @@ export class NotificationsController {
   @ApiOperation({ summary: 'Mark all notifications as read' })
   @ApiResponse({ status: 200, description: 'All notifications marked as read' })
   markAllAsRead(@Request() req) {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     return this.notificationsService.markAllAsRead(userId);
   }
 
@@ -67,7 +85,7 @@ export class NotificationsController {
   @ApiOperation({ summary: 'Delete all read/dismissed notifications' })
   @ApiResponse({ status: 200, description: 'Read notifications cleared' })
   clearRead(@Request() req) {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     return this.notificationsService.clearRead(userId);
   }
 
@@ -76,15 +94,24 @@ export class NotificationsController {
   @ApiResponse({ status: 201, description: 'Notifications sent successfully' })
   bulkSend(
     @Request() req,
-    @Body() body: { userIds: string[]; notification: Omit<CreateNotificationDto, 'userId'> },
+    @Body() body: any,
   ) {
     const tenantId = req.user.tenantId;
-    const createdBy = req.user.userId;
+    const createdBy = req.user.id;
+    
+    // Handle both formats: {userIds, notification: {}} and {userIds, message, type}
+    const notification = body.notification || {
+      message: body.message,
+      type: body.type,
+      title: body.title,
+      priority: body.priority,
+    };
+    
     return this.notificationsService.bulkSend(
       tenantId,
       createdBy,
       body.userIds,
-      body.notification,
+      notification,
     );
   }
 
@@ -102,7 +129,22 @@ export class NotificationsController {
   @ApiResponse({ status: 201, description: 'Template created successfully' })
   createTemplate(@Request() req, @Body() createTemplateDto: CreateNotificationTemplateDto) {
     const tenantId = req.user.tenantId;
-    const userId = req.user.userId;
+    const userId = req.user.id;
+    
+    // Handle field aliases
+    if (createTemplateDto.key && !createTemplateDto.templateKey) {
+      createTemplateDto.templateKey = createTemplateDto.key;
+    }
+    if (createTemplateDto.body && !createTemplateDto.bodyTemplate) {
+      createTemplateDto.bodyTemplate = createTemplateDto.body;
+    }
+    if (createTemplateDto.type && !createTemplateDto.notificationType) {
+      createTemplateDto.notificationType = createTemplateDto.type;
+    }
+    if (!createTemplateDto.templateName) {
+      createTemplateDto.templateName = createTemplateDto.subject || createTemplateDto.templateKey || createTemplateDto.key;
+    }
+    
     return this.notificationsService.createTemplate(tenantId, userId, createTemplateDto);
   }
 
@@ -122,7 +164,7 @@ export class NotificationsController {
     @Param('key') key: string,
     @Body() updateTemplateDto: Partial<CreateNotificationTemplateDto>,
   ) {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     return this.notificationsService.updateTemplate(key, userId, updateTemplateDto);
   }
 
@@ -139,15 +181,19 @@ export class NotificationsController {
   sendFromTemplate(
     @Request() req,
     @Param('key') key: string,
-    @Body() body: { userId: string; variables: Record<string, any> },
+    @Body() body: any,
   ) {
     const tenantId = req.user.tenantId;
-    const createdBy = req.user.userId;
+    const createdBy = req.user.id;
+    
+    // Handle both formats: {userId, variables} and {recipients: [], variables}
+    const userId = body.userId || (body.recipients && body.recipients[0]) || createdBy;
+    
     return this.notificationsService.sendFromTemplate(
       tenantId,
       key,
-      body.userId,
-      body.variables,
+      userId,
+      body.variables || {},
     );
   }
 

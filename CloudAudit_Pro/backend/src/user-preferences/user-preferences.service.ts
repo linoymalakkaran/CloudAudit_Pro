@@ -50,22 +50,25 @@ export class UserPreferencesService {
    * Set a user preference (create or update)
    */
   async set(userId: string, dto: SetPreferenceDto) {
+    const preferenceKey = dto.preferenceKey || dto.key;
+    const preferenceValue = dto.preferenceValue !== undefined ? dto.preferenceValue : dto.value;
+    
     return this.db.userPreference.upsert({
       where: {
         userId_preferenceKey: {
           userId,
-          preferenceKey: dto.preferenceKey,
+          preferenceKey,
         },
       },
       update: {
-        preferenceValue: dto.preferenceValue,
+        preferenceValue,
         category: dto.category,
         updatedAt: new Date(),
       },
       create: {
         userId,
-        preferenceKey: dto.preferenceKey,
-        preferenceValue: dto.preferenceValue,
+        preferenceKey,
+        preferenceValue,
         category: dto.category,
       },
     });
@@ -123,27 +126,30 @@ export class UserPreferencesService {
    * Bulk set preferences
    */
   async bulkSet(userId: string, preferences: SetPreferenceDto[]) {
-    const operations = preferences.map((pref) =>
-      this.db.userPreference.upsert({
+    const operations = preferences.map((pref) => {
+      const preferenceKey = pref.preferenceKey || pref.key;
+      const preferenceValue = pref.preferenceValue !== undefined ? pref.preferenceValue : pref.value;
+      
+      return this.db.userPreference.upsert({
         where: {
           userId_preferenceKey: {
             userId,
-            preferenceKey: pref.preferenceKey,
+            preferenceKey,
           },
         },
         update: {
-          preferenceValue: pref.preferenceValue,
+          preferenceValue,
           category: pref.category,
           updatedAt: new Date(),
         },
         create: {
           userId,
-          preferenceKey: pref.preferenceKey,
-          preferenceValue: pref.preferenceValue,
+          preferenceKey,
+          preferenceValue,
           category: pref.category,
         },
-      }),
-    );
+      });
+    });
 
     return Promise.all(operations);
   }

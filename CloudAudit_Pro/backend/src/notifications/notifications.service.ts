@@ -15,10 +15,10 @@ export class NotificationsService {
     return this.db.notification.create({
       data: {
         tenantId,
-        userId: dto.userId,
-        title: dto.title,
+        userId: dto.userId || createdBy,
+        title: dto.title || dto.message.substring(0, 100),
         message: dto.message,
-        notificationType: dto.notificationType,
+        notificationType: dto.notificationType || dto.type || 'INFO' as any,
         priority: dto.priority || NotificationPriority.MEDIUM,
         status: NotificationStatus.UNREAD,
         actionUrl: dto.actionUrl,
@@ -211,11 +211,11 @@ export class NotificationsService {
     return this.db.notificationTemplate.create({
       data: {
         tenantId,
-        templateKey: dto.templateKey,
-        templateName: dto.templateName,
+        templateKey: dto.templateKey || dto.key,
+        templateName: dto.templateName || dto.subject || dto.templateKey || dto.key,
         subject: dto.subject,
-        bodyTemplate: dto.bodyTemplate,
-        notificationType: dto.notificationType,
+        bodyTemplate: dto.bodyTemplate || dto.body,
+        notificationType: dto.notificationType || dto.type,
         triggers: dto.triggers || {},
         recipients: dto.recipients || {},
         isActive: dto.isActive !== undefined ? dto.isActive : true,
@@ -338,14 +338,17 @@ export class NotificationsService {
     tenantId: string,
     createdBy: string,
     userIds: string[],
-    dto: Omit<CreateNotificationDto, 'userId'>,
+    dto: any,
   ) {
+    const notificationType = dto.notificationType || dto.type || 'INFO' as any;
+    const title = dto.title || dto.message?.substring(0, 100) || 'Notification';
+    
     const notifications = userIds.map((userId) => ({
       tenantId,
       userId,
-      title: dto.title,
+      title,
       message: dto.message,
-      notificationType: dto.notificationType,
+      notificationType,
       priority: dto.priority || NotificationPriority.MEDIUM,
       status: NotificationStatus.UNREAD,
       actionUrl: dto.actionUrl,

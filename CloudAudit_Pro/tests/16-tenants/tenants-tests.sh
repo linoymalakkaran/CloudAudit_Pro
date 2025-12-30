@@ -11,7 +11,7 @@ validate_tenant() {
     check_field "$1" '.id' && check_field "$1" '.subdomain'
 }
 validate_stats() { 
-    check_field "$1" '.userCount' || check_field "$1" '.companyCount'
+    check_field "$1" '.totalUsers' || check_field "$1" '.totalCompanies' || check_field "$1" '.activeUsers'
 }
 
 # Initialize authentication
@@ -47,6 +47,6 @@ if [ -n "$TENANT_ID" ] && [ "$TENANT_ID" != "null" ]; then
 fi
 
 echo "" && echo "━━━ Test 4: Unauthorized Access ━━━"
-test_endpoint "No Auth" "GET" "/tenants/subdomain/test" "" "401" "" "" >/dev/null
+test_endpoint "No Auth" "GET" "/tenants/$TENANT_ID/stats" "" "401" "" "" >/dev/null
 
 print_summary

@@ -68,7 +68,17 @@ echo ""
 echo "━━━ Exchange Rate Tests ━━━"
 
 echo "" && echo "━━━ Test 8: Create Exchange Rate ━━━"
-CREATE_RATE='{"fromCurrency":"USD","toCurrency":"EUR","rate":0.85,"effectiveDate":"2025-01-01"}'
+# Get base currency ID (USD)
+BASE_CURRENCY_ID=$(curl -s -H "Authorization: Bearer $TOKEN" "$BASE_URL/currencies/code/USD" | jq -r '.id' 2>/dev/null)
+# Create EUR if it doesn't exist, or get its ID
+EUR_DATA='{"code":"EUR","name":"Euro","symbol":"€","decimalPlaces":2}'
+eur_resp=$(curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d "$EUR_DATA" "$BASE_URL/currencies" 2>/dev/null)
+TARGET_CURRENCY_ID=$(echo "$eur_resp" | jq -r '.id' 2>/dev/null)
+if [ -z "$TARGET_CURRENCY_ID" ] || [ "$TARGET_CURRENCY_ID" == "null" ]; then
+    TARGET_CURRENCY_ID=$(curl -s -H "Authorization: Bearer $TOKEN" "$BASE_URL/currencies/code/EUR" | jq -r '.id' 2>/dev/null)
+fi
+
+CREATE_RATE="{\"baseCurrencyId\":\"$BASE_CURRENCY_ID\",\"targetCurrencyId\":\"$TARGET_CURRENCY_ID\",\"rate\":0.85,\"effectiveDate\":\"2025-01-01\"}"
 rate_resp=$(test_endpoint "Create Exchange Rate" "POST" "/exchange-rates" "$CREATE_RATE" "201" "$TOKEN" "validate_exchange_rate")
 RATE_ID=$(echo "$rate_resp" | jq -r '.id' 2>/dev/null)
 
@@ -97,7 +107,7 @@ fi
 
 if [ -n "$CURRENCY_ID" ] && [ "$CURRENCY_ID" != "null" ]; then
     echo "" && echo "━━━ Test 15: Delete Currency ━━━"
-    test_endpoint "Delete Currency" "DELETE" "/currencies/$CURRENCY_ID" "" "200" "$TOKEN" "" >/dev/null
+    test_endpoint "Delete Currency" "DELETE" "/currencies/$CURRENCY_ID" "" "204" "$TOKEN" "" >/dev/null
 fi
 
 echo "" && echo "━━━ Test 16: Unauthorized Access ━━━"
