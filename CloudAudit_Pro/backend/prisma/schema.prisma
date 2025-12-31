@@ -247,11 +247,14 @@ model TenantUser {
   procedureComments    ProcedureComment[]  @relation("ProcedureComments")
 
   // Notification and preference relations
-  notifications                Notification[]         @relation("NotificationUser")
-  createdNotifications         Notification[]         @relation("NotificationCreatedBy")
-  preferences                  UserPreference[]       @relation("UserPreferences")
-  createdNotificationTemplates NotificationTemplate[] @relation("NotificationTemplateCreatedBy")
-  updatedNotificationTemplates NotificationTemplate[] @relation("NotificationTemplateUpdatedBy")
+  notifications                Notification[]          @relation("NotificationUser")
+  createdNotifications         Notification[]          @relation("NotificationCreatedBy")
+  preferences                  UserPreference[]        @relation("UserPreferences")
+  createdNotificationTemplates NotificationTemplate[]  @relation("NotificationTemplateCreatedBy")
+  updatedNotificationTemplates NotificationTemplate[]  @relation("NotificationTemplateUpdatedBy")
+  
+  // Analytics relations
+  createdSnapshots             AnalyticsSnapshot[]     @relation("SnapshotCreatedBy")
 
   @@unique([tenantId, email])
   @@map("tenant_users")
@@ -1343,7 +1346,6 @@ model User {
   statementsCreated       FinancialStatement[]     @relation("StatementCreatedBy")
   statementsUpdated       FinancialStatement[]     @relation("StatementUpdatedBy")
   statementsApproved      FinancialStatement[]     @relation("StatementApprovedBy")
-  snapshotsCreated        AnalyticsSnapshot[]      @relation("SnapshotCreatedBy")
   exportJobs              ExportJob[]              @relation("ExportJobCreator")
   importJobs              ImportJob[]              @relation("ImportJobCreator")
   assignedProcedures      Procedure[]              @relation("ProcedureAssignee")
@@ -2565,10 +2567,10 @@ model AnalyticsSnapshot {
   createdAt    DateTime     @default(now())
 
   // Relations
-  tenant        Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  company       Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  period        Period  @relation(fields: [periodId], references: [id], onDelete: Cascade)
-  createdByUser User    @relation("SnapshotCreatedBy", fields: [createdBy], references: [id])
+  tenant        Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  company       Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  period        Period     @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  createdByUser TenantUser @relation("SnapshotCreatedBy", fields: [createdBy], references: [id])
 
   @@map("analytics_snapshots")
 }

@@ -60,7 +60,7 @@ echo "" && echo "━━━ Test 4: Get Operational Dashboard ━━━"
 test_endpoint "Operational Dashboard" "GET" "/dashboard/operational" "" "200" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 5: Get Custom Dashboard ━━━"
-CUSTOM_DATA='{"metrics":["revenue","profit","expenses"],"period":"monthly"}'
+CUSTOM_DATA='{"name":"Custom Dashboard","type":"CUSTOM","metrics":[],"charts":[]}'
 test_endpoint "Custom Dashboard" "POST" "/dashboard/custom" "$CUSTOM_DATA" "200" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 6: Get Realtime Metrics ━━━"
@@ -79,7 +79,7 @@ echo "" && echo "━━━ Test 10: Get Active Alerts ━━━"
 test_endpoint "Get Alerts" "GET" "/dashboard/alerts" "" "200" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 11: Create Alert ━━━"
-CREATE_ALERT='{"title":"Test Alert","message":"Test alert message","severity":"MEDIUM","type":"SYSTEM"}'
+CREATE_ALERT='{"title":"Test Alert","message":"Test alert message","severity":"MEDIUM","type":"SYSTEM","companyId":"test-company"}'
 alert_resp=$(test_endpoint "Create Alert" "POST" "/dashboard/alerts" "$CREATE_ALERT" "201" "$TOKEN" "")
 ALERT_ID=$(echo "$alert_resp" | jq -r '.id' 2>/dev/null)
 
@@ -150,10 +150,10 @@ echo ""
 echo "━━━ Analytics Tests ━━━"
 
 echo "" && echo "━━━ Test 28: Get Analytics Overview ━━━"
-test_endpoint "Analytics Overview" "GET" "/analytics/overview" "" "200" "$TOKEN" "" >/dev/null
+test_endpoint "Analytics Overview" "GET" "/analytics/overview?companyId=test-company" "" "200" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 29: Custom Analytics Query ━━━"
-QUERY_DATA='{"metrics":["revenue","expenses"],"dimensions":["time","category"],"filters":{}}'
+QUERY_DATA='{"companyId":"test-company","metrics":["REVENUE","EXPENSES"],"filters":{}}'
 test_endpoint "Custom Analytics Query" "POST" "/analytics/query" "$QUERY_DATA" "200" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 30: Get Financial Ratios ━━━"
@@ -163,7 +163,7 @@ echo "" && echo "━━━ Test 31: Get Trend Analysis for Metric ━━━"
 test_endpoint "Metric Trends" "GET" "/analytics/trends/revenue?companyId=test-company" "" "200" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 32: Get Variance Analysis ━━━"
-test_endpoint "Variance Analysis" "GET" "/analytics/variance?companyId=test-company&periodId=test-period" "" "200" "$TOKEN" "" >/dev/null
+test_endpoint "Variance Analysis" "GET" "/analytics/variance?companyId=test-company&periodId=test-period&comparisonPeriodId=test-period" "" "200" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 33: Get Aging Analysis ━━━"
 test_endpoint "Aging Analysis" "GET" "/analytics/aging?companyId=test-company&accountType=RECEIVABLES" "" "200" "$TOKEN" "" >/dev/null
@@ -172,7 +172,7 @@ echo "" && echo "━━━ Test 34: Calculate Materiality ━━━"
 test_endpoint "Materiality" "GET" "/analytics/materiality?companyId=test-company&totalAssets=1000000" "" "200" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 35: Create Analytics Snapshot ━━━"
-SNAPSHOT_DATA='{"name":"Test Snapshot","companyId":"test-company","metrics":["revenue","profit"]}'
+SNAPSHOT_DATA='{"companyId":"test-company","periodId":"test-period","snapshotType":"DAILY"}'
 test_endpoint "Create Snapshot" "POST" "/analytics/snapshots" "$SNAPSHOT_DATA" "201" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 36: Get Analytics Snapshots ━━━"

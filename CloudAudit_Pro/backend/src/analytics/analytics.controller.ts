@@ -116,7 +116,7 @@ export class AnalyticsController {
     return this.analyticsService.createSnapshot(
       createSnapshotDto,
       req.user.tenantId,
-      req.user.sub,
+      req.user.id,
     );
   }
 

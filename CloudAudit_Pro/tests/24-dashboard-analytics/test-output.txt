@@ -1,0 +1,313 @@
+╔════════════════════════════════════════════════════════════╗
+║         DASHBOARD & ANALYTICS TESTS                         ║
+╚════════════════════════════════════════════════════════════╝
+🔐 Initializing authentication...
+  → Registering new test account
+✅ Registration auto-approved, token received
+✓ Authentication successful: testadmin1767172723@test.com
+🌱 Seeding test data with fixed IDs...
+✅ Test data seeded successfully
+
+
+━━━ Dashboard Overview Tests ━━━
+
+━━━ Test 1: Get Executive Dashboard ━━━
+
+[0;34m▶ Test 1: Executive Dashboard[0m
+  Method: GET
+  Endpoint: /dashboard/executive
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 2: Get Financial Dashboard ━━━
+
+[0;34m▶ Test 2: Financial Dashboard[0m
+  Method: GET
+  Endpoint: /dashboard/financial
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 3: Get Audit Dashboard ━━━
+
+[0;34m▶ Test 3: Audit Dashboard[0m
+  Method: GET
+  Endpoint: /dashboard/audit
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 4: Get Operational Dashboard ━━━
+
+[0;34m▶ Test 4: Operational Dashboard[0m
+  Method: GET
+  Endpoint: /dashboard/operational
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 5: Get Custom Dashboard ━━━
+
+[0;34m▶ Test 5: Custom Dashboard[0m
+  Method: POST
+  Endpoint: /dashboard/custom
+  Expected Status: 200
+  Actual Status: 201
+  [0;31m✗ Status Code: FAIL[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;31m✗ OVERALL: FAIL[0m
+
+━━━ Test 6: Get Realtime Metrics ━━━
+
+[0;34m▶ Test 6: Realtime Metrics[0m
+  Method: GET
+  Endpoint: /dashboard/realtime
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 7: Get Company Financial Overview ━━━
+
+[0;34m▶ Test 7: Company Financial[0m
+  Method: GET
+  Endpoint: /dashboard/company/test-company-id/financial
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 8: Get Company Audit Overview ━━━
+
+[0;34m▶ Test 8: Company Audit[0m
+  Method: GET
+  Endpoint: /dashboard/company/test-company-id/audit
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 9: Get Company KPIs ━━━
+
+[0;34m▶ Test 9: Company KPIs[0m
+  Method: GET
+  Endpoint: /dashboard/kpis/test-company-id
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 10: Get Active Alerts ━━━
+
+[0;34m▶ Test 10: Get Alerts[0m
+  Method: GET
+  Endpoint: /dashboard/alerts
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 11: Create Alert ━━━
+
+[0;34m▶ Test 11: Create Alert[0m
+  Method: POST
+  Endpoint: /dashboard/alerts
+  Expected Status: 201
+  Actual Status: 500
+  [0;31m✗ Status Code: FAIL[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;31m✗ OVERALL: FAIL[0m
+
+━━━ Test 13: Get Trend Analysis ━━━
+
+[0;34m▶ Test 11: Trend Analysis[0m
+  Method: GET
+  Endpoint: /dashboard/trends/test-company-id
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 14: Get Performance Metrics ━━━
+
+[0;34m▶ Test 12: Performance Metrics[0m
+  Method: GET
+  Endpoint: /dashboard/performance/test-company-id
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 15: Get Analytics Summary ━━━
+
+[0;34m▶ Test 13: Analytics Summary[0m
+  Method: GET
+  Endpoint: /dashboard/analytics/test-company-id/summary
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 16: Get System Health ━━━
+
+[0;34m▶ Test 14: System Health[0m
+  Method: GET
+  Endpoint: /dashboard/health
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Custom Dashboards Tests ━━━
+
+━━━ Test 17: Create Dashboard ━━━
+
+[0;34m▶ Test 15: Create Dashboard[0m
+  Method: POST
+  Endpoint: /dashboards
+  Expected Status: 201
+  Actual Status: 400
+  [0;31m✗ Status Code: FAIL[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;31m✗ OVERALL: FAIL[0m
+
+━━━ Analytics Tests ━━━
+
+━━━ Test 28: Get Analytics Overview ━━━
+
+[0;34m▶ Test 15: Analytics Overview[0m
+  Method: GET
+  Endpoint: /analytics/overview?companyId=test-company
+  Expected Status: 200
+  Actual Status: 500
+  [0;31m✗ Status Code: FAIL[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;31m✗ OVERALL: FAIL[0m
+
+━━━ Test 29: Custom Analytics Query ━━━
+
+[0;34m▶ Test 16: Custom Analytics Query[0m
+  Method: POST
+  Endpoint: /analytics/query
+  Expected Status: 200
+  Actual Status: 500
+  [0;31m✗ Status Code: FAIL[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;31m✗ OVERALL: FAIL[0m
+
+━━━ Test 30: Get Financial Ratios ━━━
+
+[0;34m▶ Test 17: Financial Ratios[0m
+  Method: GET
+  Endpoint: /analytics/financial-ratios?companyId=test-company&periodId=test-period
+  Expected Status: 200
+  Actual Status: 500
+  [0;31m✗ Status Code: FAIL[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;31m✗ OVERALL: FAIL[0m
+
+━━━ Test 31: Get Trend Analysis for Metric ━━━
+
+[0;34m▶ Test 18: Metric Trends[0m
+  Method: GET
+  Endpoint: /analytics/trends/revenue?companyId=test-company
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 32: Get Variance Analysis ━━━
+
+[0;34m▶ Test 19: Variance Analysis[0m
+  Method: GET
+  Endpoint: /analytics/variance?companyId=test-company&periodId=test-period&comparisonPeriodId=test-period
+  Expected Status: 200
+  Actual Status: 500
+  [0;31m✗ Status Code: FAIL[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;31m✗ OVERALL: FAIL[0m
+
+━━━ Test 33: Get Aging Analysis ━━━
+
+[0;34m▶ Test 20: Aging Analysis[0m
+  Method: GET
+  Endpoint: /analytics/aging?companyId=test-company&accountType=RECEIVABLES
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 34: Calculate Materiality ━━━
+
+[0;34m▶ Test 21: Materiality[0m
+  Method: GET
+  Endpoint: /analytics/materiality?companyId=test-company&totalAssets=1000000
+  Expected Status: 200
+  Actual Status: 500
+  [0;31m✗ Status Code: FAIL[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;31m✗ OVERALL: FAIL[0m
+
+━━━ Test 35: Create Analytics Snapshot ━━━
+
+[0;34m▶ Test 22: Create Snapshot[0m
+  Method: POST
+  Endpoint: /analytics/snapshots
+  Expected Status: 201
+  Actual Status: 500
+  [0;31m✗ Status Code: FAIL[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;31m✗ OVERALL: FAIL[0m
+
+━━━ Test 36: Get Analytics Snapshots ━━━
+
+[0;34m▶ Test 23: Get Snapshots[0m
+  Method: GET
+  Endpoint: /analytics/snapshots?companyId=test-company
+  Expected Status: 200
+  Actual Status: 200
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+━━━ Test 37: Unauthorized Access ━━━
+
+[0;34m▶ Test 24: No Auth[0m
+  Method: GET
+  Endpoint: /dashboard/executive
+  Expected Status: 401
+  Actual Status: 401
+  [0;32m✓ Status Code: PASS[0m
+  [0;32m✓ Valid JSON: PASS[0m
+  [0;32m✓ OVERALL: PASS[0m
+
+╔════════════════════════════════════════════════════════════╗
+║                    TEST SUMMARY                             ║
+╚════════════════════════════════════════════════════════════╝
+
+Total Tests: 24
+Passed: [0;32m17[0m
+Failed: [0;31m7[0m
+Success Rate: 70%
+
+[0;31m✗ 7 test(s) failed[0m

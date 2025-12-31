@@ -68,6 +68,11 @@ export class DataImportController {
     @Body('companyId') companyId: string,
     @Body('importType') importType: ImportType,
   ) {
+    // Check if file was uploaded
+    if (!file) {
+      throw new Error('No file uploaded. Please provide a file in multipart/form-data format.');
+    }
+
     const createDto: CreateDataImportDto = {
       companyId,
       importType,

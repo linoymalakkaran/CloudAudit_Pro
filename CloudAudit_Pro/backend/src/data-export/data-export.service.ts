@@ -17,7 +17,10 @@ export class DataExportService {
 
     return this.database.dataExport.create({
       data: {
-        ...createDto,
+        companyId: createDto.companyId,
+        exportType: createDto.exportType,
+        filters: createDto.filters || {},
+        options: createDto.options || {},
         tenantId,
         fileName,
         filePath,
