@@ -1,0 +1,122 @@
+{
+  "info": {
+    "name": "06 - Workpapers",
+    "_postman_id": "workpapers-collection-006",
+    "description": "Workpaper management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Workpaper",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const jsonData = pm.response.json();",
+              "if (jsonData.id) {",
+              "    pm.environment.set('workpaper_id', jsonData.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Bank Reconciliation\",\n  \"code\": \"WP-BANK-001\",\n  \"periodId\": \"{{period_id}}\",\n  \"procedureId\": \"{{procedure_id}}\",\n  \"accountId\": \"{{account_id}}\",\n  \"type\": \"LEAD_SCHEDULE\",\n  \"description\": \"Bank reconciliation for checking account\",\n  \"preparedBy\": \"{{user_id}}\",\n  \"status\": \"DRAFT\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/workpapers",
+          "host": ["{{base_url}}"],
+          "path": ["workpapers"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Workpapers",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/workpapers",
+          "host": ["{{base_url}}"],
+          "path": ["workpapers"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Workpaper by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/workpapers/{{workpaper_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["workpapers", "{{workpaper_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Workpaper",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"REVIEWED\",\n  \"reviewedBy\": \"{{user_id}}\",\n  \"reviewNotes\": \"Approved - no exceptions noted\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/workpapers/{{workpaper_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["workpapers", "{{workpaper_id}}"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

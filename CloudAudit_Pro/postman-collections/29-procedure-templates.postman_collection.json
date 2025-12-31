@@ -1,0 +1,52 @@
+{
+  "info": {
+    "name": "29 - Procedure Templates",
+    "_postman_id": "procedure-templates-collection-029",
+    "description": "Procedure template management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Procedure Templates",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/procedure-templates", "host": ["{{base_url}}"], "path": ["procedure-templates"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Create Procedure Template",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Cash Testing Template\",\n  \"category\": \"SUBSTANTIVE\",\n  \"accountType\": \"ASSETS\",\n  \"description\": \"Standard procedures for cash testing\",\n  \"steps\": [\n    \"Obtain bank confirmations\",\n    \"Perform bank reconciliation\",\n    \"Test cutoff procedures\"\n  ],\n  \"isPublic\": true\n}"
+        },
+        "url": {"raw": "{{base_url}}/procedure-templates", "host": ["{{base_url}}"], "path": ["procedure-templates"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Apply Template to Period",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"templateId\": \"{{template_id}}\",\n  \"periodId\": \"{{period_id}}\",\n  \"accountId\": \"{{account_id}}\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/procedure-templates/apply", "host": ["{{base_url}}"], "path": ["procedure-templates", "apply"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

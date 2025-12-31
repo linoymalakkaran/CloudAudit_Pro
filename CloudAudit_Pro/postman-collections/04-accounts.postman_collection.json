@@ -1,0 +1,206 @@
+{
+  "info": {
+    "name": "04 - Accounts (Chart of Accounts)",
+    "_postman_id": "accounts-collection-004",
+    "description": "Chart of Accounts management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Chart of Accounts",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response has accounts', function() {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('object');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/accounts/chart/{{period_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["accounts", "chart", "{{period_id}}"]
+        },
+        "description": "Get chart of accounts for a period"
+      },
+      "response": []
+    },
+    {
+      "name": "List Accounts for Period",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is array', function() {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "    ",
+              "    if (jsonData.length > 0) {",
+              "        pm.environment.set('account_id', jsonData[0].id);",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/accounts/period/{{period_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["accounts", "period", "{{period_id}}"]
+        },
+        "description": "List all accounts for a specific period"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Account by ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/accounts/{{account_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["accounts", "{{account_id}}"]
+        },
+        "description": "Get specific account details"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Accounts by Type",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/accounts/period/{{period_id}}?accountType=ASSETS",
+          "host": ["{{base_url}}"],
+          "path": ["accounts", "period", "{{period_id}}"],
+          "query": [
+            {
+              "key": "accountType",
+              "value": "ASSETS"
+            }
+          ]
+        },
+        "description": "Get accounts filtered by type (ASSETS, LIABILITIES, EQUITY, INCOME, EXPENSES)"
+      },
+      "response": []
+    },
+    {
+      "name": "Search Accounts",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/accounts/period/{{period_id}}?search=Cash",
+          "host": ["{{base_url}}"],
+          "path": ["accounts", "period", "{{period_id}}"],
+          "query": [
+            {
+              "key": "search",
+              "value": "Cash"
+            }
+          ]
+        },
+        "description": "Search accounts by name or code"
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

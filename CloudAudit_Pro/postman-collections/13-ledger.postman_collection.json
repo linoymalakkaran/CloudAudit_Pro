@@ -1,0 +1,38 @@
+{
+  "info": {
+    "name": "13 - Ledger",
+    "_postman_id": "ledger-collection-013",
+    "description": "General ledger endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Ledger for Account",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {
+          "raw": "{{base_url}}/ledger/account/{{account_id}}?periodId={{period_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["ledger", "account", "{{account_id}}"],
+          "query": [{"key": "periodId", "value": "{{period_id}}"}]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get General Ledger",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {
+          "raw": "{{base_url}}/ledger/period/{{period_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["ledger", "period", "{{period_id}}"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

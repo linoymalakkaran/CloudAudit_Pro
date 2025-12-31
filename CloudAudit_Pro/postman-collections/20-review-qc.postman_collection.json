@@ -1,0 +1,52 @@
+{
+  "info": {
+    "name": "20 - Review & QC",
+    "_postman_id": "review-qc-collection-020",
+    "description": "Review points and quality control endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Review Point",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"periodId\": \"{{period_id}}\",\n  \"workpaperId\": \"{{workpaper_id}}\",\n  \"type\": \"CLARIFICATION\",\n  \"comment\": \"Please provide additional support for this calculation\",\n  \"createdBy\": \"{{user_id}}\",\n  \"status\": \"OPEN\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/review-points", "host": ["{{base_url}}"], "path": ["review-points"]}
+      },
+      "response": []
+    },
+    {
+      "name": "List Review Points",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/review-points?periodId={{period_id}}", "host": ["{{base_url}}"], "path": ["review-points"], "query": [{"key": "periodId", "value": "{{period_id}}"}]}
+      },
+      "response": []
+    },
+    {
+      "name": "Resolve Review Point",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"RESOLVED\",\n  \"response\": \"Additional documentation attached\",\n  \"resolvedBy\": \"{{user_id}}\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/review-points/{{review_point_id}}", "host": ["{{base_url}}"], "path": ["review-points", "{{review_point_id}}"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

@@ -137,7 +137,7 @@ export class ReportsService {
           period: {
             select: { id: true, name: true },
           },
-          creator: {
+          createdByUser: {
             select: { id: true, firstName: true, lastName: true },
           },
         },
@@ -166,7 +166,7 @@ export class ReportsService {
         period: {
           select: { id: true, name: true },
         },
-        creator: {
+        createdByUser: {
           select: { id: true, firstName: true, lastName: true, email: true },
         },
       },

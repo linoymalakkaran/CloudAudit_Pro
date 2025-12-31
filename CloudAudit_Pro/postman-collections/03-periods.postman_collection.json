@@ -1,0 +1,284 @@
+{
+  "info": {
+    "name": "03 - Periods",
+    "_postman_id": "periods-collection-003",
+    "description": "Fiscal period management endpoints for managing audit periods",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Period",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "const jsonData = pm.response.json();",
+              "if (jsonData.id) {",
+              "    pm.environment.set('period_id', jsonData.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"FY2024 Annual Audit\",\n  \"companyId\": \"{{company_id}}\",\n  \"startDate\": \"2024-01-01\",\n  \"endDate\": \"2024-12-31\",\n  \"fiscalYear\": \"2024\",\n  \"periodType\": \"ANNUAL\",\n  \"status\": \"IN_PROGRESS\",\n  \"description\": \"Annual financial statement audit for fiscal year 2024\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/periods",
+          "host": ["{{base_url}}"],
+          "path": ["periods"]
+        },
+        "description": "Create a new audit period for a company"
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Periods",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is array', function() {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/periods",
+          "host": ["{{base_url}}"],
+          "path": ["periods"]
+        },
+        "description": "Get all periods for current tenant"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Period by ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/periods/{{period_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["periods", "{{period_id}}"]
+        },
+        "description": "Get specific period by ID"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Periods by Company",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/periods?companyId={{company_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["periods"],
+          "query": [
+            {
+              "key": "companyId",
+              "value": "{{company_id}}"
+            }
+          ]
+        },
+        "description": "Get all periods for a specific company"
+      },
+      "response": []
+    },
+    {
+      "name": "Update Period",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"FY2024 Annual Audit (Updated)\",\n  \"status\": \"IN_PROGRESS\",\n  \"description\": \"Updated description for FY2024 audit\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/periods/{{period_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["periods", "{{period_id}}"]
+        },
+        "description": "Update period details"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Quarterly Period",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() {",
+              "    pm.response.to.have.status(201);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Q1 2024 Review\",\n  \"companyId\": \"{{company_id}}\",\n  \"startDate\": \"2024-01-01\",\n  \"endDate\": \"2024-03-31\",\n  \"fiscalYear\": \"2024\",\n  \"periodType\": \"QUARTERLY\",\n  \"status\": \"PLANNED\",\n  \"quarter\": \"Q1\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/periods",
+          "host": ["{{base_url}}"],
+          "path": ["periods"]
+        },
+        "description": "Create quarterly review period"
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Period",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 or 403', function() {",
+              "    pm.expect([200, 403]).to.include(pm.response.code);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/periods/{{period_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["periods", "{{period_id}}"]
+        },
+        "description": "Delete period (soft delete)"
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

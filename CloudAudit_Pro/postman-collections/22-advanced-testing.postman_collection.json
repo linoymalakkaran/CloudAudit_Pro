@@ -1,0 +1,59 @@
+{
+  "info": {
+    "name": "22 - Advanced Testing",
+    "_postman_id": "advanced-testing-collection-022",
+    "description": "Sampling, substantive testing, and controls endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Sample",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"periodId\": \"{{period_id}}\",\n  \"procedureId\": \"{{procedure_id}}\",\n  \"populationSize\": 1000,\n  \"sampleSize\": 50,\n  \"samplingMethod\": \"RANDOM\",\n  \"description\": \"Sample of sales transactions\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/testing/samples", "host": ["{{base_url}}"], "path": ["testing", "samples"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Record Test Result",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sampleId\": \"{{sample_id}}\",\n  \"testDate\": \"2024-12-31\",\n  \"result\": \"PASSED\",\n  \"exceptions\": 0,\n  \"notes\": \"All items tested successfully\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/testing/results", "host": ["{{base_url}}"], "path": ["testing", "results"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Test Control",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"periodId\": \"{{period_id}}\",\n  \"controlName\": \"Approval of Purchase Orders\",\n  \"controlType\": \"PREVENTIVE\",\n  \"testingApproach\": \"INQUIRY_AND_OBSERVATION\",\n  \"result\": \"EFFECTIVE\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/testing/controls", "host": ["{{base_url}}"], "path": ["testing", "controls"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

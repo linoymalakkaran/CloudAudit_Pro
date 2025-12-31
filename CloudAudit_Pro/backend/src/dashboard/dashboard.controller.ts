@@ -39,7 +39,7 @@ export class DashboardController {
   @ApiQuery({ name: 'startDate', required: false, type: String, description: 'Custom start date (ISO format)' })
   @ApiQuery({ name: 'endDate', required: false, type: String, description: 'Custom end date (ISO format)' })
   async getExecutiveDashboard(@Query() filters: DashboardFilterDto, @Request() req) {
-    return this.dashboardService.getExecutiveDashboard(filters, req.user.userId);
+    return this.dashboardService.getExecutiveDashboard(filters, req.user.id);
   }
 
   @Get('financial')
@@ -52,7 +52,7 @@ export class DashboardController {
   @ApiQuery({ name: 'timeframe', required: false, enum: Timeframe, description: 'Time period for metrics' })
   @ApiQuery({ name: 'includeComparative', required: false, type: Boolean, description: 'Include comparative data' })
   async getFinancialDashboard(@Query() filters: DashboardFilterDto, @Request() req): Promise<any> {
-    return this.dashboardService.getFinancialDashboard(filters, req.user.userId);
+    return this.dashboardService.getFinancialDashboard(filters, req.user.id);
   }
 
   @Get('audit')
@@ -65,7 +65,7 @@ export class DashboardController {
   @ApiQuery({ name: 'periodId', required: false, type: String, description: 'Filter by period' })
   @ApiQuery({ name: 'timeframe', required: false, enum: Timeframe, description: 'Time period for metrics' })
   async getAuditDashboard(@Query() filters: DashboardFilterDto, @Request() req): Promise<any> {
-    return this.dashboardService.getAuditDashboard(filters, req.user.userId);
+    return this.dashboardService.getAuditDashboard(filters, req.user.id);
   }
 
   @Get('operational')
@@ -76,7 +76,7 @@ export class DashboardController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Operational dashboard data retrieved successfully' })
   @ApiQuery({ name: 'timeframe', required: false, enum: Timeframe, description: 'Time period for metrics' })
   async getOperationalDashboard(@Query() filters: DashboardFilterDto, @Request() req): Promise<any> {
-    return this.dashboardService.getOperationalDashboard(filters, req.user.userId);
+    return this.dashboardService.getOperationalDashboard(filters, req.user.id);
   }
 
   @Post('custom')
@@ -90,7 +90,7 @@ export class DashboardController {
     @Query() filters: DashboardFilterDto,
     @Request() req
   ) {
-    return this.dashboardService.getCustomDashboard(config, filters, req.user.userId);
+    return this.dashboardService.getCustomDashboard(config, filters, req.user.id);
   }
 
   @Get('realtime')
@@ -116,7 +116,7 @@ export class DashboardController {
     @Request() req
   ): Promise<any> {
     const companyFilters = { ...filters, companyId };
-    return this.dashboardService.getFinancialDashboard(companyFilters, req.user.userId);
+    return this.dashboardService.getFinancialDashboard(companyFilters, req.user.id);
   }
 
   @Get('company/:companyId/audit')
@@ -131,7 +131,7 @@ export class DashboardController {
     @Request() req
   ): Promise<any> {
     const companyFilters = { ...filters, companyId };
-    return this.dashboardService.getAuditDashboard(companyFilters, req.user.userId);
+    return this.dashboardService.getAuditDashboard(companyFilters, req.user.id);
   }
 
   @Get('kpis/:companyId')
@@ -146,7 +146,7 @@ export class DashboardController {
     @Request() req
   ) {
     const companyFilters = { ...filters, companyId };
-    const dashboardData = await this.dashboardService.getExecutiveDashboard(companyFilters, req.user.userId);
+    const dashboardData = await this.dashboardService.getExecutiveDashboard(companyFilters, req.user.id);
     return {
       kpis: dashboardData.kpis,
       summary: dashboardData.summary,
@@ -170,7 +170,7 @@ export class DashboardController {
     @Request() req?
   ) {
     const filters: DashboardFilterDto = {};
-    const dashboardData = await this.dashboardService.getExecutiveDashboard(filters, req.user.userId);
+    const dashboardData = await this.dashboardService.getExecutiveDashboard(filters, req.user.id);
     
     let alerts = dashboardData.alerts;
     
@@ -200,7 +200,7 @@ export class DashboardController {
   })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'Alert created successfully' })
   async createAlert(@Body() alert: Omit<AlertDto, 'id' | 'createdAt'>, @Request() req) {
-    return this.dashboardService.createAlert(alert, req.user.userId, req.user.companyId || 'default-company');
+    return this.dashboardService.createAlert(alert, req.user.id, req.user.companyId || 'default-company');
   }
 
   @Patch('alerts/:id/acknowledge')
@@ -210,7 +210,7 @@ export class DashboardController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Alert acknowledged successfully' })
   async acknowledgeAlert(@Param('id') id: string, @Request() req) {
-    return this.dashboardService.acknowledgeAlert(id, req.user.userId);
+    return this.dashboardService.acknowledgeAlert(id, req.user.id);
   }
 
   @Get('trends/:companyId')
@@ -225,7 +225,7 @@ export class DashboardController {
     @Request() req
   ) {
     const companyFilters = { ...filters, companyId };
-    const dashboardData = await this.dashboardService.getExecutiveDashboard(companyFilters, req.user.userId);
+    const dashboardData = await this.dashboardService.getExecutiveDashboard(companyFilters, req.user.id);
     
     return {
       trends: dashboardData.trends,
@@ -254,9 +254,9 @@ export class DashboardController {
     @Request() req
   ) {
     const [financialData, auditData, operationalData] = await Promise.all([
-      this.dashboardService.getFinancialDashboard({ ...filters, companyId }, req.user.userId),
-      this.dashboardService.getAuditDashboard({ ...filters, companyId }, req.user.userId),
-      this.dashboardService.getOperationalDashboard(filters, req.user.userId),
+      this.dashboardService.getFinancialDashboard({ ...filters, companyId }, req.user.id),
+      this.dashboardService.getAuditDashboard({ ...filters, companyId }, req.user.id),
+      this.dashboardService.getOperationalDashboard(filters, req.user.id),
     ]);
 
     return {
@@ -291,7 +291,7 @@ export class DashboardController {
     @Request() req
   ) {
     const companyFilters = { ...filters, companyId };
-    const dashboardData = await this.dashboardService.getExecutiveDashboard(companyFilters, req.user.userId);
+    const dashboardData = await this.dashboardService.getExecutiveDashboard(companyFilters, req.user.id);
 
     const summary = {
       overview: dashboardData.summary,

@@ -1,0 +1,158 @@
+{
+  "info": {
+    "name": "08 - Journal Entries",
+    "_postman_id": "journal-entries-collection-008",
+    "description": "Journal entry management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Journal Entry",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const jsonData = pm.response.json();",
+              "if (jsonData.id) {",
+              "    pm.environment.set('journal_entry_id', jsonData.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reference\": \"AJE-001\",\n  \"periodId\": \"{{period_id}}\",\n  \"date\": \"2024-12-31\",\n  \"description\": \"Audit adjustment for accrued expenses\",\n  \"type\": \"ADJUSTMENT\",\n  \"status\": \"DRAFT\",\n  \"lines\": [\n    {\n      \"accountId\": \"{{account_id}}\",\n      \"debit\": 10000.00,\n      \"credit\": 0,\n      \"description\": \"Accrued expenses\"\n    },\n    {\n      \"accountId\": \"{{account_id}}\",\n      \"debit\": 0,\n      \"credit\": 10000.00,\n      \"description\": \"Accounts payable\"\n    }\n  ],\n  \"preparedBy\": \"{{user_id}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/journal-entries",
+          "host": ["{{base_url}}"],
+          "path": ["journal-entries"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Journal Entries",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/journal-entries",
+          "host": ["{{base_url}}"],
+          "path": ["journal-entries"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Journal Entry by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/journal-entries/{{journal_entry_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["journal-entries", "{{journal_entry_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Journal Entry",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"POSTED\",\n  \"reviewedBy\": \"{{user_id}}\",\n  \"postingDate\": \"2024-12-31\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/journal-entries/{{journal_entry_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["journal-entries", "{{journal_entry_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Post Journal Entry",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/journal-entries/{{journal_entry_id}}/post",
+          "host": ["{{base_url}}"],
+          "path": ["journal-entries", "{{journal_entry_id}}", "post"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reverse Journal Entry",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/journal-entries/{{journal_entry_id}}/reverse",
+          "host": ["{{base_url}}"],
+          "path": ["journal-entries", "{{journal_entry_id}}", "reverse"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

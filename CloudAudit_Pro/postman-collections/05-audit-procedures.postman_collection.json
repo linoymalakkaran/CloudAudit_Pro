@@ -1,0 +1,157 @@
+{
+  "info": {
+    "name": "05 - Audit Procedures",
+    "_postman_id": "procedures-collection-005",
+    "description": "Audit procedure management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Procedure",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "const jsonData = pm.response.json();",
+              "if (jsonData.id) {",
+              "    pm.environment.set('procedure_id', jsonData.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Cash and Cash Equivalents Testing\",\n  \"code\": \"CASH-001\",\n  \"periodId\": \"{{period_id}}\",\n  \"category\": \"SUBSTANTIVE\",\n  \"accountId\": \"{{account_id}}\",\n  \"description\": \"Perform substantive testing on cash and cash equivalents\",\n  \"objectives\": [\"Verify existence\", \"Confirm completeness\", \"Test valuation\"],\n  \"assignedTo\": \"{{user_id}}\",\n  \"status\": \"NOT_STARTED\",\n  \"dueDate\": \"2024-12-31\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/procedures",
+          "host": ["{{base_url}}"],
+          "path": ["procedures"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Procedures",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/procedures",
+          "host": ["{{base_url}}"],
+          "path": ["procedures"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Procedure by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/procedures/{{procedure_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["procedures", "{{procedure_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Procedure",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"IN_PROGRESS\",\n  \"notes\": \"Testing has begun\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/procedures/{{procedure_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["procedures", "{{procedure_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Procedure Statistics",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/procedures/statistics",
+          "host": ["{{base_url}}"],
+          "path": ["procedures", "statistics"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

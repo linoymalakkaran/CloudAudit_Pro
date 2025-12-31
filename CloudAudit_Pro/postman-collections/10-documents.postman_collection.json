@@ -1,0 +1,208 @@
+{
+  "info": {
+    "name": "10 - Documents",
+    "_postman_id": "documents-collection-010",
+    "description": "Document management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Upload Document",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const jsonData = pm.response.json();",
+              "if (jsonData.id) {",
+              "    pm.environment.set('document_id', jsonData.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "companyId",
+              "value": "{{company_id}}",
+              "type": "text"
+            },
+            {
+              "key": "periodId",
+              "value": "{{period_id}}",
+              "type": "text"
+            },
+            {
+              "key": "category",
+              "value": "FINANCIAL_STATEMENTS",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "Annual financial statements",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/documents/upload",
+          "host": ["{{base_url}}"],
+          "path": ["documents", "upload"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Documents",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/documents",
+          "host": ["{{base_url}}"],
+          "path": ["documents"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Document by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/documents/{{document_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["documents", "{{document_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Download Document",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/documents/{{document_id}}/download",
+          "host": ["{{base_url}}"],
+          "path": ["documents", "{{document_id}}", "download"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Document Metadata",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"Updated document description\",\n  \"category\": \"AUDIT_EVIDENCE\",\n  \"tags\": [\"financial\", \"2024\", \"audit\"]\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/documents/{{document_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["documents", "{{document_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Document",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/documents/{{document_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["documents", "{{document_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Documents",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/documents?search=financial&category=FINANCIAL_STATEMENTS",
+          "host": ["{{base_url}}"],
+          "path": ["documents"],
+          "query": [
+            {
+              "key": "search",
+              "value": "financial"
+            },
+            {
+              "key": "category",
+              "value": "FINANCIAL_STATEMENTS"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

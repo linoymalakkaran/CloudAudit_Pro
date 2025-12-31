@@ -1,0 +1,63 @@
+{
+  "info": {
+    "name": "30 - System Config",
+    "_postman_id": "system-config-collection-030",
+    "description": "System configuration and admin endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get System Settings",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/system/settings", "host": ["{{base_url}}"], "path": ["system", "settings"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Update System Settings",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"maintenanceMode\": false,\n  \"allowRegistration\": true,\n  \"sessionTimeout\": 3600,\n  \"maxUploadSize\": 10485760\n}"
+        },
+        "url": {"raw": "{{base_url}}/system/settings", "host": ["{{base_url}}"], "path": ["system", "settings"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Get System Health",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/health", "host": ["{{base_url}}"], "path": ["health"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Get Audit Logs",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/system/audit-logs?page=1&limit=50", "host": ["{{base_url}}"], "path": ["system", "audit-logs"], "query": [{"key": "page", "value": "1"}, {"key": "limit", "value": "50"}]}
+      },
+      "response": []
+    },
+    {
+      "name": "Clear Cache",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/system/cache/clear", "host": ["{{base_url}}"], "path": ["system", "cache", "clear"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

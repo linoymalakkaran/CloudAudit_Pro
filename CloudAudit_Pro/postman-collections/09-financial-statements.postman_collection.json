@@ -1,0 +1,142 @@
+{
+  "info": {
+    "name": "09 - Financial Statements",
+    "_postman_id": "financial-statements-collection-009",
+    "description": "Financial statement generation endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Generate Balance Sheet",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"periodId\": \"{{period_id}}\",\n  \"asOfDate\": \"2024-12-31\",\n  \"comparative\": true,\n  \"includeNotes\": true\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/financial-statements/balance-sheet",
+          "host": ["{{base_url}}"],
+          "path": ["financial-statements", "balance-sheet"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Generate Income Statement",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"periodId\": \"{{period_id}}\",\n  \"startDate\": \"2024-01-01\",\n  \"endDate\": \"2024-12-31\",\n  \"comparative\": true\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/financial-statements/income-statement",
+          "host": ["{{base_url}}"],
+          "path": ["financial-statements", "income-statement"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Generate Cash Flow Statement",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"periodId\": \"{{period_id}}\",\n  \"startDate\": \"2024-01-01\",\n  \"endDate\": \"2024-12-31\",\n  \"method\": \"INDIRECT\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/financial-statements/cash-flow",
+          "host": ["{{base_url}}"],
+          "path": ["financial-statements", "cash-flow"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Financial Statement Package",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/financial-statements/package/{{period_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["financial-statements", "package", "{{period_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Export Financial Statements (PDF)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"periodId\": \"{{period_id}}\",\n  \"format\": \"PDF\",\n  \"statements\": [\"BALANCE_SHEET\", \"INCOME_STATEMENT\", \"CASH_FLOW\"]\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/financial-statements/export",
+          "host": ["{{base_url}}"],
+          "path": ["financial-statements", "export"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "info": {
+    "name": "18 - Bank & Country",
+    "_postman_id": "bank-country-collection-018",
+    "description": "Bank and country master data endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Banks",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/banks", "host": ["{{base_url}}"], "path": ["banks"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Create Bank",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Example Bank\",\n  \"code\": \"EXBANK\",\n  \"swiftCode\": \"EXBKUS33\",\n  \"country\": \"USA\",\n  \"address\": \"123 Banking St\",\n  \"city\": \"New York\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/banks", "host": ["{{base_url}}"], "path": ["banks"]}
+      },
+      "response": []
+    },
+    {
+      "name": "List Countries",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/countries", "host": ["{{base_url}}"], "path": ["countries"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

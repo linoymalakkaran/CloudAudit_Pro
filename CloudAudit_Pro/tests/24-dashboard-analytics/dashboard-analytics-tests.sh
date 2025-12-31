@@ -29,6 +29,21 @@ fi
 TOKEN="$SHARED_AUTH_TOKEN"
 TS=$(date +%s)
 
+# Seed test data for dashboard tests
+echo "🌱 Seeding test data with fixed IDs..."
+TENANT_ID=$(echo "$AUTH_INFO" | jq -r '.tenant.id')
+if [ -n "$TENANT_ID" ] && [ "$TENANT_ID" != "null" ]; then
+    docker exec cloudaudit-backend sh -c "cd /app/backend && TENANT_ID='$TENANT_ID' npx ts-node prisma/demo-data/seed-test.ts" > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo "✅ Test data seeded successfully"
+    else
+        echo "⚠️  Warning: Test data seeding failed, some tests may fail"
+    fi
+else
+    echo "⚠️  Warning: Could not get tenant ID, some tests may fail"
+fi
+echo ""
+
 echo ""
 echo "━━━ Dashboard Overview Tests ━━━"
 

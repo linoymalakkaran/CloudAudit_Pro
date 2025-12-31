@@ -26,7 +26,11 @@
     "cleanup:test": "ts-node scripts/cleanup-test-data.ts",
     "test:prepare": "npm run cleanup:test && npm run db:seed",
     "db:cleanup": "ts-node prisma/cleanup-test-data.ts",
-    "test:reset": "npm run db:cleanup && npm run db:seed"
+    "test:reset": "npm run db:cleanup && npm run db:seed",
+    "db:seed:demo": "ts-node prisma/demo-data/seed-demo.ts",
+    "db:cleanup:demo": "ts-node prisma/demo-data/cleanup-demo.ts",
+    "db:reset:demo": "npm run db:cleanup:demo && npm run db:seed:demo",
+    "db:seed:test": "ts-node prisma/demo-data/seed-test.ts"
   },
   "dependencies": {
     "@azure/identity": "^3.2.4",

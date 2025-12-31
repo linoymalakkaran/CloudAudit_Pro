@@ -1,0 +1,54 @@
+{
+  "info": {
+    "name": "26 - Notifications & Preferences",
+    "_postman_id": "notifications-preferences-collection-026",
+    "description": "Notifications and user preferences endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Notifications",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/notifications", "host": ["{{base_url}}"], "path": ["notifications"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Mark Notification as Read",
+      "request": {
+        "method": "PATCH",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/notifications/{{notification_id}}/read", "host": ["{{base_url}}"], "path": ["notifications", "{{notification_id}}", "read"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Get User Preferences",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/users/preferences", "host": ["{{base_url}}"], "path": ["users", "preferences"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Update User Preferences",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"emailNotifications\": true,\n  \"theme\": \"DARK\",\n  \"language\": \"en\",\n  \"timezone\": \"America/New_York\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/users/preferences", "host": ["{{base_url}}"], "path": ["users", "preferences"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

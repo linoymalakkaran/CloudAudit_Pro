@@ -1,0 +1,146 @@
+{
+  "info": {
+    "name": "07 - Findings",
+    "_postman_id": "findings-collection-007",
+    "description": "Audit findings management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Finding",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const jsonData = pm.response.json();",
+              "if (jsonData.id) {",
+              "    pm.environment.set('finding_id', jsonData.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Unreconciled Bank Differences\",\n  \"periodId\": \"{{period_id}}\",\n  \"procedureId\": \"{{procedure_id}}\",\n  \"accountId\": \"{{account_id}}\",\n  \"severity\": \"MEDIUM\",\n  \"status\": \"OPEN\",\n  \"description\": \"Bank reconciliation shows outstanding items over 90 days\",\n  \"impact\": \"Potential misstatement of cash balance\",\n  \"recommendation\": \"Clear old outstanding items and adjust balances\",\n  \"amount\": 15000.00,\n  \"identifiedBy\": \"{{user_id}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/findings",
+          "host": ["{{base_url}}"],
+          "path": ["findings"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Findings",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/findings",
+          "host": ["{{base_url}}"],
+          "path": ["findings"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Finding by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/findings/{{finding_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["findings", "{{finding_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Finding",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"RESOLVED\",\n  \"resolution\": \"Client has cleared all outstanding items\",\n  \"resolvedBy\": \"{{user_id}}\",\n  \"resolvedDate\": \"2024-12-31\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/findings/{{finding_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["findings", "{{finding_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Findings by Severity",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/findings?severity=HIGH",
+          "host": ["{{base_url}}"],
+          "path": ["findings"],
+          "query": [
+            {
+              "key": "severity",
+              "value": "HIGH"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "info": {
+    "name": "17 - Currency Exchange",
+    "_postman_id": "currency-exchange-collection-017",
+    "description": "Currency and exchange rate management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Currencies",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/currencies", "host": ["{{base_url}}"], "path": ["currencies"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Get Exchange Rates",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/exchange-rates?from=USD&to=EUR&date=2024-12-31", "host": ["{{base_url}}"], "path": ["exchange-rates"], "query": [{"key": "from", "value": "USD"}, {"key": "to", "value": "EUR"}, {"key": "date", "value": "2024-12-31"}]}
+      },
+      "response": []
+    },
+    {
+      "name": "Create Exchange Rate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fromCurrency\": \"USD\",\n  \"toCurrency\": \"EUR\",\n  \"rate\": 0.92,\n  \"effectiveDate\": \"2024-12-31\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/exchange-rates", "host": ["{{base_url}}"], "path": ["exchange-rates"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

@@ -1,0 +1,47 @@
+{
+  "info": {
+    "name": "24 - Dashboard & Analytics",
+    "_postman_id": "dashboard-analytics-collection-024",
+    "description": "Dashboard and analytics endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Dashboard Overview",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/dashboard/overview", "host": ["{{base_url}}"], "path": ["dashboard", "overview"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Get Audit Progress",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/dashboard/audit-progress/{{period_id}}", "host": ["{{base_url}}"], "path": ["dashboard", "audit-progress", "{{period_id}}"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Get Analytics by Period",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/analytics/period/{{period_id}}", "host": ["{{base_url}}"], "path": ["analytics", "period", "{{period_id}}"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Get Team Performance",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/analytics/team-performance", "host": ["{{base_url}}"], "path": ["analytics", "team-performance"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

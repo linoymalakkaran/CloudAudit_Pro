@@ -304,21 +304,26 @@ export class DashboardService {
 
   // Private helper methods
   private async getSummaryMetrics(companyFilter: any, timeRange: any) {
+    // Get user's tenant ID for proper filtering
+    const tenantFilter = companyFilter.companyId 
+      ? { id: companyFilter.companyId } 
+      : { id: { in: companyFilter.companyId.in } };
+      
     const [
       totalCompanies,
       activePeriods,
       totalUsers,
       pendingTasks,
     ] = await Promise.all([
-      this.database.company.count({ where: companyFilter }),
+      this.database.company.count({ where: tenantFilter }),
       this.database.period.count({ 
         where: { 
           ...companyFilter, 
           isActive: true 
         } 
       }),
-      this.database.user.count({ where: { isActive: true } }),
-      this.database.procedure.count({ 
+      this.database.tenantUser.count({ where: { isActive: true } }),
+      this.database.auditProcedure.count({ 
         where: { 
           ...companyFilter,
           status: { in: ['NOT_STARTED', 'IN_PROGRESS'] }
@@ -336,10 +341,10 @@ export class DashboardService {
 
   private async getFinancialMetrics(companyFilter: any, timeRange: any): Promise<FinancialMetrics> {
     // This would calculate financial metrics from trial balance and journal entries
-    const trialBalanceData = await this.database.trialBalance.findMany({
+    const trialBalanceData = await this.database.trialBalanceEntry.findMany({
       where: {
         ...companyFilter,
-        createdAt: timeRange,
+        lastUpdated: timeRange,
       },
       include: {
         accountHead: {
@@ -399,7 +404,7 @@ export class DashboardService {
   }
 
   private async getAuditMetrics(companyFilter: any, timeRange: any): Promise<AuditMetrics> {
-    const procedures = await this.database.procedure.findMany({
+    const procedures = await this.database.auditProcedure.findMany({
       where: {
         ...companyFilter,
         createdAt: timeRange,
@@ -435,7 +440,7 @@ export class DashboardService {
       documentsCount,
       reportsCount,
     ] = await Promise.all([
-      this.database.user.count({ where: { isActive: true } }),
+      this.database.tenantUser.count({ where: { isActive: true } }),
       this.database.document.count({ 
         where: { 
           ...companyFilter,
@@ -665,7 +670,7 @@ export class DashboardService {
   }
 
   private async verifyUserAccess(userId: string) {
-    const user = await this.database.user.findUnique({
+    const user = await this.database.tenantUser.findFirst({
       where: { id: userId },
     });
 
@@ -684,7 +689,19 @@ export class DashboardService {
   }
 
   private async getUserCompanies(userId: string) {
+    // Get the tenant user to find their tenant
+    const tenantUser = await this.database.tenantUser.findFirst({
+      where: { id: userId },
+      select: { tenantId: true },
+    });
+
+    if (!tenantUser) {
+      return [];
+    }
+
+    // Return all companies belonging to the user's tenant
     return this.database.company.findMany({
+      where: { tenantId: tenantUser.tenantId },
       select: { id: true, name: true },
     });
   }
@@ -706,11 +723,11 @@ export class DashboardService {
   }
 
   private async getActiveUserCount() {
-    return this.database.user.count({ where: { isActive: true } });
+    return this.database.tenantUser.count({ where: { isActive: true } });
   }
 
   private async getOngoingProceduresCount(companyFilter: any) {
-    return this.database.procedure.count({
+    return this.database.auditProcedure.count({
       where: {
         ...companyFilter,
         status: 'IN_PROGRESS',

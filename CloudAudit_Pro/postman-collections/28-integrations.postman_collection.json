@@ -1,0 +1,52 @@
+{
+  "info": {
+    "name": "28 - Integrations",
+    "_postman_id": "integrations-collection-028",
+    "description": "Third-party integration endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Available Integrations",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/integrations", "host": ["{{base_url}}"], "path": ["integrations"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Configure Integration",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"integrationType\": \"QUICKBOOKS\",\n  \"credentials\": {\n    \"apiKey\": \"your-api-key\",\n    \"apiSecret\": \"your-api-secret\"\n  },\n  \"settings\": {\n    \"autoSync\": true,\n    \"syncInterval\": \"DAILY\"\n  }\n}"
+        },
+        "url": {"raw": "{{base_url}}/integrations/configure", "host": ["{{base_url}}"], "path": ["integrations", "configure"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Sync Data",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"integrationId\": \"{{integration_id}}\",\n  \"periodId\": \"{{period_id}}\",\n  \"dataType\": \"TRIAL_BALANCE\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/integrations/sync", "host": ["{{base_url}}"], "path": ["integrations", "sync"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

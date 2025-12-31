@@ -1,0 +1,36 @@
+{
+  "info": {
+    "name": "16 - Tenants",
+    "_postman_id": "tenants-collection-016",
+    "description": "Tenant management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Current Tenant",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/tenants/current", "host": ["{{base_url}}"], "path": ["tenants", "current"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Update Tenant Settings",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Tenant Name\",\n  \"settings\": {\n    \"allowClientAccess\": true,\n    \"requireTwoFactor\": false\n  }\n}"
+        },
+        "url": {"raw": "{{base_url}}/tenants/current", "host": ["{{base_url}}"], "path": ["tenants", "current"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

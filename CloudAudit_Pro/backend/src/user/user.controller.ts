@@ -33,7 +33,8 @@ export class UserController {
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'User profile retrieved successfully' })
   async getCurrentUser(@Request() req: any) {
-    return this.userService.getUserById(req.user.id, req.user.tenantId);
+    // Return the user data from the JWT token (already validated)
+    return req.user;
   }
 
   @Get('stats')

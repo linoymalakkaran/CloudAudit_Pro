@@ -1,0 +1,341 @@
+{
+  "info": {
+    "name": "02 - Companies",
+    "_postman_id": "companies-collection-002",
+    "description": "Company management endpoints for creating, updating, and managing client companies",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Company",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const timestamp = Date.now();",
+              "pm.environment.set('timestamp', timestamp);"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Response has company ID', function() {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData).to.have.property('name');",
+              "    pm.environment.set('company_id', jsonData.id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Acme Corporation {{timestamp}}\",\n  \"industry\": \"Technology\",\n  \"taxId\": \"12-3456789\",\n  \"registrationNumber\": \"REG{{timestamp}}\",\n  \"address\": \"123 Main Street\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"postalCode\": \"94105\",\n  \"country\": \"USA\",\n  \"phone\": \"+1-555-0123\",\n  \"email\": \"contact@acme{{timestamp}}.com\",\n  \"website\": \"https://www.acme{{timestamp}}.com\",\n  \"fiscalYearEnd\": \"12-31\",\n  \"currency\": \"USD\",\n  \"status\": \"ACTIVE\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/companies",
+          "host": ["{{base_url}}"],
+          "path": ["companies"]
+        },
+        "description": "Create a new client company"
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Companies",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is array', function() {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/companies",
+          "host": ["{{base_url}}"],
+          "path": ["companies"]
+        },
+        "description": "Get list of all companies for current tenant"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Company by ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response has company details', function() {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData).to.have.property('name');",
+              "    pm.expect(jsonData).to.have.property('industry');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/companies/{{company_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["companies", "{{company_id}}"]
+        },
+        "description": "Get specific company by ID"
+      },
+      "response": []
+    },
+    {
+      "name": "Update Company",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Company updated', function() {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Acme Corporation (Updated)\",\n  \"industry\": \"Financial Services\",\n  \"phone\": \"+1-555-9999\",\n  \"status\": \"ACTIVE\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/companies/{{company_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["companies", "{{company_id}}"]
+        },
+        "description": "Update company details"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Companies with Pagination",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/companies?page=1&limit=10&status=ACTIVE",
+          "host": ["{{base_url}}"],
+          "path": ["companies"],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            },
+            {
+              "key": "status",
+              "value": "ACTIVE"
+            }
+          ]
+        },
+        "description": "Get companies with pagination and filters"
+      },
+      "response": []
+    },
+    {
+      "name": "Search Companies",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/companies?search=Acme",
+          "host": ["{{base_url}}"],
+          "path": ["companies"],
+          "query": [
+            {
+              "key": "search",
+              "value": "Acme"
+            }
+          ]
+        },
+        "description": "Search companies by name"
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Company",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 or 204', function() {",
+              "    pm.expect([200, 204]).to.include(pm.response.code);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/companies/{{company_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["companies", "{{company_id}}"]
+        },
+        "description": "Delete (soft delete) a company"
+      },
+      "response": []
+    },
+    {
+      "name": "Unauthorized Access Test",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401', function() {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/companies",
+          "host": ["{{base_url}}"],
+          "path": ["companies"]
+        },
+        "description": "Test unauthorized access"
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

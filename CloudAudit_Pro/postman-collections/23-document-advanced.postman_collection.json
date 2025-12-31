@@ -1,0 +1,52 @@
+{
+  "info": {
+    "name": "23 - Document Advanced",
+    "_postman_id": "document-advanced-collection-023",
+    "description": "Document links, templates, and collections endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Link Document to Procedure",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"documentId\": \"{{document_id}}\",\n  \"procedureId\": \"{{procedure_id}}\",\n  \"linkType\": \"EVIDENCE\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/documents/links", "host": ["{{base_url}}"], "path": ["documents", "links"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Create Document Collection",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Year-End Documents\",\n  \"periodId\": \"{{period_id}}\",\n  \"description\": \"All documents for year-end audit\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/documents/collections", "host": ["{{base_url}}"], "path": ["documents", "collections"]}
+      },
+      "response": []
+    },
+    {
+      "name": "List Document Templates",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/documents/templates", "host": ["{{base_url}}"], "path": ["documents", "templates"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

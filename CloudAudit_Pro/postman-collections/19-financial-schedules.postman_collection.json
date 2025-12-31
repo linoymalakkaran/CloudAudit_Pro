@@ -1,0 +1,61 @@
+{
+  "info": {
+    "name": "19 - Financial Schedules",
+    "_postman_id": "financial-schedules-collection-019",
+    "description": "Fixed assets, liabilities, and equity schedule endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Fixed Asset Schedule",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"periodId\": \"{{period_id}}\",\n  \"assetName\": \"Office Building\",\n  \"category\": \"BUILDING\",\n  \"acquisitionDate\": \"2020-01-01\",\n  \"cost\": 500000.00,\n  \"accumulatedDepreciation\": 50000.00,\n  \"usefulLife\": 40,\n  \"depreciationMethod\": \"STRAIGHT_LINE\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/schedules/fixed-assets", "host": ["{{base_url}}"], "path": ["schedules", "fixed-assets"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Get Fixed Asset Schedule",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/schedules/fixed-assets/period/{{period_id}}", "host": ["{{base_url}}"], "path": ["schedules", "fixed-assets", "period", "{{period_id}}"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Create Liability Schedule",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"periodId\": \"{{period_id}}\",\n  \"liabilityType\": \"LOAN\",\n  \"description\": \"Bank Loan\",\n  \"principal\": 100000.00,\n  \"interestRate\": 5.5,\n  \"maturityDate\": \"2029-12-31\"\n}"
+        },
+        "url": {"raw": "{{base_url}}/schedules/liabilities", "host": ["{{base_url}}"], "path": ["schedules", "liabilities"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Get Equity Schedule",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/schedules/equity/period/{{period_id}}", "host": ["{{base_url}}"], "path": ["schedules", "equity", "period", "{{period_id}}"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}

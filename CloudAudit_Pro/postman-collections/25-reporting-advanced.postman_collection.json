@@ -1,0 +1,52 @@
+{
+  "info": {
+    "name": "25 - Reporting Advanced",
+    "_postman_id": "reporting-advanced-collection-025",
+    "description": "Report templates and scheduling endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Report Template",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Monthly Audit Summary\",\n  \"reportType\": \"AUDIT_SUMMARY\",\n  \"template\": \"<html>...</html>\",\n  \"parameters\": [\"periodId\", \"includeFindings\"]\n}"
+        },
+        "url": {"raw": "{{base_url}}/reports/templates", "host": ["{{base_url}}"], "path": ["reports", "templates"]}
+      },
+      "response": []
+    },
+    {
+      "name": "Schedule Report",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{auth_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"templateId\": \"{{template_id}}\",\n  \"schedule\": \"MONTHLY\",\n  \"recipients\": [\"manager@example.com\"],\n  \"parameters\": {\"includeFindings\": true}\n}"
+        },
+        "url": {"raw": "{{base_url}}/reports/schedules", "host": ["{{base_url}}"], "path": ["reports", "schedules"]}
+      },
+      "response": []
+    },
+    {
+      "name": "List Report Templates",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{auth_token}}"}],
+        "url": {"raw": "{{base_url}}/reports/templates", "host": ["{{base_url}}"], "path": ["reports", "templates"]}
+      },
+      "response": []
+    }
+  ],
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]}
+}
