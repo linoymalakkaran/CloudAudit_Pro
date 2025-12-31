@@ -255,6 +255,9 @@ model TenantUser {
   
   // Analytics relations
   createdSnapshots             AnalyticsSnapshot[]     @relation("SnapshotCreatedBy")
+  
+  // Export relations
+  dataExports                  DataExport[]            @relation("DataExportUser")
 
   @@unique([tenantId, email])
   @@map("tenant_users")
@@ -1357,7 +1360,6 @@ model User {
   // Phase 7: System Utilities Relations (removed notification/preferences - now in TenantUser)
   configsUpdated               SystemConfiguration[]       @relation("ConfigUpdatedBy")
   dataImports                  DataImport[]                @relation("DataImportUser")
-  dataExports                  DataExport[]                @relation("DataExportUser")
   backupsCreated               SystemBackup[]              @relation("BackupCreatedBy")
   integrationsCreated          Integration[]               @relation("IntegrationCreatedBy")
   integrationsUpdated          Integration[]               @relation("IntegrationUpdatedBy")
@@ -2712,9 +2714,9 @@ model DataExport {
   expiresAt    DateTime?
 
   // Relations
-  tenant         Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  company        Company? @relation(fields: [companyId], references: [id])
-  exportedByUser User    @relation("DataExportUser", fields: [exportedBy], references: [id])
+  tenant         Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  company        Company?   @relation(fields: [companyId], references: [id])
+  exportedByUser TenantUser @relation("DataExportUser", fields: [exportedBy], references: [id])
 
   @@map("data_exports")
 }

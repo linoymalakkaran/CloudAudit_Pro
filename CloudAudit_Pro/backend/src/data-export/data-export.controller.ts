@@ -29,7 +29,7 @@ export class DataExportController {
   @Post()
   @ApiOperation({ summary: 'Create export' })
   create(@Req() req: any, @Body() createDto: CreateDataExportDto) {
-    return this.dataExportService.create(req.user.userId, req.user.tenantId, createDto);
+    return this.dataExportService.create(req.user.id, req.user.tenantId, createDto);
   }
 
   @Get()
@@ -57,7 +57,7 @@ export class DataExportController {
   @Post('quick')
   @ApiOperation({ summary: 'Quick export (create and process)' })
   quickExport(@Req() req: any, @Body() createDto: CreateDataExportDto) {
-    return this.dataExportService.quickExport(req.user.tenantId, req.user.userId, createDto);
+    return this.dataExportService.quickExport(req.user.tenantId, req.user.id, createDto);
   }
 
   @Post('schedule')
@@ -65,7 +65,7 @@ export class DataExportController {
   scheduleExport(@Req() req: any, @Body() body: { export: CreateDataExportDto; schedule: any }) {
     return this.dataExportService.scheduleExport(
       req.user.tenantId,
-      req.user.userId,
+      req.user.id,
       body.export,
       body.schedule,
     );

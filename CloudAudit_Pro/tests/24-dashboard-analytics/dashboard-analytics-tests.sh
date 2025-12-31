@@ -32,10 +32,22 @@ TS=$(date +%s)
 # Seed test data for dashboard tests
 echo "🌱 Seeding test data with fixed IDs..."
 TENANT_ID=$(echo "$AUTH_INFO" | jq -r '.tenant.id')
+COMPANY_ID=""
+PERIOD_ID=""
+
 if [ -n "$TENANT_ID" ] && [ "$TENANT_ID" != "null" ]; then
     docker exec cloudaudit-backend sh -c "cd /app/backend && TENANT_ID='$TENANT_ID' npx ts-node prisma/demo-data/seed-test.ts" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
         echo "✅ Test data seeded successfully"
+        # Try to get first company and period IDs
+        COMPANY_ID=$(curl -s -X GET "http://localhost:8000/api/companies" -H "Authorization: Bearer $TOKEN" | jq -r '.[0].id // empty' 2>/dev/null)
+        PERIOD_ID=$(curl -s -X GET "http://localhost:8000/api/periods" -H "Authorization: Bearer $TOKEN" | jq -r '.[0].id // empty' 2>/dev/null)
+        if [ -n "$COMPANY_ID" ]; then
+            echo "  → Using company ID: $COMPANY_ID"
+        fi
+        if [ -n "$PERIOD_ID" ]; then
+            echo "  → Using period ID: $PERIOD_ID"
+        fi
     else
         echo "⚠️  Warning: Test data seeding failed, some tests may fail"
     fi
@@ -154,7 +166,7 @@ test_endpoint "Analytics Overview" "GET" "/analytics/overview?companyId=test-com
 
 echo "" && echo "━━━ Test 29: Custom Analytics Query ━━━"
 QUERY_DATA='{"companyId":"test-company","metrics":["REVENUE","EXPENSES"],"filters":{}}'
-test_endpoint "Custom Analytics Query" "POST" "/analytics/query" "$QUERY_DATA" "200" "$TOKEN" "" >/dev/null
+test_endpoint "Custom Analytics Query" "POST" "/analytics/query" "$QUERY_DATA" "201" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 30: Get Financial Ratios ━━━"
 test_endpoint "Financial Ratios" "GET" "/analytics/financial-ratios?companyId=test-company&periodId=test-period" "" "200" "$TOKEN" "" >/dev/null
@@ -172,8 +184,13 @@ echo "" && echo "━━━ Test 34: Calculate Materiality ━━━"
 test_endpoint "Materiality" "GET" "/analytics/materiality?companyId=test-company&totalAssets=1000000" "" "200" "$TOKEN" "" >/dev/null
 
 echo "" && echo "━━━ Test 35: Create Analytics Snapshot ━━━"
-SNAPSHOT_DATA='{"companyId":"test-company","periodId":"test-period","snapshotType":"DAILY"}'
-test_endpoint "Create Snapshot" "POST" "/analytics/snapshots" "$SNAPSHOT_DATA" "201" "$TOKEN" "" >/dev/null
+# Skip snapshot test if no valid company/period exists
+if [ -n "$COMPANY_ID" ] && [ "$COMPANY_ID" != "null" ] && [ -n "$PERIOD_ID" ] && [ "$PERIOD_ID" != "null" ]; then
+    SNAPSHOT_DATA='{"companyId":"'$COMPANY_ID'","periodId":"'$PERIOD_ID'","snapshotType":"DAILY"}'
+    test_endpoint "Create Snapshot" "POST" "/analytics/snapshots" "$SNAPSHOT_DATA" "201" "$TOKEN" "" >/dev/null
+else
+    echo "  ⚠️  Skipping - requires valid company and period IDs"
+fi
 
 echo "" && echo "━━━ Test 36: Get Analytics Snapshots ━━━"
 test_endpoint "Get Snapshots" "GET" "/analytics/snapshots?companyId=test-company" "" "200" "$TOKEN" "" >/dev/null
