@@ -1116,17 +1116,17 @@ Questions?"
 | Metric | Target | Mike's Current | Status |
 |--------|--------|----------------|--------|
 | **Quality** ||||
-| Clean opinions | >95% | 100% (12/12) | ✅ Exceeds |
-| Rework rate | <15% | 12% | ✅ Meets |
-| Client satisfaction | >4.0/5 | 4.6/5 | ✅ Exceeds |
+| Clean opinions | &gt;95% | 100% (12/12) | ✅ Exceeds |
+| Rework rate | &lt;15% | 12% | ✅ Meets |
+| Client satisfaction | &gt;4.0/5 | 4.6/5 | ✅ Exceeds |
 | **Efficiency** ||||
-| On-time delivery | >90% | 92% (11/12) | ✅ Meets |
+| On-time delivery | &gt;90% | 92% (11/12) | ✅ Meets |
 | Budget performance | ±10% | +5% avg | ✅ Meets |
 | Team utilization | 70-85% | 78% avg | ✅ Optimal |
 | **Leadership** ||||
-| Team satisfaction | >4.0/5 | 4.4/5 | ✅ Exceeds |
+| Team satisfaction | &gt;4.0/5 | 4.4/5 | ✅ Exceeds |
 | Staff development | 2+ trained | 3 promoted | ✅ Exceeds |
-| Retention | >80% | 100% | ✅ Exceeds |
+| Retention | &gt;80% | 100% | ✅ Exceeds |
 
 ---
 

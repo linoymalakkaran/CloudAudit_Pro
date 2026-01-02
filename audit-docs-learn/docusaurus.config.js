@@ -20,7 +20,6 @@ const config = {
   projectName: 'learning-hub', // Usually your repo name.
 
   onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang.
@@ -70,16 +69,6 @@ const config = {
             label: 'Learning Hub',
           },
           {
-            to: '/docs/reference/glossary',
-            label: 'Glossary',
-            position: 'left'
-          },
-          {
-            to: '/docs/examples/overview',
-            label: 'Examples',
-            position: 'left'
-          },
-          {
             href: 'https://github.com/cloudaudit/pro',
             label: 'GitHub',
             position: 'right',
@@ -112,31 +101,6 @@ const config = {
               {
                 label: 'Business Processes',
                 to: '/docs/processes/audit-lifecycle',
-              },
-              {
-                label: 'Modules',
-                to: '/docs/modules/company/overview',
-              },
-              {
-                label: 'Examples',
-                to: '/docs/examples/overview',
-              },
-            ],
-          },
-          {
-            title: 'Reference',
-            items: [
-              {
-                label: 'Glossary',
-                to: '/docs/reference/glossary',
-              },
-              {
-                label: 'Quick Guides',
-                to: '/docs/reference/quick-guides/overview',
-              },
-              {
-                label: 'FAQ',
-                to: '/docs/reference/faq',
               },
             ],
           },
@@ -180,6 +144,9 @@ const config = {
 
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
   },
   themes: ['@docusaurus/theme-mermaid'],
 };

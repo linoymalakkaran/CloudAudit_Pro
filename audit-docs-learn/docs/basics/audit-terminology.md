@@ -12,7 +12,7 @@ Welcome to your audit vocabulary guide! This page explains common audit terms in
 - Browse by category to learn related terms
 - Use Ctrl+F to search for a specific term
 - Click links to see terms in context
-- Check the [full glossary](/docs/reference/glossary.md) for even more terms
+- Check the [full glossary](/docs/reference/glossary) for even more terms
 :::
 
 ## 🎯 Core Audit Concepts
@@ -351,7 +351,7 @@ Let's test your understanding! Match the scenario to the term:
 
 ## 📚 Want to Learn More?
 
-- **Full Glossary**: [Complete A-Z reference](/docs/reference/glossary.md) with 100+ terms
+- **Full Glossary**: [Complete A-Z reference](/docs/reference/glossary) with 100+ terms
 - **System Overview**: [How CloudAudit Pro uses these concepts](/docs/basics/system-overview.md)
 - **The Audit Journey**: [See terms in action](/docs/processes/audit-lifecycle.md)
 

@@ -306,7 +306,7 @@ graph LR
 
 ### For Seniors
 1. [Audit Procedures](/docs/modules/procedures/overview) - Master procedure management
-2. [Review Process](/docs/processes/05-review) - Quality control
+2. [Review & Quality Control](/docs/processes/review-quality-control) - Quality control
 3. [Workpapers](/docs/modules/workpapers/overview) - Documentation
 
 ### For Auditors

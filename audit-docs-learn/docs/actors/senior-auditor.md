@@ -1246,7 +1246,7 @@ End of Day:
 - [Auditor Role](./auditor) - Understand who you're reviewing
 - [Manager Role](./manager) - See where you're headed
 - [Procedure Module](/docs/modules/procedures) - Master procedures
-- [Review Process](/docs/processes/05-review) - Review workflows
+- [Review & Quality Control](/docs/processes/review-quality-control) - Review workflows
 
 ---
 
