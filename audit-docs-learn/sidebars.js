@@ -57,9 +57,37 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: '🧩 Product Modules',
+      collapsed: true,
+      items: [
+        'modules/index',
+        'modules/company/overview',
+        'modules/team',
+        'modules/periods',
+        'modules/chart-of-accounts',
+        'modules/documents/overview',
+        'modules/procedures/overview',
+        'modules/workpapers/overview',
+        'modules/reporting/overview',
+      ],
+    },
+    {
+      type: 'category',
+      label: '🧪 Examples',
+      collapsed: true,
+      items: ['examples/overview', 'examples/scenarios/year-end-audit'],
+    },
+    {
+      type: 'category',
       label: '📖 Reference',
       collapsed: true,
       items: ['reference/glossary', 'reference/quick-guides/overview'],
+    },
+    {
+      type: 'category',
+      label: '🛡️ Platform',
+      collapsed: true,
+      items: ['security/overview', 'api/index', 'performance/monitoring'],
     },
   ],
 };

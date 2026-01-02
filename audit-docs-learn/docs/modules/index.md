@@ -5,9 +5,9 @@ description: Overview of CloudAudit Pro modules and feature areas
 
 # 🧩 System Modules
 
-This section documents CloudAudit Pro features by module.
+This section documents CloudAudit Pro features by module. Use it when you want to understand *how the system works* (screens, objects, workflows) rather than *when you use it* (process-driven docs).
 
-> Status: This is a placeholder index created to resolve cross-links while module documentation is built.
+If you’re new, start with Company Management → Procedures → Workpapers → Documents → Reporting.
 
 ## Module Areas
 
@@ -22,3 +22,10 @@ This section documents CloudAudit Pro features by module.
 - [Chart of Accounts](chart-of-accounts.md)
 - [Periods](periods.md)
 - [Team Management](team.md)
+
+---
+
+## 🔗 Related
+
+- [Audit Lifecycle (Business Processes)](/docs/processes/audit-lifecycle)
+- [Glossary](/docs/reference/glossary)
