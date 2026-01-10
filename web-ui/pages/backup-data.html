@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup Data - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Backup Data</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Backup System Data</h1>
+            
+            <form id="backupForm">
+                <div class="form-group">
+                    <label for="backupType">Backup Type</label>
+                    <select id="backupType" name="backupType">
+                        <option value="Full" selected>Full Backup</option>
+                        <option value="Incremental">Incremental Backup</option>
+                        <option value="Differential">Differential Backup</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="backupLocation">Backup Location</label>
+                    <input type="text" id="backupLocation" name="backupLocation" value="D:\Backups\eAuditPro" required>
+                </div>
+
+                <div style="background: #fef3c7; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1.5rem; border-left: 4px solid #f59e0b;">
+                    <strong>⚠️ Important:</strong> Ensure you have sufficient disk space before starting backup. Do not interrupt the backup process.
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" onclick="alert('Backup starting...')">Start Backup</button>
+                    <button type="reset" class="btn btn-secondary">Reset</button>
+                </div>
+            </form>
+        </div>
+
+        <h2 style="margin-top: 3rem;">Recent Backups</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Backup Name</th>
+                        <th>Date Created</th>
+                        <th>Type</th>
+                        <th>Size</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Backup_2024_01_20_Full</td>
+                        <td>2024-01-20 22:30</td>
+                        <td>Full</td>
+                        <td>2.5 GB</td>
+                        <td><span class="badge badge-success">Completed</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td>Backup_2024_01_15_Full</td>
+                        <td>2024-01-15 23:00</td>
+                        <td>Full</td>
+                        <td>2.4 GB</td>
+                        <td><span class="badge badge-success">Completed</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

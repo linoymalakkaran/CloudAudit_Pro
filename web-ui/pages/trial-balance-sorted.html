@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trial Balance Sorted - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Trial Balance (Sorted)</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Trial Balance - Sorted by Account Type</h1>
+            
+            <form id="tbSortedForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="period">Period</label>
+                        <select id="period" name="period">
+                            <option value="202403" selected>March 2024</option>
+                            <option value="202402">February 2024</option>
+                            <option value="202401">January 2024</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sortBy">Sort By</label>
+                        <select id="sortBy" name="sortBy">
+                            <option value="type" selected>Account Type</option>
+                            <option value="code">Account Code</option>
+                            <option value="name">Account Name</option>
+                            <option value="balance">Balance</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" class="btn btn-secondary" style="margin-top: 1.9rem;">Generate Report</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account Type</th>
+                        <th>Account Code</th>
+                        <th>Account Name</th>
+                        <th style="text-align: right;">Debit</th>
+                        <th style="text-align: right;">Credit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: #f0f4ff; font-weight: bold;">
+                        <td colspan="5">ASSETS</td>
+                    </tr>
+                    <tr>
+                        <td>Current Asset</td>
+                        <td>1010</td>
+                        <td>Cash in Bank</td>
+                        <td style="text-align: right;">125,000.00</td>
+                        <td style="text-align: right;">-</td>
+                    </tr>
+                    <tr>
+                        <td>Current Asset</td>
+                        <td>1050</td>
+                        <td>Accounts Receivable</td>
+                        <td style="text-align: right;">85,000.00</td>
+                        <td style="text-align: right;">-</td>
+                    </tr>
+                    <tr style="background: #f0f4ff; font-weight: bold;">
+                        <td colspan="5">LIABILITIES</td>
+                    </tr>
+                    <tr>
+                        <td>Current Liability</td>
+                        <td>2010</td>
+                        <td>Accounts Payable</td>
+                        <td style="text-align: right;">-</td>
+                        <td style="text-align: right;">45,000.00</td>
+                    </tr>
+                    <tr>
+                        <td>Current Liability</td>
+                        <td>2020</td>
+                        <td>Accrued Expenses</td>
+                        <td style="text-align: right;">-</td>
+                        <td style="text-align: right;">25,000.00</td>
+                    </tr>
+                    <tr style="background: #f0f4ff; font-weight: bold;">
+                        <td colspan="5">TOTAL</td>
+                    </tr>
+                    <tr style="background: #fff5f5; font-weight: bold;">
+                        <td colspan="3" style="text-align: right;">Total</td>
+                        <td style="text-align: right;">210,000.00</td>
+                        <td style="text-align: right;">70,000.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center;">
+            <button class="btn btn-primary">Export to PDF</button>
+            <button class="btn btn-secondary">Print</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

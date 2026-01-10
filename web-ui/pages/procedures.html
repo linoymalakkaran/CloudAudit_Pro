@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procedures - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Procedures</span>
+        </div>
+
+        <h1 class="form-title">Audit Procedures</h1>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Procedure ID</th>
+                        <th>Procedure Name</th>
+                        <th>Review ID</th>
+                        <th>Assigned To</th>
+                        <th>Status</th>
+                        <th>Completion %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PROC-001</td>
+                        <td>Verify Bank Reconciliation</td>
+                        <td>REV-2024-001</td>
+                        <td>John Smith</td>
+                        <td><span class="badge badge-success">Completed</span></td>
+                        <td>100%</td>
+                    </tr>
+                    <tr>
+                        <td>PROC-002</td>
+                        <td>Test Accounts Receivable</td>
+                        <td>REV-2024-001</td>
+                        <td>Mary Johnson</td>
+                        <td><span class="badge badge-warning">In Progress</span></td>
+                        <td>75%</td>
+                    </tr>
+                    <tr>
+                        <td>PROC-003</td>
+                        <td>Analyze Fixed Assets</td>
+                        <td>REV-2024-001</td>
+                        <td>Robert Wilson</td>
+                        <td><span class="badge badge-info">Pending</span></td>
+                        <td>0%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-primary" onclick="alert('Create new procedure')">New Procedure</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connection Settings - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Database Connection</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Database Connection Settings</h1>
+            
+            <form id="connectionForm">
+                <div class="form-group">
+                    <label for="serverName">Server Name</label>
+                    <input type="text" id="serverName" name="serverName" value="localhost" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="serverPort">Server Port</label>
+                    <input type="number" id="serverPort" name="serverPort" value="1433" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="databaseName">Database Name</label>
+                    <input type="text" id="databaseName" name="databaseName" value="eAuditPro" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="userName">Username</label>
+                    <input type="text" id="userName" name="userName" value="sa" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="trustedConnection" name="trustedConnection">
+                        Use Windows Authentication
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="connectionTimeout">Connection Timeout (seconds)</label>
+                    <input type="number" id="connectionTimeout" name="connectionTimeout" value="30" required>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="testConnection()">Test Connection</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+
+            <div id="connectionStatus"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+    <script>
+        function testConnection() {
+            showNotification('Connection to database successful!', 'success');
+        }
+    </script>
+</body>
+</html>

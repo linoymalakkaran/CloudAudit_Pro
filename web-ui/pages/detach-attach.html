@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detach & Attach - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Detach & Attach</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Database Detach & Attach Operations</h1>
+            
+            <form id="detachAttachForm">
+                <div class="form-group">
+                    <label for="operation">Select Operation</label>
+                    <select id="operation" name="operation">
+                        <option value="Detach" selected>Detach Database</option>
+                        <option value="Attach">Attach Database</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="databasePath">Database Path</label>
+                    <input type="text" id="databasePath" name="databasePath" value="D:\eAuditPro\Database\eAuditPro.mdf" required>
+                </div>
+
+                <div style="background: #fef3c7; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1.5rem; border-left: 4px solid #f59e0b;">
+                    <strong>ℹ️ Note:</strong> Detaching a database will temporarily disconnect it from the system. Ensure no users are currently accessing the database before proceeding.
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Execute Operation</button>
+                    <button type="reset" class="btn btn-secondary">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

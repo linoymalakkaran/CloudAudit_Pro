@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal Entry - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Journal Entry</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Record Journal Entry</h1>
+            
+            <form id="journalEntryForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="jePeriod">Period</label>
+                        <select id="jePeriod" name="jePeriod">
+                            <option value="">Select Period</option>
+                            <option value="Jan-2024" selected>January 2024</option>
+                            <option value="Feb-2024">February 2024</option>
+                            <option value="Mar-2024">March 2024</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jeRefNo">Reference Number</label>
+                        <input type="text" id="jeRefNo" name="jeRefNo" value="JE-2024-001" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="jeDate">Journal Entry Date</label>
+                        <input type="date" id="jeDate" name="jeDate" value="2024-01-15" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jeType">Journal Type</label>
+                        <select id="jeType" name="jeType">
+                            <option value="">Select Type</option>
+                            <option value="User Adjustment" selected>User Adjustment</option>
+                            <option value="Error Schedule">Error Schedule</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="jeRemark">Remarks/Description</label>
+                    <textarea id="jeRemark" name="jeRemark">Bank reconciliation adjustment - received payment for outstanding invoice</textarea>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Journal Entry Items</h3>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Account</th>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1010 - Cash</td>
+                                <td>1000.00</td>
+                                <td>-</td>
+                                <td>Payment received</td>
+                            </tr>
+                            <tr>
+                                <td>1200 - Accounts Receivable</td>
+                                <td>-</td>
+                                <td>1000.00</td>
+                                <td>Payment applied</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Post Entry</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                    <button type="button" class="btn btn-secondary" onclick="alert('Add line item')">Add Line Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

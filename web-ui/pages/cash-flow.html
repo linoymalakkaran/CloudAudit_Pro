@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Flow - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Cash Flow</span>
+        </div>
+
+        <h1 class="form-title">Cash Flow Statement</h1>
+
+        <div class="form-container">
+            <div class="form-group">
+                <label for="cfPeriod">Period</label>
+                <select id="cfPeriod" name="cfPeriod">
+                    <option value="2024" selected>Year 2024</option>
+                    <option value="2023">Year 2023</option>
+                    <option value="2022">Year 2022</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-container" style="margin-top: 2rem;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="font-weight: bold; background: #e0e7ff;">
+                        <td colspan="2">OPERATING ACTIVITIES</td>
+                    </tr>
+                    <tr>
+                        <td>Net Income</td>
+                        <td>45000.00</td>
+                    </tr>
+                    <tr>
+                        <td>Depreciation & Amortization</td>
+                        <td>5000.00</td>
+                    </tr>
+                    <tr>
+                        <td>Change in Working Capital</td>
+                        <td>(3000.00)</td>
+                    </tr>
+                    <tr style="font-weight: bold;">
+                        <td>Net Cash from Operations</td>
+                        <td>47000.00</td>
+                    </tr>
+                    
+                    <tr style="font-weight: bold; background: #e0e7ff;">
+                        <td colspan="2">INVESTING ACTIVITIES</td>
+                    </tr>
+                    <tr>
+                        <td>Purchase of Fixed Assets</td>
+                        <td>(10000.00)</td>
+                    </tr>
+                    <tr>
+                        <td>Sale of Investments</td>
+                        <td>5000.00</td>
+                    </tr>
+                    <tr style="font-weight: bold;">
+                        <td>Net Cash from Investing</td>
+                        <td>(5000.00)</td>
+                    </tr>
+
+                    <tr style="font-weight: bold; background: #e0e7ff;">
+                        <td colspan="2">FINANCING ACTIVITIES</td>
+                    </tr>
+                    <tr>
+                        <td>Debt Repayment</td>
+                        <td>(10000.00)</td>
+                    </tr>
+                    <tr>
+                        <td>Dividend Paid</td>
+                        <td>(5000.00)</td>
+                    </tr>
+                    <tr style="font-weight: bold;">
+                        <td>Net Cash from Financing</td>
+                        <td>(15000.00)</td>
+                    </tr>
+
+                    <tr style="font-weight: bold; background: #fef3c7;">
+                        <td>NET INCREASE IN CASH</td>
+                        <td>27000.00</td>
+                    </tr>
+                    <tr>
+                        <td>Cash at Beginning of Period</td>
+                        <td>51000.00</td>
+                    </tr>
+                    <tr style="font-weight: bold; background: #dcfce7;">
+                        <td>Cash at End of Period</td>
+                        <td>78000.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-secondary" onclick="downloadTableAsCSV('cash-flow.csv')">Export to CSV</button>
+            <button class="btn btn-secondary" onclick="printPage()">Print</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

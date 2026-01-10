@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Types - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Account Types</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Define Account Types</h1>
+            
+            <form id="accountTypesForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="accountTypeCode">Account Type Code</label>
+                        <input type="text" id="accountTypeCode" name="accountTypeCode" value="AT001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="accountTypeName">Account Type Name</label>
+                        <input type="text" id="accountTypeName" name="accountTypeName" value="Current Assets" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="parentType">Parent Type</label>
+                        <select id="parentType" name="parentType">
+                            <option value="">Select Parent</option>
+                            <option value="Assets" selected>Assets</option>
+                            <option value="Liabilities">Liabilities</option>
+                            <option value="Equity">Equity</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="balanceSheetPosition">Balance Sheet Position</label>
+                        <input type="text" id="balanceSheetPosition" name="balanceSheetPosition" value="Left - Asset Side">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description">This account type is used for current assets that can be converted to cash within one year.</textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nature">Nature</label>
+                        <select id="nature" name="nature">
+                            <option value="">Select Nature</option>
+                            <option value="Debit" selected>Debit</option>
+                            <option value="Credit">Credit</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="costAcType">Cost Account Type</label>
+                        <select id="costAcType" name="costAcType">
+                            <option value="">Select Cost Type</option>
+                            <option value="1">Cost Center</option>
+                            <option value="2">Department</option>
+                            <option value="3">Project</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="depreciationAcType">Depreciation Account Type</label>
+                        <select id="depreciationAcType" name="depreciationAcType">
+                            <option value="">Select Depreciation Type</option>
+                            <option value="1">Fixed Assets</option>
+                            <option value="2">Accumulated Depreciation</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deductionAcType">Deduction Account Type</label>
+                        <select id="deductionAcType" name="deductionAcType">
+                            <option value="">Select Deduction Type</option>
+                            <option value="1">Tax Deduction</option>
+                            <option value="2">Employee Deduction</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="allocationAcType">Allocation Account Type</label>
+                    <select id="allocationAcType" name="allocationAcType">
+                        <option value="">Select Allocation Type</option>
+                        <option value="1">Direct Allocation</option>
+                        <option value="2">Indirect Allocation</option>
+                    </select>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

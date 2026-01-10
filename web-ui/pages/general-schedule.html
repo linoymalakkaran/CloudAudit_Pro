@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Schedule - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>General Schedule</span>
+        </div>
+
+        <h1 class="form-title">General Ledger Schedule</h1>
+
+        <div class="form-container">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="gsPeriod">Period</label>
+                    <select id="gsPeriod" name="gsPeriod">
+                        <option value="Mar-2024" selected>March 2024</option>
+                        <option value="Feb-2024">February 2024</option>
+                        <option value="Jan-2024">January 2024</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gsAccountType">Account Type Filter</label>
+                    <select id="gsAccountType" name="gsAccountType">
+                        <option value="">All</option>
+                        <option value="Assets" selected>Assets</option>
+                        <option value="Liabilities">Liabilities</option>
+                        <option value="Revenue">Revenue</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account Code</th>
+                        <th>Account Name</th>
+                        <th>Opening Balance</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                        <th>Closing Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1010</td>
+                        <td>Cash</td>
+                        <td>50000.00</td>
+                        <td>6000.00</td>
+                        <td>3000.00</td>
+                        <td>53000.00</td>
+                    </tr>
+                    <tr>
+                        <td>1200</td>
+                        <td>Accounts Receivable</td>
+                        <td>20000.00</td>
+                        <td>10000.00</td>
+                        <td>5000.00</td>
+                        <td>25000.00</td>
+                    </tr>
+                    <tr>
+                        <td>1500</td>
+                        <td>Fixed Assets</td>
+                        <td>100000.00</td>
+                        <td>5000.00</td>
+                        <td>-</td>
+                        <td>105000.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-secondary" onclick="downloadTableAsCSV('general-schedule.csv')">Export to CSV</button>
+            <button class="btn btn-secondary" onclick="printPage()">Print</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

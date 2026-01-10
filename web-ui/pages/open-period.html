@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Period - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Open Period</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Open/Reopen Accounting Period</h1>
+            
+            <form id="openPeriodForm">
+                <div class="form-group">
+                    <label for="periodToOpen">Select Period</label>
+                    <select id="periodToOpen" name="periodToOpen">
+                        <option value="">Select Period</option>
+                        <option value="202401">January 2024 (Closed)</option>
+                        <option value="202402" selected>February 2024 (Closed)</option>
+                        <option value="202403">March 2024 (Open)</option>
+                    </select>
+                </div>
+
+                <div class="alert alert-warning">
+                    <strong>⚠️ Warning:</strong> Opening a closed period will allow further transactions to be posted. This should only be done if corrections are needed.
+                </div>
+
+                <div class="form-group">
+                    <label for="reopenReason">Reason for Opening</label>
+                    <textarea id="reopenReason" name="reopenReason" required>Please specify why this period needs to be reopened.</textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Open Period</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

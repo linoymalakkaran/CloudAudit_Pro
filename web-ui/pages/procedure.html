@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procedure Details - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <a href="procedures.html">Procedures</a>
+            <span>Procedure Details</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Procedure Details - PROC-001</h1>
+            
+            <form id="procedureForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="procId">Procedure ID</label>
+                        <input type="text" id="procId" name="procId" value="PROC-001" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="procStatus">Status</label>
+                        <select id="procStatus" name="procStatus">
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed" selected>Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="assignedTo">Assigned To</label>
+                        <input type="text" id="assignedTo" name="assignedTo" value="John Smith">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="completionDate">Completion Date</label>
+                        <input type="date" id="completionDate" name="completionDate" value="2024-01-20">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="findings">Findings & Observations</label>
+                    <textarea id="findings" name="findings">Bank reconciliation was completed successfully. All items reconciled without discrepancies. Procedures verified and signed.</textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

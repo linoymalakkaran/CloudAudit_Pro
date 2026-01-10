@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert Wizard - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Convert Wizard</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Database Conversion Wizard</h1>
+            
+            <div style="background: #f0f4ff; padding: 1.5rem; margin-bottom: 2rem; border-radius: 0.5rem;">
+                <h3>Step 1: Select Source Database</h3>
+                <p>This wizard will help convert your existing data to eAudit Pro format.</p>
+            </div>
+
+            <form id="convertForm">
+                <div class="form-group">
+                    <label for="sourceDb">Source Database Type</label>
+                    <select id="sourceDb" name="sourceDb">
+                        <option value="">Select Database Type</option>
+                        <option value="mdb">Microsoft Access (.mdb)</option>
+                        <option value="xls">Excel (.xls)</option>
+                        <option value="csv">CSV Files</option>
+                        <option value="sql">SQL Server</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sourceFile">Source File Path</label>
+                    <input type="file" id="sourceFile" name="sourceFile">
+                </div>
+
+                <div class="form-group">
+                    <label for="mappingType">Column Mapping</label>
+                    <select id="mappingType" name="mappingType">
+                        <option value="auto">Automatic Detection</option>
+                        <option value="manual">Manual Mapping</option>
+                        <option value="template">Use Template</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="validateData" name="validateData" checked>
+                        Validate data before import
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="createBackup" name="createBackup" checked>
+                        Create backup before conversion
+                    </label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary">← Previous</button>
+                    <button type="button" class="btn btn-primary">Next →</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

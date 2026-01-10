@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equity Schedule - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Equity Schedule</span>
+        </div>
+
+        <h1 class="form-title">Equity Schedule</h1>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Equity Item</th>
+                        <th>Opening Balance</th>
+                        <th>Addition/(Withdrawal)</th>
+                        <th>Current Year Profit</th>
+                        <th>Closing Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Common Stock</td>
+                        <td>50000.00</td>
+                        <td>10000.00</td>
+                        <td>-</td>
+                        <td>60000.00</td>
+                    </tr>
+                    <tr>
+                        <td>Retained Earnings</td>
+                        <td>100000.00</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>100000.00</td>
+                    </tr>
+                    <tr>
+                        <td>Current Year Profit</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>45000.00</td>
+                        <td>45000.00</td>
+                    </tr>
+                    <tr style="font-weight: bold; background: #f3f4f6;">
+                        <td>Total Equity</td>
+                        <td>150000.00</td>
+                        <td>10000.00</td>
+                        <td>45000.00</td>
+                        <td>205000.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-secondary" onclick="downloadTableAsCSV('equity-schedule.csv')">Export to CSV</button>
+            <button class="btn btn-secondary" onclick="printPage()">Print</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

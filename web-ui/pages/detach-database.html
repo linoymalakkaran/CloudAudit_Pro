@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detach Database - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Detach Database</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Detach Database</h1>
+
+            <div class="alert alert-warning">
+                <strong>⚠️ Warning:</strong> Detaching the database will disconnect it from the server. Ensure you have a backup before proceeding.
+            </div>
+            
+            <form id="detachDbForm">
+                <div class="form-group">
+                    <label for="detachDatabase">Database to Detach</label>
+                    <select id="detachDatabase" name="detachDatabase">
+                        <option value="">Select Database</option>
+                        <option value="eAuditPro" selected>eAuditPro</option>
+                        <option value="eAuditPro_Backup">eAuditPro_Backup</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="dropConnections" name="dropConnections" checked>
+                        Drop existing connections
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="updateStatistics" name="updateStatistics">
+                        Update statistics before detach
+                    </label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-danger">Detach Database</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-container" style="margin-top: 2rem;">
+            <h2>Recent Detach Operations</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Database Name</th>
+                            <th>Detach Date</th>
+                            <th>Status</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>eAuditPro_Old</td>
+                            <td>2024-03-10</td>
+                            <td><span class="badge badge-success">Success</span></td>
+                            <td>C:\Data\eAuditPro_Old.mdf</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

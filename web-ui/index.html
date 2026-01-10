@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eAudit Pro - Home</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin User</strong> | <a href="#" style="color: white;">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h1>eAudit Pro System</h1>
+            <p>Comprehensive Audit Management Solution - Navigate to any form below</p>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <input type="text" id="searchInput" placeholder="Search forms..." 
+                   style="width: 100%; max-width: 500px; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem;"
+                   onkeyup="searchForms(this.value)">
+        </div>
+
+        <div class="grid">
+            <!-- Authentication Forms -->
+            <div class="card">
+                <h3>Login</h3>
+                <p>User authentication and system access</p>
+                <a href="pages/login.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Company Management -->
+            <div class="card">
+                <h3>Company</h3>
+                <p>Company information and setup</p>
+                <a href="pages/company.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Company Console</h3>
+                <p>View all company details</p>
+                <a href="pages/company-console.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Company Details</h3>
+                <p>Edit company information</p>
+                <a href="pages/company-details.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Account Management -->
+            <div class="card">
+                <h3>Account Heads</h3>
+                <p>Manage account chart hierarchy</p>
+                <a href="pages/ac-heads.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Account Types</h3>
+                <p>Define account types and categories</p>
+                <a href="pages/ac-types.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Journal & Ledger -->
+            <div class="card">
+                <h3>Journal Entry</h3>
+                <p>Record journal entries and transactions</p>
+                <a href="pages/journal-entry.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Ledger</h3>
+                <p>View account ledger details</p>
+                <a href="pages/ledger.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Financial Reports -->
+            <div class="card">
+                <h3>Trial Balance</h3>
+                <p>View trial balance report</p>
+                <a href="pages/trial-balance.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>General Schedule</h3>
+                <p>View general ledger schedule</p>
+                <a href="pages/general-schedule.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Fixed Asset Schedule</h3>
+                <p>Manage fixed assets and depreciation</p>
+                <a href="pages/fixed-asset-schedule.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Equity Schedule</h3>
+                <p>View equity and capital schedules</p>
+                <a href="pages/equity-schedule.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Liability Schedule</h3>
+                <p>View liability schedules</p>
+                <a href="pages/liability-schedule.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Cash and Cash Equivalents</h3>
+                <p>Manage cash accounts</p>
+                <a href="pages/cash-and-cash-equivalents.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Cash Flow</h3>
+                <p>View cash flow statement</p>
+                <a href="pages/cash-flow.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Master Data -->
+            <div class="card">
+                <h3>Bank Master</h3>
+                <p>Manage bank accounts</p>
+                <a href="pages/bank-master.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Currency Master</h3>
+                <p>Manage currency codes</p>
+                <a href="pages/currency-master.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Nations Master</h3>
+                <p>Manage countries and regions</p>
+                <a href="pages/nations-master.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Periods</h3>
+                <p>Manage accounting periods</p>
+                <a href="pages/periods.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Document Management -->
+            <div class="card">
+                <h3>Document Collection</h3>
+                <p>Manage document collections</p>
+                <a href="pages/document-collection.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Document Definition</h3>
+                <p>Define document types</p>
+                <a href="pages/document-definition.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Document Linking</h3>
+                <p>Link documents to transactions</p>
+                <a href="pages/document-linking.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Attached Documents</h3>
+                <p>View attached documents</p>
+                <a href="pages/attached-documents.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Audit & Review -->
+            <div class="card">
+                <h3>Review</h3>
+                <p>Manage audit reviews</p>
+                <a href="pages/review.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Review Details</h3>
+                <p>View review details</p>
+                <a href="pages/review-details.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Related Reviews</h3>
+                <p>View related audit reviews</p>
+                <a href="pages/related-reviews.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Procedures & Notes -->
+            <div class="card">
+                <h3>Procedures</h3>
+                <p>Manage audit procedures</p>
+                <a href="pages/procedures.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Procedure Details</h3>
+                <p>View procedure details</p>
+                <a href="pages/procedure.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Notes and Captions</h3>
+                <p>Manage notes and captions</p>
+                <a href="pages/note-no-and-caption.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- System Administration -->
+            <div class="card">
+                <h3>Users</h3>
+                <p>Manage system users</p>
+                <a href="pages/users.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Change Password</h3>
+                <p>Change user password</p>
+                <a href="pages/change-password.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>User Privileges</h3>
+                <p>Manage user privileges</p>
+                <a href="pages/user-privileges.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Privilege Settings</h3>
+                <p>Configure privilege settings</p>
+                <a href="pages/privilege-settings.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Reports -->
+            <div class="card">
+                <h3>Report Generator</h3>
+                <p>Generate custom reports</p>
+                <a href="pages/report-generator.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Report Designer</h3>
+                <p>Design custom reports</p>
+                <a href="pages/report-designer.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Backup & Restore -->
+            <div class="card">
+                <h3>Backup Data</h3>
+                <p>Backup system data</p>
+                <a href="pages/backup-data.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Restore Database</h3>
+                <p>Restore database from backup</p>
+                <a href="pages/restore-database.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Detach & Attach</h3>
+                <p>Detach/Attach database</p>
+                <a href="pages/detach-attach.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Other Forms -->
+            <div class="card">
+                <h3>Finalisation</h3>
+                <p>Finalize accounting period</p>
+                <a href="pages/finalisation.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Options</h3>
+                <p>System options and settings</p>
+                <a href="pages/options.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Navigator</h3>
+                <p>Navigate through system modules</p>
+                <a href="pages/navigator.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Find</h3>
+                <p>Search functionality</p>
+                <a href="pages/find.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Datasheet</h3>
+                <p>View data in spreadsheet format</p>
+                <a href="pages/datasheet.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Preview</h3>
+                <p>Preview reports and documents</p>
+                <a href="pages/preview.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Version Details</h3>
+                <p>View system version information</p>
+                <a href="pages/version-details.html" class="card-link">Open Form →</a>
+            </div>
+
+            <!-- Additional Forms -->
+            <div class="card">
+                <h3>Split Schedule</h3>
+                <p>Manage account splits and allocations</p>
+                <a href="pages/split-schedule.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Open Period</h3>
+                <p>Reopen closed accounting periods</p>
+                <a href="pages/open-period.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Resources</h3>
+                <p>System resources and documentation</p>
+                <a href="pages/resources.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Database Connection</h3>
+                <p>Configure database connection settings</p>
+                <a href="pages/connection.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Convert Wizard</h3>
+                <p>Convert data from other formats</p>
+                <a href="pages/convert-wizard.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Detach Database</h3>
+                <p>Detach database from server</p>
+                <a href="pages/detach-database.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Document Insert</h3>
+                <p>Insert new documents into system</p>
+                <a href="pages/document-insert.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Select Items</h3>
+                <p>Select items for batch operations</p>
+                <a href="pages/select.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Export to Excel</h3>
+                <p>Export data to Excel spreadsheet</p>
+                <a href="pages/show-excel.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Tips & Help</h3>
+                <p>Help and tips for using the system</p>
+                <a href="pages/tips.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Trial Balance Sorted</h3>
+                <p>View trial balance sorted by account type</p>
+                <a href="pages/trial-balance-sorted.html" class="card-link">Open Form →</a>
+            </div>
+
+            <div class="card">
+                <h3>Collect Multiple Documents</h3>
+                <p>Collect and organize multiple documents</p>
+                <a href="pages/collect-multiple-docs.html" class="card-link">Open Form →</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

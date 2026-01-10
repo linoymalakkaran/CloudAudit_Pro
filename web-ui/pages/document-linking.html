@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Linking - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Document Linking</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Link Documents to Transactions</h1>
+            
+            <form id="docLinkForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transactionType">Transaction Type</label>
+                        <select id="transactionType" name="transactionType">
+                            <option value="">Select Type</option>
+                            <option value="Journal Entry" selected>Journal Entry</option>
+                            <option value="Invoice">Invoice</option>
+                            <option value="Purchase Order">Purchase Order</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transactionNo">Transaction Number</label>
+                        <input type="text" id="transactionNo" name="transactionNo" value="JE-2024-001" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="documentFile">Select Document</label>
+                        <input type="text" id="documentFile" name="documentFile" value="Invoice-2024-001.pdf" placeholder="Document file name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="linkDate">Link Date</label>
+                        <input type="date" id="linkDate" name="linkDate" value="2024-01-15">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="comments">Comments</label>
+                    <textarea id="comments" name="comments">Linked supporting document for verification</textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Link Document</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

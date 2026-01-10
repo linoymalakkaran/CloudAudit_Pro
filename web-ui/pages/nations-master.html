@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nations Master - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Nations Master</span>
+        </div>
+
+        <h1 class="form-title">Countries & Nations Master</h1>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Country Code</th>
+                        <th>Country Name</th>
+                        <th>Region</th>
+                        <th>Currency</th>
+                        <th>Phone Code</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>US</td>
+                        <td>United States</td>
+                        <td>North America</td>
+                        <td>USD</td>
+                        <td>+1</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td>GB</td>
+                        <td>United Kingdom</td>
+                        <td>Europe</td>
+                        <td>GBP</td>
+                        <td>+44</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td>CA</td>
+                        <td>Canada</td>
+                        <td>North America</td>
+                        <td>CAD</td>
+                        <td>+1</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td>AU</td>
+                        <td>Australia</td>
+                        <td>Oceania</td>
+                        <td>AUD</td>
+                        <td>+61</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td>IN</td>
+                        <td>India</td>
+                        <td>Asia</td>
+                        <td>INR</td>
+                        <td>+91</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-primary" onclick="alert('Add new country')">Add Country</button>
+            <button class="btn btn-secondary" onclick="downloadTableAsCSV('nations.csv')">Export to CSV</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

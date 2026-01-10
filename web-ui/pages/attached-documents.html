@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attached Documents - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Attached Documents</span>
+        </div>
+
+        <h1 class="form-title">Attached Documents</h1>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Document Name</th>
+                        <th>Type</th>
+                        <th>Attached To</th>
+                        <th>Upload Date</th>
+                        <th>File Size</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Invoice-2024-001.pdf</td>
+                        <td>PDF</td>
+                        <td>JE-2024-001</td>
+                        <td>2024-01-15</td>
+                        <td>256 KB</td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 0.5rem 0.75rem; font-size: 0.9rem;" onclick="alert('Download file')">Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Receipt-IMG001.jpg</td>
+                        <td>Image</td>
+                        <td>JE-2024-002</td>
+                        <td>2024-01-20</td>
+                        <td>1.2 MB</td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 0.5rem 0.75rem; font-size: 0.9rem;" onclick="alert('Download file')">Download</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-primary" onclick="alert('Upload new document')">Upload Document</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

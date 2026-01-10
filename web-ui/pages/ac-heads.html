@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Heads - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Account Heads</span>
+        </div>
+
+        <h1 class="form-title">Chart of Accounts - Account Heads</h1>
+
+        <div class="form-container" style="margin-bottom: 2rem;">
+            <h3>New Account Head</h3>
+            <form id="accountHeadForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="acCode">Account Code</label>
+                        <input type="text" id="acCode" name="acCode" value="6000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="acName">Account Name</label>
+                        <input type="text" id="acName" name="acName" value="Cost of Goods Sold" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="accountTypeId">Account Type</label>
+                        <select id="accountTypeId" name="accountTypeId">
+                            <option value="">Select Account Type</option>
+                            <option value="1" selected>Current Asset</option>
+                            <option value="2">Fixed Asset</option>
+                            <option value="3">Current Liability</option>
+                            <option value="4">Long-term Liability</option>
+                            <option value="5">Equity</option>
+                            <option value="6">Revenue</option>
+                            <option value="7">Expense</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="statusId">Status</label>
+                        <select id="statusId" name="statusId">
+                            <option value="Active" selected>Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="trialOrder">Trial Balance Order</label>
+                    <input type="number" id="trialOrder" name="trialOrder" value="6" min="1">
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Save Account Head</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                </div>
+            </form>
+        </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account Head Code</th>
+                        <th>Account Head Name</th>
+                        <th>Account Type</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1000</td>
+                        <td>Assets</td>
+                        <td>Balance Sheet</td>
+                        <td>All current and fixed assets</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>2000</td>
+                        <td>Liabilities</td>
+                        <td>Balance Sheet</td>
+                        <td>All current and long-term liabilities</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>3000</td>
+                        <td>Equity</td>
+                        <td>Balance Sheet</td>
+                        <td>Owner's equity and retained earnings</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>4000</td>
+                        <td>Revenue</td>
+                        <td>Income Statement</td>
+                        <td>All revenue and sales accounts</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>5000</td>
+                        <td>Expenses</td>
+                        <td>Income Statement</td>
+                        <td>All operating expenses</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-primary" onclick="alert('Add new account head')">Add New Account Head</button>
+            <button class="btn btn-secondary" onclick="downloadTableAsCSV('account-heads.csv')">Export to CSV</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

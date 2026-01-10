@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privilege Settings - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Privilege Settings</span>
+        </div>
+
+        <h1 class="form-title">Privilege Settings</h1>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Role</th>
+                        <th>Description</th>
+                        <th>Users</th>
+                        <th>Modules</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Administrator</td>
+                        <td>Full system access</td>
+                        <td>1</td>
+                        <td>All</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>Manager</td>
+                        <td>Management access</td>
+                        <td>1</td>
+                        <td>Most</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>Auditor</td>
+                        <td>Limited audit access</td>
+                        <td>2</td>
+                        <td>Selected</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-primary" onclick="alert('Create new role')">Create New Role</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

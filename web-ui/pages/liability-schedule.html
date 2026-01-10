@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liability Schedule - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Liability Schedule</span>
+        </div>
+
+        <h1 class="form-title">Liability Schedule</h1>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Liability Item</th>
+                        <th>Current Portion</th>
+                        <th>Non-Current Portion</th>
+                        <th>Interest Rate</th>
+                        <th>Due Date</th>
+                        <th>Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Accounts Payable</td>
+                        <td>15000.00</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>2024-02-15</td>
+                        <td>15000.00</td>
+                    </tr>
+                    <tr>
+                        <td>Short-Term Loan</td>
+                        <td>25000.00</td>
+                        <td>-</td>
+                        <td>5.5%</td>
+                        <td>2024-06-30</td>
+                        <td>25000.00</td>
+                    </tr>
+                    <tr>
+                        <td>Long-Term Debt</td>
+                        <td>10000.00</td>
+                        <td>50000.00</td>
+                        <td>6.0%</td>
+                        <td>2026-12-31</td>
+                        <td>60000.00</td>
+                    </tr>
+                    <tr style="font-weight: bold; background: #f3f4f6;">
+                        <td>Total Liabilities</td>
+                        <td>50000.00</td>
+                        <td>50000.00</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>100000.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-secondary" onclick="downloadTableAsCSV('liability-schedule.csv')">Export to CSV</button>
+            <button class="btn btn-secondary" onclick="printPage()">Print</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

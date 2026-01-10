@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collect Multiple Documents - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Collect Multiple Documents</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Collect Multiple Documents</h1>
+            
+            <form id="collectMultipleDocsForm">
+                <div class="form-group">
+                    <label for="collectionName">Collection Name</label>
+                    <input type="text" id="collectionName" name="collectionName" value="Audit Evidence 2024" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="documentCategory">Document Category</label>
+                    <select id="documentCategory" name="documentCategory">
+                        <option value="">Select Category</option>
+                        <option value="evidence" selected>Audit Evidence</option>
+                        <option value="supporting">Supporting Documents</option>
+                        <option value="reports">Reports</option>
+                        <option value="correspondence">Correspondence</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="documentsUpload">Upload Multiple Documents</label>
+                    <input type="file" id="documentsUpload" name="documentsUpload" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.png">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="createSubfolders" name="createSubfolders">
+                        Create subfolders by category
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="indexDocuments" name="indexDocuments" checked>
+                        Index documents for search
+                    </label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Collect Documents</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-container" style="margin-top: 2rem;">
+            <h2>Upload Progress</h2>
+            <div style="background: #f3f4f6; padding: 1.5rem; border-radius: 0.5rem;">
+                <div style="margin-bottom: 1rem;">
+                    <p>0 files selected</p>
+                </div>
+                <div style="width: 100%; background: #e5e7eb; height: 20px; border-radius: 0.25rem;"></div>
+                <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">Total size: 0 MB</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

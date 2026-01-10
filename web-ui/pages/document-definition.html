@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Definition - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Document Definition</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Define Document Types</h1>
+            
+            <form id="docDefForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="docTypeCode">Document Type Code</label>
+                        <input type="text" id="docTypeCode" name="docTypeCode" value="INVOICE" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="docTypeName">Document Type Name</label>
+                        <input type="text" id="docTypeName" name="docTypeName" value="Invoice" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" name="category">
+                            <option value="">Select Category</option>
+                            <option value="Financial" selected>Financial</option>
+                            <option value="Operational">Operational</option>
+                            <option value="Administrative">Administrative</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="retentionPeriod">Retention Period (years)</label>
+                        <input type="number" id="retentionPeriod" name="retentionPeriod" value="7">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description">Invoice documents issued to customers for sales of goods or services.</textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Save Document Type</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                </div>
+            </form>
+        </div>
+
+        <h2 style="margin-top: 3rem;">Document Types List</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Retention Period</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>INVOICE</td>
+                        <td>Invoice</td>
+                        <td>Financial</td>
+                        <td>7 years</td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>RECEIPT</td>
+                        <td>Receipt</td>
+                        <td>Financial</td>
+                        <td>7 years</td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

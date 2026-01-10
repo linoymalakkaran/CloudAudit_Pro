@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trial Balance - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Trial Balance</span>
+        </div>
+
+        <h1 class="form-title">Trial Balance Report</h1>
+
+        <div class="form-container">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tbPeriod">As of Period</label>
+                    <select id="tbPeriod" name="tbPeriod">
+                        <option value="Mar-2024" selected>March 31, 2024</option>
+                        <option value="Feb-2024">February 29, 2024</option>
+                        <option value="Jan-2024">January 31, 2024</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tbStatus">Include Closed Accounts</label>
+                    <select id="tbStatus" name="tbStatus">
+                        <option value="no" selected>No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="alert('Generating trial balance')">Generate</button>
+        </div>
+
+        <div class="table-container" style="margin-top: 2rem;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account Code</th>
+                        <th>Account Name</th>
+                        <th>Debit Balance</th>
+                        <th>Credit Balance</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1010</td>
+                        <td>Cash</td>
+                        <td>53000.00</td>
+                        <td>-</td>
+                        <td><span class="badge badge-success">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>1200</td>
+                        <td>Accounts Receivable</td>
+                        <td>25000.00</td>
+                        <td>-</td>
+                        <td><span class="badge badge-success">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>2100</td>
+                        <td>Accounts Payable</td>
+                        <td>-</td>
+                        <td>15000.00</td>
+                        <td><span class="badge badge-success">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>3000</td>
+                        <td>Common Stock</td>
+                        <td>-</td>
+                        <td>50000.00</td>
+                        <td><span class="badge badge-success">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>4000</td>
+                        <td>Sales Revenue</td>
+                        <td>-</td>
+                        <td>100000.00</td>
+                        <td><span class="badge badge-success">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>5100</td>
+                        <td>Salary Expense</td>
+                        <td>30000.00</td>
+                        <td>-</td>
+                        <td><span class="badge badge-success">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>TOTALS</strong></td>
+                        <td><strong>108000.00</strong></td>
+                        <td><strong>165000.00</strong></td>
+                        <td><span class="badge badge-warning">Unbalanced</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-secondary" onclick="downloadTableAsCSV('trial-balance.csv')">Export to CSV</button>
+            <button class="btn btn-secondary" onclick="printPage()">Print</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

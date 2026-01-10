@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalisation - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Finalisation</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Period Finalisation</h1>
+            
+            <form id="finalisationForm">
+                <div class="form-group">
+                    <label for="periodToFinalize">Select Period to Finalize</label>
+                    <select id="periodToFinalize" name="periodToFinalize">
+                        <option value="">Select Period</option>
+                        <option value="202401">January 2024</option>
+                        <option value="202402" selected>February 2024</option>
+                        <option value="202403">March 2024</option>
+                    </select>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>ℹ️ Information:</strong> Finalizing a period will lock it from further transactions. You should ensure all entries have been made and verified before finalizing.
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem 0;">Pre-Finalization Checklist</h3>
+                <div style="background: #f9fafb; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1.5rem;">
+                    <div style="margin-bottom: 1rem;">
+                        <label>
+                            <input type="checkbox" name="checks" value="TrialBalance" required>
+                            Trial Balance is in balance
+                        </label>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label>
+                            <input type="checkbox" name="checks" value="AllJournals" required>
+                            All journal entries have been reviewed
+                        </label>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label>
+                            <input type="checkbox" name="checks" value="Reconciliation" required>
+                            All reconciliations are complete
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="checks" value="Approvals" required>
+                            Required approvals have been obtained
+                        </label>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" onclick="alert('Period finalized successfully!')">Finalize Period</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

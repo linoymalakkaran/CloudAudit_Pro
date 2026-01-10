@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show in Excel - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Export to Excel</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Export Data to Excel</h1>
+            
+            <form id="excelExportForm">
+                <div class="form-group">
+                    <label for="dataType">Select Data to Export</label>
+                    <select id="dataType" name="dataType">
+                        <option value="">Select Data Type</option>
+                        <option value="trialbalance" selected>Trial Balance</option>
+                        <option value="ledger">Ledger</option>
+                        <option value="journalentries">Journal Entries</option>
+                        <option value="accounts">Accounts</option>
+                        <option value="reports">Financial Reports</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" name="startDate" value="2024-01-01">
+                </div>
+
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" name="endDate" value="2024-03-31">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="includeFormulas" name="includeFormulas">
+                        Include Formulas
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="formatCells" name="formatCells" checked>
+                        Apply Formatting
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="fileName">Excel File Name</label>
+                    <input type="text" id="fileName" name="fileName" value="eAuditPro_Export" required>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Export to Excel</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-container" style="margin-top: 2rem;">
+            <h2>Recent Exports</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Data Type</th>
+                            <th>Export Date</th>
+                            <th>Size</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>eAuditPro_TB_Jan2024</td>
+                            <td>Trial Balance</td>
+                            <td>2024-03-01</td>
+                            <td>245 KB</td>
+                            <td><button class="btn btn-small btn-primary">Download</button></td>
+                        </tr>
+                        <tr>
+                            <td>eAuditPro_Ledger_Feb2024</td>
+                            <td>Ledger</td>
+                            <td>2024-03-05</td>
+                            <td>512 KB</td>
+                            <td><button class="btn btn-small btn-primary">Download</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

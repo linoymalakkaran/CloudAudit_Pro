@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Company</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Company Information</h1>
+            
+            <form id="companyForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="companyName">Company Name</label>
+                        <input type="text" id="companyName" name="companyName" value="ABC Corporation Ltd." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="companyCode">Company Code</label>
+                        <input type="text" id="companyCode" name="companyCode" value="ABC001" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="shortName">Short Name</label>
+                        <input type="text" id="shortName" name="shortName" value="ABC" maxlength="20">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jobCode">Job Code</label>
+                        <input type="text" id="jobCode" name="jobCode" value="JOB-2024-001" maxlength="20">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="registrationNo">Registration Number</label>
+                        <input type="text" id="registrationNo" name="registrationNo" value="REG123456" maxlength="50">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taxId">Tax ID</label>
+                        <input type="text" id="taxId" name="taxId" value="TAX789456" maxlength="30">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="currencyId">Default Currency</label>
+                        <select id="currencyId" name="currencyId">
+                            <option value="USD" selected>USD - US Dollar</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="GBP">GBP - British Pound</option>
+                            <option value="INR">INR - Indian Rupee</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" name="address" value="123 Business Street, Suite 100">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" value="New York">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="state">State/Province</label>
+                        <input type="text" id="state" name="state" value="NY">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="zipCode">Zip/Postal Code</label>
+                        <input type="text" id="zipCode" name="zipCode" value="10001">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <input type="text" id="country" name="country" value="United States">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="text" id="phone" name="phone" value="+1-555-123-4567" maxlength="50">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fax">Fax</label>
+                        <input type="text" id="fax" name="fax" value="+1-555-123-4568" maxlength="20">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="info@abccorp.com" maxlength="40">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="website">Website</label>
+                        <input type="text" id="website" name="website" value="www.abccorp.com" maxlength="40">
+                    </div>
+                </div>
+
+                <div style="border-top: 2px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem;">Contact Information</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contactName">Contact Name</label>
+                            <input type="text" id="contactName" name="contactName" value="John Smith" maxlength="30" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactDesignation">Contact Designation</label>
+                            <input type="text" id="contactDesignation" name="contactDesignation" value="Chief Financial Officer" maxlength="50">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contactEmail">Contact Email</label>
+                            <input type="email" id="contactEmail" name="contactEmail" value="john.smith@abccorp.com" maxlength="40">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactPhone">Contact Phone</label>
+                            <input type="text" id="contactPhone" name="contactPhone" value="+1-555-123-4569" maxlength="50">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="remarks">Remarks</label>
+                    <textarea id="remarks" name="remarks">This is a sample company for testing purposes. Additional notes and information can be added here.</textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                    <button type="button" class="btn btn-danger" onclick="alert('Delete company?')">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

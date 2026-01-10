@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Console - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Company Console</span>
+        </div>
+
+        <h1 class="form-title">Company Details</h1>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Company Code</th>
+                        <th>Company Name</th>
+                        <th>Registration No</th>
+                        <th>Tax ID</th>
+                        <th>City</th>
+                        <th>Country</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ABC001</td>
+                        <td>ABC Corporation Ltd.</td>
+                        <td>REG123456</td>
+                        <td>TAX789456</td>
+                        <td>New York</td>
+                        <td>United States</td>
+                        <td>+1-555-123-4567</td>
+                        <td>info@abccorp.com</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>XYZ002</td>
+                        <td>XYZ Industries</td>
+                        <td>REG654321</td>
+                        <td>TAX321654</td>
+                        <td>London</td>
+                        <td>United Kingdom</td>
+                        <td>+44-20-7946-0958</td>
+                        <td>contact@xyzind.com</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>PQR003</td>
+                        <td>PQR Solutions Ltd.</td>
+                        <td>REG789123</td>
+                        <td>TAX456789</td>
+                        <td>Toronto</td>
+                        <td>Canada</td>
+                        <td>+1-416-555-0147</td>
+                        <td>hello@pqrsol.com</td>
+                        <td><span class="badge badge-info">Inactive</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-primary" onclick="alert('Add new company')">Add New Company</button>
+            <button class="btn btn-secondary" onclick="downloadTableAsCSV('companies.csv')">Export to CSV</button>
+            <button class="btn btn-secondary" onclick="printPage()">Print</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

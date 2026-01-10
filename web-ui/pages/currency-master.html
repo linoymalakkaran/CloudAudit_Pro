@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Master - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Currency Master</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Currency Master</h1>
+            
+            <form id="currencyMasterForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="currencyCode">Currency Code</label>
+                        <input type="text" id="currencyCode" name="currencyCode" value="USD" required maxlength="3">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currencyName">Currency Name</label>
+                        <input type="text" id="currencyName" name="currencyName" value="US Dollar" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="symbol">Currency Symbol</label>
+                        <input type="text" id="symbol" name="symbol" value="$" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exchangeRate">Exchange Rate to Base</label>
+                        <input type="number" id="exchangeRate" name="exchangeRate" value="1.0" step="0.0001" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="isBaseCurrency" value="true" checked>
+                        Set as Base Currency
+                    </label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Save Currency</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                </div>
+            </form>
+        </div>
+
+        <h2 style="margin-top: 3rem;">Currency List</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Currency Code</th>
+                        <th>Currency Name</th>
+                        <th>Symbol</th>
+                        <th>Exchange Rate</th>
+                        <th>Is Base</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>USD</td>
+                        <td>US Dollar</td>
+                        <td>$</td>
+                        <td>1.0000</td>
+                        <td><span class="badge badge-success">Yes</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>EUR</td>
+                        <td>Euro</td>
+                        <td>€</td>
+                        <td>1.0850</td>
+                        <td><span class="badge badge-danger">No</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>GBP</td>
+                        <td>British Pound</td>
+                        <td>£</td>
+                        <td>0.7925</td>
+                        <td><span class="badge badge-danger">No</span></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

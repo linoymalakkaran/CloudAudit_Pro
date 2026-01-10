@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Users</span>
+        </div>
+
+        <h1 class="form-title">System Users</h1>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Last Login</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>U001</td>
+                        <td>admin</td>
+                        <td>Admin User</td>
+                        <td>admin@eauditpro.com</td>
+                        <td><span class="badge badge-info">Administrator</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>2024-01-20 09:30</td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>U002</td>
+                        <td>john.smith</td>
+                        <td>John Smith</td>
+                        <td>john.smith@company.com</td>
+                        <td><span class="badge badge-info">Auditor</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>2024-01-19 14:15</td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>U003</td>
+                        <td>mary.johnson</td>
+                        <td>Mary Johnson</td>
+                        <td>mary.johnson@company.com</td>
+                        <td><span class="badge badge-info">Manager</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>2024-01-18 11:45</td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-group" style="margin-top: 2rem;">
+            <button class="btn btn-primary" onclick="alert('Add new user')">Add New User</button>
+            <button class="btn btn-secondary" onclick="downloadTableAsCSV('users.csv')">Export to CSV</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

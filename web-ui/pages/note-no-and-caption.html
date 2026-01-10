@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes and Captions - eAudit Pro</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">eAudit Pro</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                Welcome, <strong>Admin</strong> | <a href="../index.html" style="color: white;">← Back</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>Notes and Captions</span>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Notes & Captions</h1>
+            
+            <form id="noteForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="noteNumber">Note Number</label>
+                        <input type="text" id="noteNumber" name="noteNumber" value="NOTE-001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="caption">Caption/Title</label>
+                        <input type="text" id="caption" name="caption" value="Bank Reconciliation Note" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="noteContent">Note Content</label>
+                    <textarea id="noteContent" name="noteContent" style="height: 200px;">This note provides details on the bank reconciliation process for the period ending March 31, 2024. All items have been properly reconciled and verified. Supporting documentation is attached.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="referenceItem">Reference Item/Account</label>
+                    <input type="text" id="referenceItem" name="referenceItem" value="1010 - Cash">
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Save Note</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                </div>
+            </form>
+        </div>
+
+        <h2 style="margin-top: 3rem;">Notes List</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Note Number</th>
+                        <th>Caption</th>
+                        <th>Reference</th>
+                        <th>Created Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NOTE-001</td>
+                        <td>Bank Reconciliation Note</td>
+                        <td>1010 - Cash</td>
+                        <td>2024-01-20</td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 eAudit Pro System. All rights reserved.</p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>
