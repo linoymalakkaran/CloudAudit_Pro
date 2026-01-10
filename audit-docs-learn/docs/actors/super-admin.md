@@ -209,7 +209,9 @@ pie title "Storage Usage by Company"
 ```
 
 ```mermaid
-bar title "Monthly Active Users Trend"
+%%{init: {'theme':'base'}}%%
+xychart-beta
+    title "Monthly Active Users Trend"
     x-axis ["Oct", "Nov", "Dec", "Jan"]
     y-axis "Users" 0 --> 300
     bar [180, 210, 235, 247]
